@@ -5,120 +5,424 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arrow Core | Privacy by Construction</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0a0a0c;
-            --bg-card: #121216;
-            --accent: #8257ff;
-            --accent-glow: rgba(130, 87, 255, 0.2);
-            --text-main: #f3f3f4;
-            --text-muted: #8b8b93;
+            --bg: #07070a;
+            --bg2: #0d0d12;
+            --bg3: #13131a;
+            --accent: #7c3aed;
+            --accent-light: #a78bfa;
+            --accent-glow: rgba(124,58,237,0.18);
+            --green: #22c55e;
+            --text: #f4f4f6;
+            --muted: #7a7a8c;
+            --border: rgba(255,255,255,0.07);
+            --r: 12px;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
+        /* ===== NAVBAR ===== */
         nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 24px 6%; position: fixed; width: 100%; top: 0;
-            background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(12px); z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: fixed; top: 0; width: 100%; z-index: 999;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 6%; height: 68px;
+            background: rgba(7,7,10,0.85); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
         }
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-weight: 600; font-size: 1.05rem; }
+        .nav-brand img { width: 30px; height: 30px; border-radius: 50%; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-right a.icon-link { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+        .nav-right a.icon-link:hover { color: var(--text); }
+        .btn-primary { background: var(--accent); color: #fff; padding: 9px 20px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; white-space: nowrap; }
+        .btn-primary:hover { background: #6d28d9; box-shadow: 0 0 20px var(--accent-glow); }
 
-        .brand { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 1.1rem; color: #fff; text-decoration: none; }
-        .brand img { width: 28px; height: 28px; border-radius: 50%; }
-        
-        .nav-links a { color: var(--text-muted); text-decoration: none; margin: 0 16px; font-size: 0.9rem; transition: 0.2s; }
-        .nav-links a:hover { color: #fff; }
-
-        .btn-launch {
-            background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: 0.2s;
+        /* ===== TICKER ===== */
+        .ticker-wrap {
+            margin-top: 68px;
+            background: var(--bg2); border-bottom: 1px solid var(--border);
+            padding: 10px 0; overflow: hidden; white-space: nowrap;
         }
-        .btn-launch:hover { background: #9673ff; box-shadow: 0 0 15px var(--accent-glow); }
+        .ticker-track { display: inline-flex; gap: 60px; animation: ticker 40s linear infinite; }
+        .ticker-item { font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+        .ticker-item span.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); display: inline-block; }
+        .ticker-item b { color: var(--green); }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
+        /* ===== HERO ===== */
         .hero {
-            display: flex; justify-content: space-between; align-items: center;
-            min-height: 100vh; padding: 0 6%;
-            background: radial-gradient(circle at 80% 50%, var(--accent-glow), transparent 40%);
+            min-height: calc(100vh - 68px - 40px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 80px 6% 60px;
+            background: radial-gradient(ellipse at 70% 50%, var(--accent-glow) 0%, transparent 55%);
         }
-
-        .hero-content { max-width: 600px; }
-        
+        .hero-left { max-width: 580px; }
         .badge {
-            display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
-            background: rgba(130, 87, 255, 0.1); color: #bba3ff; border: 1px solid rgba(130,87,255,0.2);
-            border-radius: 20px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; margin-bottom: 24px; text-transform: uppercase;
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25);
+            color: var(--accent-light); padding: 5px 14px; border-radius: 99px;
+            font-size: 0.72rem; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 28px;
         }
-        .badge::before { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
+        .badge::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
+        .hero h1 { font-size: 4.8rem; font-weight: 700; line-height: 1.04; letter-spacing: -0.04em; margin-bottom: 24px; }
+        .hero h1 .gradient { background: linear-gradient(135deg, var(--accent-light), #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.1rem; color: var(--muted); line-height: 1.7; margin-bottom: 40px; max-width: 480px; }
+        .btn-row { display: flex; gap: 14px; }
+        .btn-secondary { color: var(--text); padding: 12px 22px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600; border: 1px solid var(--border); transition: all 0.2s; }
+        .btn-secondary:hover { border-color: rgba(255,255,255,0.2); background: var(--bg2); }
 
-        h1 { font-size: 4.5rem; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 24px; font-weight: 600; }
-        .hero-content p { font-size: 1.15rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 40px; }
-
+        /* Terminal */
         .terminal {
-            background: #000; border: 1px solid #222; border-radius: 12px;
-            width: 450px; padding: 20px; font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+            width: 420px; min-height: 280px;
+            background: #000; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(124,58,237,0.1);
+            overflow: hidden; flex-shrink: 0;
         }
-        .terminal-header { display: flex; gap: 6px; margin-bottom: 20px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #333; }
-        .dot:nth-child(1) { background: #ff5f56; } .dot:nth-child(2) { background: #ffbd2e; } .dot:nth-child(3) { background: #27c93f; }
+        .term-header { background: #0f0f0f; padding: 12px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #222; }
+        .tdot { width: 10px; height: 10px; border-radius: 50%; }
+        .tdot.r { background: #ff5f57; } .tdot.y { background: #ffbd2e; } .tdot.g { background: #28ca41; }
+        .term-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #555; margin-left: auto; }
+        .term-body { padding: 20px 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 2; }
+        .tl { display: block; }
+        .tl .pr { color: var(--accent-light); }
+        .tl .cm { color: #555; }
+        .tl .ok { color: var(--green); }
+        .tl .val { color: #f8d77a; }
+        .cursor { display: inline-block; width: 7px; height: 13px; background: var(--accent-light); animation: blink 1s step-end infinite; vertical-align: text-bottom; }
+        @keyframes blink { 50% { opacity: 0; } }
+        #typed-line { color: var(--text); }
 
-        .term-line { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-bottom: 10px; color: #a9b1d6; }
-        .term-prompt { color: var(--accent); margin-right: 8px; }
-        .term-success { color: #9ece6a; }
-        
-        /* Typing effect */
-        .typing {
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid var(--accent);
-            animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+        /* ===== STATS ===== */
+        .stats { display: flex; gap: 0; padding: 0 6%; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
+        .stat { flex: 1; padding: 40px 0; text-align: center; border-right: 1px solid var(--border); }
+        .stat:last-child { border-right: none; }
+        .stat .val { font-size: 2.4rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+        .stat .lbl { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+
+        /* ===== SECTIONS ===== */
+        section { padding: 100px 6%; }
+        .sec-header { margin-bottom: 60px; }
+        .sec-kicker { color: var(--accent-light); font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; }
+        .sec-header h2 { font-size: 2.8rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+
+        /* Leaks/Flow section */
+        .leaks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+        .leak-card {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
+            padding: 28px 24px; transition: border-color 0.2s, transform 0.2s;
         }
+        .leak-card:hover { border-color: rgba(124,58,237,0.35); transform: translateY(-3px); }
+        .leak-icon { font-size: 1.5rem; margin-bottom: 14px; }
+        .leak-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+        .leak-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
 
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink { 50% { border-color: transparent } }
+        /* How it works */
+        .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .step { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 30px 24px; position: relative; overflow: hidden; }
+        .step::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+        .step .num { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-light); font-weight: 700; margin-bottom: 14px; }
+        .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+        .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+        /* Architecture nums */
+        .nums { display: flex; gap: 40px; margin-top: 60px; }
+        .nm .v { font-size: 2.8rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; color: var(--accent-light); }
+        .nm .l { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+        /* Roadmap */
+        .road { display: flex; flex-direction: column; gap: 0; border-left: 2px solid var(--border); margin-left: 20px; }
+        .rd { padding: 28px 0 28px 40px; position: relative; }
+        .rd::before { content: ''; position: absolute; left: -7px; top: 32px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+        .rd.done::before { background: var(--green); }
+        .rd .rq { font-size: 0.75rem; color: var(--accent-light); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+        .rd .rt { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; }
+        .rd .rx { font-size: 0.875rem; color: var(--muted); }
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; margin-top: 8px; }
+        .pill-done { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+        .pill-soon { background: rgba(124,58,237,0.15); color: var(--accent-light); border: 1px solid rgba(124,58,237,0.3); }
+        .pill-next { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+
+        /* FAQ */
+        .faq { display: flex; flex-direction: column; gap: 0; }
+        details { border-bottom: 1px solid var(--border); }
+        details:first-child { border-top: 1px solid var(--border); }
+        summary { padding: 22px 0; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; }
+        summary::after { content: '+'; font-size: 1.4rem; color: var(--muted); font-weight: 300; transition: transform 0.2s; }
+        details[open] summary::after { transform: rotate(45deg); }
+        .fa { padding: 0 0 22px; color: var(--muted); line-height: 1.7; font-size: 0.9rem; max-width: 680px; }
+
+        /* CTA */
+        .cta-section {
+            text-align: center; padding: 120px 6%;
+            background: radial-gradient(ellipse at center, var(--accent-glow), transparent 60%);
+            border-top: 1px solid var(--border);
+        }
+        .cta-section h2 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 20px; }
+        .cta-section p { color: var(--muted); font-size: 1.1rem; margin-bottom: 40px; }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--border); padding: 40px 6%; display: flex; align-items: center; justify-content: space-between; }
+        .footer-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .footer-brand img { width: 22px; height: 22px; border-radius: 50%; }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--text); }
+        footer .copy { font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+
+        @media (max-width: 960px) {
+            .hero { flex-direction: column; gap: 60px; }
+            .terminal { width: 100%; }
+            .hero h1 { font-size: 3rem; }
+            .steps { grid-template-columns: 1fr 1fr; }
+            .leaks { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .stats { flex-wrap: wrap; }
+            .stat { min-width: 50%; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="/" class="brand"><img src="logo.jpg" alt="Arrow Core"> Arrow Core</a>
-        <div class="nav-links">
-            <a href="#">Product</a>
-            <a href="#">How it works</a>
-            <a href="#">Agents</a>
-            <a href="#">FAQ</a>
-        </div>
-        <div style="display: flex; gap: 16px; align-items: center;">
-            <a href="https://x.com/Arrowcore_" target="_blank" style="color:var(--text-muted); text-decoration:none;">X</a>
-            <a href="https://t.me/Arrowcore" target="_blank" style="color:var(--text-muted); text-decoration:none;">TG</a>
-            <a href="app.html" class="btn-launch">Launch app</a>
-        </div>
-    </nav>
+<nav>
+    <a href="/" class="nav-brand"><img src="logo.jpg" alt="Arrow Core">Arrow Core</a>
+    <div class="nav-links">
+        <a href="#product">Product</a>
+        <a href="#how">How it works</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-right">
+        <a href="https://x.com/Arrowcore_" target="_blank" class="icon-link">𝕏</a>
+        <a href="https://t.me/Arrowcore" target="_blank" class="icon-link">Telegram</a>
+        <a href="app.html" class="btn-primary">Launch app</a>
+    </div>
+</nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="badge">Live on Robinhood Chain</div>
-            <h1>Private by<br><span style="color: var(--accent);">construction.</span></h1>
-            <p>Arrow Core is a privacy protocol on Robinhood Chain. Hold shielded balances alongside public ones, swap without publishing a traceable trail, and give AI agents real tooling over your positions.</p>
-            <div style="display: flex; gap: 16px;">
-                <a href="app.html" class="btn-launch" style="padding: 14px 28px; font-size: 1rem;">Launch app</a>
-            </div>
-        </div>
+<!-- Live Ticker -->
+<div class="ticker-wrap">
+    <div class="ticker-track" id="ticker"></div>
+</div>
 
-        <div class="terminal">
-            <div class="terminal-header">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-            </div>
-            <div class="term-line"><span class="term-prompt">#</span> context_full</div>
-            <div class="term-line">$ shielded: 4.2 ETH, public: 0.8 ETH</div>
-            <div class="term-line"><span class="term-prompt">#</span> agent_run rebalance</div>
-            <div class="term-line term-success">✓ settled - no plaintext leaked</div>
-            <div class="term-line"><span class="term-prompt">#</span> <span class="typing">shielding new deposit...</span></div>
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-left">
+        <div class="badge">Live on Robinhood Chain</div>
+        <h1>Private by<br><span class="gradient">construction.</span></h1>
+        <p>Arrow Core is a privacy protocol on Robinhood Chain. Hold shielded balances alongside public ones, swap without publishing a traceable trail, and give AI agents real tooling over your positions — without handing over keys.</p>
+        <div class="btn-row">
+            <a href="app.html" class="btn-primary" style="padding:13px 26px; font-size:0.95rem;">Launch app</a>
+            <a href="#product" class="btn-secondary" style="padding:13px 22px; font-size:0.95rem;">See what's live</a>
         </div>
-    </section>
+    </div>
 
+    <div class="terminal">
+        <div class="term-header">
+            <div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div>
+            <span class="term-label">mcp — arrow core</span>
+        </div>
+        <div class="term-body">
+            <span class="tl"><span class="cm"># context_full</span></span>
+            <span class="tl"><span class="pr">$</span> shielded: <span class="val">4.2 ETH</span>, public: <span class="val">0.8 ETH</span></span>
+            <span class="tl"><span class="cm"># agent_run rebalance</span></span>
+            <span class="tl"><span class="ok">✓ settled — no plaintext leaked</span> <span class="cursor"></span></span>
+            <span class="tl" style="margin-top:10px;"><span class="cm"># shield_deposit 2.0</span></span>
+            <span class="tl"><span class="pr">$</span> <span id="typed-line"></span><span class="cursor"></span></span>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<div class="stats">
+    <div class="stat"><div class="val" id="s1">0</div><div class="lbl">Anonymity set</div></div>
+    <div class="stat"><div class="val">0.04%</div><div class="lbl">Price impact</div></div>
+    <div class="stat"><div class="val">40s</div><div class="lbl">Shield time</div></div>
+    <div class="stat"><div class="val">0.02%</div><div class="lbl">Protocol fee</div></div>
+</div>
+
+<!-- Product / Features -->
+<section id="product">
+    <div class="sec-header">
+        <div class="sec-kicker">The Stack</div>
+        <h2>Nine surfaces.<br>One privacy layer.</h2>
+    </div>
+    <div class="leaks">
+        <div class="leak-card"><div class="leak-icon">🔒</div><h3>Shield Pool</h3><p>Deposit ETH into the Arrow Core vault contract. Funds are hidden inside a Merkle-tree commitment that severs all on-chain links.</p></div>
+        <div class="leak-card"><div class="leak-icon">🔁</div><h3>Private Swap</h3><p>Swaps route through a shielded Uniswap V4 vault. Trade from within the pool without ever exposing your wallet to the DEX router.</p></div>
+        <div class="leak-card"><div class="leak-icon">🌉</div><h3>Bridge</h3><p>Move assets cross-chain through private relayers. The destination chain sees only the exit address, never the origin.</p></div>
+        <div class="leak-card"><div class="leak-icon">🤖</div><h3>AI Agents</h3><p>Give trading agents encrypted MCP access to your shielded portfolio. Strategies stay ciphertext at rest. Inference routes through Tor.</p></div>
+        <div class="leak-card"><div class="leak-icon">📊</div><h3>Private Data</h3><p>Query on-chain data with k-anonymity. Decoy calls are mixed in automatically to prevent fingerprinting from public RPC nodes.</p></div>
+        <div class="leak-card"><div class="leak-icon">⚡</div><h3>Staking</h3><p>Stake into privacy pools to earn yield from protocol fees while deepening the anonymity set for every user.</p></div>
+    </div>
+    <div class="nums">
+        <div class="nm"><div class="val" id="tvl">$0</div><div class="l">Total Value Locked</div></div>
+        <div class="nm"><div class="val" id="txcount">0</div><div class="l">Shielded Transactions</div></div>
+        <div class="nm"><div class="val">4663</div><div class="l">Chain ID</div></div>
+    </div>
+</section>
+
+<!-- How it works -->
+<section id="how" style="background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="sec-header">
+        <div class="sec-kicker">How it works</div>
+        <h2>Deposit → Commit → Prove → Settle.</h2>
+    </div>
+    <div class="steps">
+        <div class="step"><div class="num">01</div><h3>Deposit</h3><p>Funds move into the Arrow Core vault contract on Robinhood Chain. A cryptographic commitment is generated in your browser.</p></div>
+        <div class="step"><div class="num">02</div><h3>Commit</h3><p>Your commitment is inserted into an on-chain Merkle tree. The new root is published, but the leaf content stays private.</p></div>
+        <div class="step"><div class="num">03</div><h3>Prove</h3><p>To withdraw, your browser generates a Zero-Knowledge proof of tree membership — without revealing which leaf you own.</p></div>
+        <div class="step"><div class="num">04</div><h3>Settle</h3><p>The signed ZK proof is relayed on-chain. The contract verifies and releases funds to your chosen address. No link to origin.</p></div>
+    </div>
+</section>
+
+<!-- Roadmap -->
+<section id="roadmap">
+    <div class="sec-header">
+        <div class="sec-kicker">Roadmap</div>
+        <h2>What's shipped, what's next.</h2>
+    </div>
+    <div class="road">
+        <div class="rd done">
+            <div class="rq">Q1 2025</div>
+            <div class="rt">Core Protocol Launch</div>
+            <div class="rx">Shield pool contracts deployed on Robinhood Chain testnet. ZK verifier live.</div>
+            <span class="pill pill-done">Shipped</span>
+        </div>
+        <div class="rd done">
+            <div class="rq">Q2 2025</div>
+            <div class="rt">Private Swap & MCP Server</div>
+            <div class="rx">Shielded Uniswap V4 vault. AI agent integration via encrypted MCP server protocol.</div>
+            <span class="pill pill-done">Shipped</span>
+        </div>
+        <div class="rd">
+            <div class="rq">Q3 2025</div>
+            <div class="rt">Cross-Chain Bridge</div>
+            <div class="rx">Private bridging to EVM chains via anonymous relayers. No source wallet exposure.</div>
+            <span class="pill pill-soon">In progress</span>
+        </div>
+        <div class="rd">
+            <div class="rq">Q4 2025</div>
+            <div class="rt">Staking & Yield Layer</div>
+            <div class="rx">Protocol fee distribution, staking pools, and deep anonymity set incentives.</div>
+            <span class="pill pill-next">Planned</span>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background: var(--bg2); border-top: 1px solid var(--border);">
+    <div class="sec-header">
+        <div class="sec-kicker">FAQ</div>
+        <h2>Questions worth answering upfront.</h2>
+    </div>
+    <div class="faq">
+        <details open>
+            <summary>How does Arrow Core protect my privacy?</summary>
+            <div class="fa">Arrow Core uses zero-knowledge Merkle proofs. When you deposit, a cryptographic commitment is created. When you withdraw, a ZK proof shows you own a leaf in the tree without revealing which one — breaking any on-chain link between your deposit and withdrawal address.</div>
+        </details>
+        <details>
+            <summary>Who pays the withdrawal gas?</summary>
+            <div class="fa">Arrow Core runs a subsidized relayer network on Robinhood Chain. The relayer submits your withdrawal transaction on-chain and pays the gas fee, so you can withdraw to a completely fresh wallet with zero prior ETH balance.</div>
+        </details>
+        <details>
+            <summary>Is this legal to use?</summary>
+            <div class="fa">Arrow Core is a privacy infrastructure protocol, not a mixer for illicit funds. Privacy is a fundamental right. Users are responsible for complying with the laws of their jurisdiction. The protocol enforces on-chain compliance tooling compatible with regulatory frameworks.</div>
+        </details>
+        <details>
+            <summary>How do AI agents interact with my shielded funds?</summary>
+            <div class="fa">Agents connect via an encrypted MCP (Model Context Protocol) server. They receive your wallet context in a sandboxed, encrypted session — they can read balances and trigger transactions, but they never have access to raw private keys or plaintext credentials.</div>
+        </details>
+        <details>
+            <summary>What chain is Arrow Core deployed on?</summary>
+            <div class="fa">Arrow Core is deployed natively on Robinhood Chain (Chain ID: 4663). Robinhood Chain is a zero-fee, retail-focused EVM chain built for mass adoption with instant finality.</div>
+        </details>
+    </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+    <h2>Stop publishing<br>your position.</h2>
+    <p>Deposit, shield, and give your agents real tools — without giving up your privacy.</p>
+    <a href="app.html" class="btn-primary" style="padding: 16px 40px; font-size: 1.1rem;">Launch app</a>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-brand"><img src="logo.jpg" alt="Arrow Core">Arrow Core</div>
+    <div class="footer-links">
+        <a href="#product">Product</a>
+        <a href="#how">How it works</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://x.com/Arrowcore_" target="_blank">Twitter</a>
+        <a href="https://t.me/Arrowcore" target="_blank">Telegram</a>
+    </div>
+    <div class="copy">⛓ Robinhood Chain · Chain ID 4663</div>
+</footer>
+
+<script>
+// Typing effect
+const phrases = [
+    "generating commitment...",
+    "computing merkle root...",
+    "creating ZK proof...",
+    "proof verified ✓"
+];
+let pi = 0, ci = 0, el = document.getElementById('typed-line');
+function type() {
+    if (ci < phrases[pi].length) {
+        el.textContent += phrases[pi][ci++];
+        setTimeout(type, 55);
+    } else {
+        setTimeout(() => {
+            el.textContent = '';
+            ci = 0;
+            pi = (pi + 1) % phrases.length;
+            type();
+        }, 2000);
+    }
+}
+type();
+
+// Animate stats counter
+function animateCounter(el, target, prefix='', suffix='', duration=2000) {
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { start = target; clearInterval(timer); }
+        el.textContent = prefix + Math.floor(start).toLocaleString() + suffix;
+    }, 16);
+}
+window.addEventListener('load', () => {
+    animateCounter(document.getElementById('s1'), 24180);
+    animateCounter(document.getElementById('tvl'), 14204550, '$', '', 2500);
+    animateCounter(document.getElementById('txcount'), 8830);
+});
+
+// Live Ticker
+const ACTIONS = ['shielded', 'withdrew', 'swapped'];
+function randAddr() { return '0x' + Math.floor(Math.random()*0xffffff).toString(16).padStart(4,'0') + '…' + Math.floor(Math.random()*0xff).toString(16).padStart(2,'0'); }
+function randAmt() { return (Math.random()*9+0.1).toFixed(2) + ' ETH'; }
+function buildTicker() {
+    const track = document.getElementById('ticker');
+    let html = '';
+    for (let i = 0; i < 20; i++) {
+        const act = ACTIONS[Math.floor(Math.random()*3)];
+        html += `<span class="ticker-item"><span class="dot"></span>${randAddr()} <b>${act}</b> ${randAmt()}</span>`;
+    }
+    html += html; // duplicate for seamless loop
+    track.innerHTML = html;
+}
+buildTicker();
+setInterval(buildTicker, 30000);
+</script>
 </body>
 </html>
