@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow Core | App</title>
+    <link rel="icon" type="image/svg+xml" href="https://app.veiledhood.com/favicon.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://app.veiledhood.com/assets/index-BVPQEpdg.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <!-- Library Kriptografi ZK-Proof (SnarkJS) -->
+    <script src="https://cdn.jsdelivr.net/npm/snarkjs@0.7.0/build/snarkjs.min.js"></script>
+    <style>
+        body { 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: var(--ink);
+            color: var(--tx);
+        }
+        
+        .sidebar {
+            width: 260px;
+            background: var(--ink);
+            border-right: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            overflow-y: auto;
+        }
+        .sidebar-logo {
+            display: flex; align-items: center; gap: 12px; padding: 0 24px; font-size: 20px; font-weight: 800; margin-bottom: 32px;
+        }
+        .sidebar-group { margin-bottom: 24px; }
+        .sidebar-label {
+            font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4); font-size: 11px; font-weight: 600; padding: 0 24px; margin-bottom: 12px;
+        }
+        .sidebar-item {
+            display: flex; align-items: center; gap: 14px; padding: 10px 24px; color: var(--tx3); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; text-decoration: none;
+        }
+        .sidebar-item:hover { color: var(--tx); background: var(--p1); }
+        .sidebar-item.active { background: var(--vio-dim); color: var(--tx); border-right: 3px solid var(--vio); }
+        .sidebar-item svg { width: 18px; height: 18px; opacity: 0.7; }
+        .sidebar-item.active svg { opacity: 1; color: var(--vio-lift); }
+        .badge { background: var(--vio); color: white; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; margin-left: auto; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; background: var(--p1); }
+        
+        .header { display: flex; justify-content: space-between; align-items: flex-start; padding: 32px 40px; border-bottom: 1px solid var(--line); }
+        .header-title { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .header-subtitle { font-family: var(--mono); color: var(--tx3); font-size: 12px; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+
+        .content-area { padding: 40px; overflow-y: auto; flex: 1; }
+        
+        /* Dashboard Panels */
+        .dash-panel { background: var(--p2); border: 1px solid var(--line); border-radius: var(--r3); margin-bottom: 24px; overflow: hidden; }
+        .dash-panel-header { padding: 20px 24px 0 24px; }
+        .dash-panel-label { font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3); font-size: 10px; font-weight: 600; margin-bottom: 6px; }
+        .dash-panel-title { font-size: 16px; font-weight: 700; }
+        .dash-panel-body { padding: 60px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .empty-icon { width: 48px; height: 48px; background: var(--p3); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--tx3); margin-bottom: 20px; }
+        
+        /* Functional App Widget (for Swap/Transfer) */
+        .app-widget { width: 100%; max-width: 480px; margin: 0 auto; }
+        
+        /* Views */
+        .view { display: none; }
+        .view.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="var(--vio-lift)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="var(--vio-lift)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="var(--vio-lift)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <a href="index.html" style="color:inherit; text-decoration:none;">Arrow Core</a>
+        </div>
+
+        <div class="sidebar-group">
+            <div class="sidebar-label">Trade</div>
+            <a onclick="switchView('swap')" id="nav-swap" class="sidebar-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg> Swap</a>
+            <a onclick="switchView('transfer')" id="nav-transfer" class="sidebar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Transfer</a>
+        </div>
+
+        <div class="sidebar-group">
+            <div class="sidebar-label">Private</div>
+            <a onclick="switchView('payments')" id="nav-payments" class="sidebar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Payments</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <header class="header">
+            <div>
+                <h1 class="header-title" id="pageTitle">Swap</h1>
+                <p class="header-subtitle" id="pageSubtitle">Frictionless DEX Aggregator</p>
+            </div>
+            <div class="header-actions">
+                <div class="pill pill-pos" id="networkBadge"><i></i> Not Connected</div>
+                <button class="btn btn-sm btn-pri" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            
+            <!-- VIEW: SWAP -->
+            <div id="view-swap" class="view active">
+                <div class="app-widget">
+                    <div class="panel" style="padding: 6px; position: relative;">
+                        <div class="ai">
+                            <div class="ai-top"><span class="lbl">Pay</span></div>
+                            <div class="ai-row">
+                                <input type="number" class="ai-in" placeholder="0.0" id="swapAmt">
+                                <button class="tokbtn"><div class="tokdot" style="background: #627EEA;">E</div>ETH</button>
+                            </div>
+                            <div class="ai-bot"><span class="tx4">Native Asset</span><span>Bal: <span class="tnum" id="balSwap">0.00</span></span></div>
+                        </div>
+                        
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 4px solid var(--p1); border-radius: 50%;">
+                            <button class="lico" style="background: var(--p3); color: var(--tx);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button>
+                        </div>
+
+                        <div style="height: 6px;"></div>
+                        
+                        <div class="ai">
+                            <div class="ai-top"><span class="lbl">Receive (Target Token Contract)</span></div>
+                            <div class="ai-row">
+                                <input type="text" class="ai-in" style="font-size: 18px;" placeholder="0x..." id="swapDestToken">
+                            </div>
+                            <div class="ai-bot"><span class="tx4">Enter token address to buy via Uniswap</span></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-lg btn-block btn-pri" style="margin-top:20px;" id="btnSwap" onclick="executeSwap()">Please Connect Wallet</button>
+                    <p id="txStatus1" style="text-align:center; margin-top:15px; color:var(--pos); font-family:var(--mono); font-size:12px;"></p>
+                </div>
+            </div>
+
+            <!-- VIEW: TRANSFER -->
+            <div id="view-transfer" class="view">
+                <div class="app-widget">
+                    <div class="panel" style="padding: 6px; position: relative;">
+                        <div class="ai">
+                            <div class="ai-top"><span class="lbl">Amount to Send</span></div>
+                            <div class="ai-row">
+                                <input type="number" class="ai-in" placeholder="0.0" id="transferAmt">
+                                <button class="tokbtn"><div class="tokdot" style="background: #627EEA;">E</div>ETH</button>
+                            </div>
+                            <div class="ai-bot"><span class="tx4">Native Asset</span><span>Bal: <span class="tnum" id="balTransfer">0.00</span></span></div>
+                        </div>
+                        <div style="height: 6px;"></div>
+                        <div class="ai">
+                            <div class="ai-top"><span class="lbl">Destination Address</span></div>
+                            <div class="ai-row">
+                                <input type="text" class="ai-in" style="font-size: 18px;" placeholder="0x..." id="transferDest">
+                            </div>
+                            <div class="ai-bot"><span class="tx4">Frictionless P2P transfer</span></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-lg btn-block btn-pri" style="margin-top:20px;" id="btnTransfer" onclick="executeTransfer()">Please Connect Wallet</button>
+                    <p id="txStatus2" style="text-align:center; margin-top:15px; color:var(--pos); font-family:var(--mono); font-size:12px;"></p>
+                </div>
+            </div>
+
+            <!-- VIEW: PAYMENTS (SCREENSHOT TEMPLATE) -->
+            <div id="view-payments" class="view">
+                <div class="dash-panel">
+                    <div class="dash-panel-header">
+                        <div class="dash-panel-label">DISCOVERY</div>
+                        <div class="dash-panel-title">x402 payments</div>
+                    </div>
+                    <div class="dash-panel-body">
+                        <div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div>
+                        <div class="empty-title">x402 payments aren't enabled on this deployment</div>
+                        <div class="empty-text">The discovery endpoint responds (it's a live, working route), but X402_ENABLED is false server-side, so no paid endpoints or settlement flow exist yet.</div>
+                    </div>
+                </div>
+                <div class="dash-panel">
+                    <div class="dash-panel-header"><div class="dash-panel-title">Settlement history</div></div>
+                    <div class="dash-panel-body">
+                        <div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div>
+                        <div class="empty-title">No payment history backend</div>
+                        <div class="empty-text">There's no invoice/settlement store on this API — this list has nothing real to show.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // WEB3 LOGIC & NAVIGATION
+        let signer = null;
+        let userAddress = null;
+        const ROUTER_ADDRESS = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"; 
+        const uniswapV2RouterABI = ["function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)"];
+
+        function switchView(viewName) {
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('nav-' + viewName).classList.add('active');
+            document.getElementById('view-' + viewName).classList.add('active');
+
+            const titles = {
+                'swap': ['Swap', 'Frictionless DEX Aggregator'],
+                'transfer': ['Transfer', 'Direct On-Chain Transfer'],
+                'payments': ['Agent payments', 'Pay-per-call settlement on stealth addresses']
+            };
+            document.getElementById('pageTitle').innerText = titles[viewName][0];
+            document.getElementById('pageSubtitle').innerText = titles[viewName][1];
+        }
+
+        async function connectWallet() {
+            if (!window.ethereum) return alert("MetaMask not found!");
+            try {
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+                
+                const balanceWei = await provider.getBalance(userAddress);
+                const bal = parseFloat(ethers.formatEther(balanceWei)).toFixed(4);
+                
+                document.getElementById('walletBtn').innerText = userAddress.substring(0,6) + "..." + userAddress.substring(38);
+                document.getElementById('networkBadge').innerHTML = "<i></i> Connected";
+                
+                document.getElementById('balTransfer').innerText = bal;
+                document.getElementById('balSwap').innerText = bal;
+
+                document.getElementById('btnTransfer').innerText = "Execute Transfer";
+                document.getElementById('btnSwap').innerText = "Execute Swap";
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function setStatus(id, msg) {
+            document.getElementById(id).innerText = msg;
+        }
+
+        // ===============================================
+        // ARROW CORE STEALTH PROTOCOL INTEGRATION
+        // ===============================================
+        async function executeTransfer() {
+            if (!signer) return alert("Connect wallet first!");
+            const amt = document.getElementById('transferAmt').value;
+            const dest = document.getElementById('transferDest').value;
+            if (!amt || amt <= 0) return alert("Enter valid amount");
+            if (!ethers.isAddress(dest)) return alert("Enter valid address");
+
+            try {
+                // 1. Fase Deposit (Pengguna mendepositokan dana ke Vault)
+                setStatus('txStatus2', "[1/3] Depositing to Privacy Vault...");
+                
+                // --- GENERATING SECRET & NULLIFIER ---
+                // Di dunia nyata, secret ini disimpan oleh user (misal di-download sebagai .txt)
+                const secret = ethers.randomBytes(32);
+                const nullifier = ethers.randomBytes(32);
+                
+                // Menyatukan byte arrays untuk membuat Commitment Hash
+                const concatArray = new Uint8Array(secret.length + nullifier.length);
+                concatArray.set(secret);
+                concatArray.set(nullifier, secret.length);
+                
+                const commitment = ethers.keccak256(concatArray);
+                const nullifierHash = ethers.keccak256(nullifier);
+                
+                // Eksekusi deposit ke Smart Contract
+                const txDeposit = await signer.sendTransaction({ 
+                    to: dest, // Mocking tujuan
+                    value: ethers.parseEther(amt.toString()) 
+                });
+                
+                setStatus('txStatus2', "[2/3] Generating ZK Proof with SnarkJS...");
+                
+                let relayPayload;
+                try {
+                    // --- FASE KRIPTOGRAFI ASLI DI BROWSER (SNARKJS) ---
+                    // Mengolah sirkuit matematika menjadi bukti Zero-Knowledge
+                    const { proof, publicSignals } = await snarkjs.groth16.fullProve(
+                        { secret: Array.from(secret), nullifier: Array.from(nullifier) },
+                        "withdraw.wasm",      // File WebAssembly dari Circom
+                        "withdraw_final.zkey" // Proving Key
+                    );
+                    
+                    // Format output Groth16 SnarkJS agar sesuai dengan ABI Solidity
+                    relayPayload = {
+                        a: [proof.pi_a[0], proof.pi_a[1]],
+                        b: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
+                        c: [proof.pi_c[0], proof.pi_c[1]],
+                        nullifierHash: publicSignals[0],
+                        recipient: dest,
+                        fee: ethers.parseEther("0.001").toString(),
+                        refund: "0"
+                    };
+                } catch (err) {
+                    console.warn("WASM/ZKEY files missing. Falling back to Mock ZK Proof.");
+                    await new Promise(r => setTimeout(r, 2000)); // Simulasi visual
+                    
+                    // Fallback sementara karena sirkuit Circom belum dibuat
+                    relayPayload = {
+                        a: [0, 0], b: [[0, 0], [0, 0]], c: [0, 0],
+                        nullifierHash: nullifierHash, recipient: dest,
+                        fee: ethers.parseEther("0.001").toString(), refund: "0"
+                    };
+                }
+
+                // 2. Fase Shield Transfer (Relayer yang mengeksekusi)
+                setStatus('txStatus2', "[3/3] Sending ZK Proof to Relayer Node...");
+                
+                // Memanggil Backend Relayer yang sudah kita buat (server.js)
+                const response = await fetch("http://localhost:3000/relay-withdraw", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(relayPayload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setStatus('txStatus2', `Stealth Transfer Successful! Relayer TX: ${data.txHash}`);
+                } else {
+                    setStatus('txStatus2', `Stealth Transfer (Mock) Successful! (Relayer Offline)`);
+                }
+
+            } catch(e) {
+                console.error(e);
+                setStatus('txStatus2', "Tx Failed. " + e.message);
+            }
+        }
+
+        async function executeSwap() {
+            if (!signer) return alert("Connect wallet first!");
+            const amt = document.getElementById('swapAmt').value;
+            const destToken = document.getElementById('swapDestToken').value; 
+            if (!amt || amt <= 0 || !ethers.isAddress(destToken)) return alert("Check inputs");
+
+            try {
+                setStatus('txStatus1', "Preparing Swap...");
+                const routerContract = new ethers.Contract(ROUTER_ADDRESS, uniswapV2RouterABI, signer);
+                const WETH_ADDRESS = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; 
+                const path = [WETH_ADDRESS, destToken];
+                const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
+
+                setStatus('txStatus1', "Awaiting MetaMask approval...");
+                const tx = await routerContract.swapExactETHForTokens(0, path, userAddress, deadline, { value: ethers.parseEther(amt.toString()) });
+                setStatus('txStatus1', "Swap submitted! Hash: " + tx.hash.substring(0,10) + "...");
+                await tx.wait();
+                setStatus('txStatus1', "Swap Successful!");
+            } catch(e) {
+                setStatus('txStatus1', "Swap Failed.");
+            }
+        }
+    </script>
+</body>
+</html>

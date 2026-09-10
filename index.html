@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow Core</title>
+    <link rel="icon" type="image/svg+xml" href="https://www.arrowcore.com/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <!-- Menggunakan CSS Asli Arrow Core untuk hasil 100% Identik -->
+    <!-- Ethers.js v6 (Engine Web3 Asli) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="https://www.arrowcore.com/assets/index-sb9ALmBQ.css">
+</head>
+<body class="js-reveal">
+
+    <!-- Navbar -->
+    <nav class="nav">
+        <div class="container in">
+            <div class="lg">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="var(--vio-lift)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="var(--vio-lift)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="var(--vio-lift)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Arrow <span class="b">Core</span>
+            </div>
+            <div class="lk">
+                <a href="#features">Features</a>
+                <a href="#terminal">Terminal</a>
+                <a href="#roadmap">Roadmap</a>
+                <a href="#faq">FAQ</a>
+            </div>
+            <div class="rt">
+                <button class="btn btn-sm btn-sec" id="walletBalance">0 ETH</button>
+                <a href="app.html" class="btn btn-sm btn-pri" style="text-decoration:none;">Launch App</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="container in">
+            <div class="rv d1">
+                <div class="eyebrow">
+                    <i></i> THE NEXT EVOLUTION
+                </div>
+                <h1 class="big">
+                    Unseen.<br>
+                    <span class="g">Untraceable.</span><br>
+                    Unstoppable.
+                </h1>
+                <p class="lead">
+                    Arrow Core provides the ultimate privacy layer for your Web3 transactions. Seamlessly obscure your digital footprint without sacrificing speed or utility.
+                </p>
+                <div class="cta-row">
+                    <a href="app.html" class="btn btn-lg btn-pri" style="text-decoration:none;">Start Shielding</a>
+                    <button class="btn btn-lg btn-sec">Read Whitepaper</button>
+                </div>
+                
+                <div class="hstats rv d2">
+                    <div>
+                        <div class="hv">>$100M</div>
+                        <div class="hl">Total Volume</div>
+                    </div>
+                    <div>
+                        <div class="hv">42.5K</div>
+                        <div class="hl">Active Wallets</div>
+                    </div>
+                    <div>
+                        <div class="hv">0.1s</div>
+                        <div class="hl">Avg TX Speed</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hero Art / Visuals -->
+            <div class="art rv d3">
+                <div class="arc" style="width: 100%; height: 100%; border: 1px solid var(--vio); border-radius: 50%;"></div>
+                <div class="arc" style="width: 80%; height: 80%; border: 1px solid var(--vio); border-radius: 50%; top: 10%; left: 10%;"></div>
+                <div class="arc" style="width: 60%; height: 60%; border: 1px solid var(--vio); border-radius: 50%; top: 20%; left: 20%;"></div>
+                <div class="core" style="background: var(--vio-lift); width: 80px; height: 80px; border-radius: 50%;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="mq">
+        <div class="mq-t">
+            <div class="mq-i"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg> ZERO KNOWLEDGE</div>
+            <div class="mq-i"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg> FULL PRIVACY</div>
+            <div class="mq-i"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg> EVM COMPATIBLE</div>
+            <div class="mq-i"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg> NO FRONT-RUNNING</div>
+            <div class="mq-i"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg> ZERO KNOWLEDGE</div>
+            <div class="mq-i"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg> FULL PRIVACY</div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="sec">
+        <div class="container">
+            <div class="sec-h rv">
+                <div class="sec-k">ARCHITECTURE</div>
+                <h2>Built for absolute stealth.</h2>
+                <p class="sec-x">Our proprietary mixing protocol ensures your wallet addresses remain completely detached from your destination transfers.</p>
+            </div>
+
+            <div class="feats">
+                <div class="feat rv d1">
+                    <div class="f-i">🔒</div>
+                    <div class="f-t">ZK-SNARK Integration</div>
+                    <div class="f-x">Mathematical proofs guarantee your transaction validity without revealing the amount or the parties involved.</div>
+                    <div class="f-m"><i></i> Learn More</div>
+                </div>
+                <div class="feat rv d2">
+                    <div class="f-i">⚡</div>
+                    <div class="f-t">Instant Obfuscation</div>
+                    <div class="f-x">No waiting for mix rounds. Transactions are processed on Layer 2 and finalized in milliseconds.</div>
+                    <div class="f-m"><i></i> Try It</div>
+                </div>
+                <div class="feat rv d3">
+                    <div class="f-i">🛡️</div>
+                    <div class="f-t">MEV Protection</div>
+                    <div class="f-x">Our shielded mempool prevents bots from front-running or sandwiching your trades.</div>
+                    <div class="f-m"><i></i> Documentation</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terminal Section -->
+    <section id="terminal" class="sec">
+        <div class="container">
+            <div class="split">
+                <div class="rv d1">
+                    <div class="sec-k">DEVELOPER EXPERIENCE</div>
+                    <h2>Command your privacy.</h2>
+                    <p class="sec-x">Interact with the Arrow Core protocol directly from your CLI or integrate it seamlessly into your dApp using our SDK.</p>
+                    
+                    <div class="chk">
+                        <div class="chk-i">
+                            <div class="c">✓</div>
+                            <div>
+                                <span class="t">Easy Integration</span>
+                                <span class="x">NPM package ready for React, Vue, and Node.js.</span>
+                            </div>
+                        </div>
+                        <div class="chk-i">
+                            <div class="c">✓</div>
+                            <div>
+                                <span class="t">Full Documentation</span>
+                                <span class="x">Comprehensive guides and API references.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="term rv d2">
+                    <div class="term-h">
+                        <i></i> <i></i> <i></i>
+                        <span>BASH</span>
+                    </div>
+                    <div class="term-b">
+                        <span class="l"><span class="cm"># Install the Arrow Core SDK</span></span>
+                        <span class="l"><span class="pr">~</span> <span class="vl">npm i @arrowcore/sdk</span></span>
+                        <span class="l"><span class="ok">✔ Packages installed successfully.</span></span>
+                        <br>
+                        <span class="l"><span class="cm"># Initialize stealth transaction</span></span>
+                        <span class="l"><span class="pr">~</span> <span class="vl">arrowcore tx --amount 100 --token USDT</span></span>
+                        <span class="l"><span class="cm">Generating Zero-Knowledge Proof...</span></span>
+                        <span class="l"><span class="ok">✔ Proof generated.</span></span>
+                        <span class="l"><span class="cm">Broadcasting to shielded network...</span></span>
+                        <span class="l"><span class="ok">✔ Transaction confirmed. Privacy maintained.</span></span>
+                        <span class="l"><span class="pr">~</span> <span class="cur"></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="sec">
+        <div class="container nums">
+            <div class="nm rv d1">
+                <div class="v">1.2M+</div>
+                <div class="l">Shielded TXs</div>
+            </div>
+            <div class="nm rv d2">
+                <div class="v">0</div>
+                <div class="l">Data Breaches</div>
+            </div>
+            <div class="nm rv d3">
+                <div class="v">15+</div>
+                <div class="l">Chains Supported</div>
+            </div>
+            <div class="nm rv d4">
+                <div class="v">$500M</div>
+                <div class="l">TVL Secured</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="sec">
+        <div class="container">
+            <div class="sec-h rv">
+                <div class="sec-k">SUPPORT</div>
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            <div class="faq rv d1">
+                <details>
+                    <summary>How does Arrow Core hide my transactions?</summary>
+                    <div class="fa">We use a combination of zk-SNARKs and shielded mempools. When you deposit funds, they are pooled with others, and when you withdraw, cryptographic proofs ensure you own the funds without linking the withdrawal address to the deposit address.</div>
+                </details>
+                <details>
+                    <summary>Is it compatible with MetaMask?</summary>
+                    <div class="fa">Yes, Arrow Core acts as an intermediary layer. You can connect standard Web3 wallets like MetaMask, TrustWallet, or Rabby, and execute shielded transactions directly from our dashboard.</div>
+                </details>
+                <details>
+                    <summary>What are the fees?</summary>
+                    <div class="fa">Arrow Core charges a flat 0.1% protocol fee for mixing and routing, plus the standard network gas fee of the underlying blockchain (e.g., Ethereum or Polygon).</div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final rv">
+        <div class="in">
+            <h2>Ready to go dark?</h2>
+            <p class="lead">Join thousands of users protecting their onchain privacy today.</p>
+            <div class="cta-row">
+                <a href="app.html" class="btn btn-lg btn-pri" style="text-decoration:none;">Start Shielding</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="foot">
+        <div class="container in">
+            <div>
+                <div class="fl">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="var(--tx)" stroke-width="2"/>
+                    </svg>
+                    Arrow <span class="b">Core</span>
+                </div>
+            </div>
+            <div class="fc">
+                <div class="fg">
+                    <div class="fgt">Protocol</div>
+                    <a href="#">Whitepaper</a>
+                    <a href="#">Docs</a>
+                    <a href="#">GitHub</a>
+                </div>
+                <div class="fg">
+                    <div class="fgt">Community</div>
+                    <a href="#">Twitter</a>
+                    <a href="#">Discord</a>
+                    <a href="#">Telegram</a>
+                </div>
+            </div>
+            <div class="fb">
+                <div>&copy; 2026 Arrow Core. All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Reveal Animation & Web3 Script -->
+    <script>
+        // --- 1. Animasi Bawaan Arrow Core ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('vis');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.rv').forEach(el => observer.observe(el));
+        });
+
+        // --- 2. Integrasi Web3 Nyata (Ethers.js) ---
+        let provider;
+        let signer;
+        let userAddress;
+
+        async function connectWallet() {
+            if (window.ethereum == null) {
+                alert("Please install MetaMask or a Web3 Wallet!");
+                return;
+            }
+
+            try {
+                // Memicu pop-up wallet asli
+                provider = new ethers.BrowserProvider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+
+                // Membaca Saldo ETH asli
+                const balanceWei = await provider.getBalance(userAddress);
+                const balanceEth = ethers.formatEther(balanceWei);
+                
+                // Update UI Navbar
+                document.getElementById('connectBtn').innerText = 
+                    userAddress.substring(0, 6) + "..." + userAddress.substring(38);
+                document.getElementById('walletBalance').innerText = parseFloat(balanceEth).toFixed(4) + " ETH";
+                document.getElementById('walletBalance').classList.add("pos"); // kasih warna hijau
+
+                // Update data di layar utama (opsional: mengganti data statis menjadi data dompet)
+                const mainBtn = document.querySelector('.hero .btn-pri');
+                if (mainBtn) {
+                    mainBtn.innerText = "Execute Stealth TX";
+                    mainBtn.onclick = executeMockStealthTx;
+                }
+
+            } catch (error) {
+                console.error("Connection failed", error);
+            }
+        }
+
+        async function executeMockStealthTx() {
+            if (!signer) {
+                alert("Connect wallet first!");
+                return;
+            }
+            try {
+                // Contoh: Mengirim TX nyata (ke alamat nol / mock)
+                const tx = await signer.sendTransaction({
+                    to: "0x0000000000000000000000000000000000000000",
+                    value: ethers.parseEther("0.001")
+                });
+                alert("Transaction sent! Hash: " + tx.hash);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    </script>
+</body>
+</html>
