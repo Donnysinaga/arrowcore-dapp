@@ -1,90 +1,305 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./logo.jpg" />
-    <link rel="alternate icon" type="image/png" href="./logo.jpg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <title>Arrow Core</title>
-    <script type="module" crossorigin src="./assets/index-BwtAdKTc.js"></script>
-    <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-BcKkbAw3.js">
-    <link rel="modulepreload" crossorigin href="./assets/preload-helper-Czpn1I53.js">
-    <link rel="modulepreload" crossorigin href="./assets/stringify-jRFYdFbU.js">
-    <link rel="modulepreload" crossorigin href="./assets/utils-Bpv4vmSW.js">
-    <link rel="modulepreload" crossorigin href="./assets/encodeFunctionData-CCULKQQJ.js">
-    <link rel="modulepreload" crossorigin href="./assets/Value-zgShoQJE.js">
-    <link rel="modulepreload" crossorigin href="./assets/createBatchScheduler-CDyMUy5Z.js">
-    <link rel="modulepreload" crossorigin href="./assets/call-BEi1m0Z7.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-BVPQEpdg.css">
-  
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow Core | Dashboard</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
-      /* Hide original SVG logos */
-      span[style*="color:var(--vio-lift)"] > svg,
-      span[style*="color: var(--vio-lift)"] > svg,
-      .lg > svg,
-      .fl > svg {
-          display: none !important;
-      }
-      
-      /* Inject custom logo image ONLY on the span wrappers */
-      span[style*="color:var(--vio-lift)"]::before,
-      span[style*="color: var(--vio-lift)"]::before {
-          content: "";
-          display: inline-block;
-          width: 28px;
-          height: 28px;
-          background-image: url('./logo.jpg');
-          background-size: cover;
-          background-position: center;
-          border-radius: 50%;
-          margin-right: 6px;
-          vertical-align: middle;
-      }
-      
-      /* If .lg directly has an SVG (no span), replace it */
-      .lg > svg {
-          display: none !important;
-      }
-      .lg:not(:has(span[style*="color"]))::before {
-          content: "";
-          display: inline-block;
-          width: 28px;
-          height: 28px;
-          background-image: url('./logo.jpg');
-          background-size: cover;
-          background-position: center;
-          border-radius: 50%;
-          margin-right: 8px;
-          vertical-align: middle;
-      }
+        :root {
+            --bg-main: #050505;
+            --bg-panel: #111318;
+            --neon-green: #00ff66;
+            --text-main: #ffffff;
+            --text-muted: #8892b0;
+            --border: #222;
+        }
 
-      /* Replace the massive right-side hero graphic (purple arches) with the logo */
-      .art .arc, .art .core, .art .orb {
-          display: none !important;
-      }
-      .art {
-          background-image: url('./logo.jpg') !important;
-          background-size: contain !important;
-          background-position: center !important;
-          background-repeat: no-repeat !important;
-          border-radius: 50%;
-          box-shadow: 0 0 100px rgba(0, 255, 100, 0.2);
-          width: 400px;
-          height: 400px;
-          margin: 0 auto;
-      }
-      @media (max-width: 768px) {
-          .art {
-              width: 250px;
-              height: 250px;
-          }
-      }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif; }
+        
+        body { background: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; }
+
+        .sidebar {
+            width: 260px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .brand img { width: 32px; height: 32px; border-radius: 50%; }
+
+        .nav-item {
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            background: rgba(0, 255, 102, 0.1);
+            color: var(--neon-green);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .topbar {
+            height: 80px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 40px;
+            background: var(--bg-main);
+        }
+
+        .btn-connect {
+            background: var(--neon-green);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-connect:hover {
+            box-shadow: 0 0 15px rgba(0,255,102,0.4);
+        }
+
+        .content { padding: 40px; max-width: 800px; margin: 0 auto; width: 100%; }
+
+        .dashboard-header { margin-bottom: 30px; }
+        .dashboard-header h1 { font-size: 2rem; margin-bottom: 8px; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .stat-card h3 { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; text-transform: uppercase; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; font-family: 'DM Mono', monospace; }
+
+        .action-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .tabs { display: flex; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .tab { color: var(--text-muted); font-weight: 600; cursor: pointer; }
+        .tab.active { color: var(--neon-green); }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 10px; color: var(--text-muted); font-size: 0.9rem; }
+        .input-wrapper { display: flex; background: var(--bg-main); border: 1px solid var(--border); border-radius: 8px; padding: 5px; }
+        .input-wrapper input {
+            flex: 1; background: none; border: none; color: white; padding: 10px; font-size: 1.2rem; font-family: 'DM Mono', monospace; outline: none;
+        }
+        .input-wrapper .currency { padding: 10px 15px; color: var(--text-muted); font-weight: bold; border-left: 1px solid var(--border); }
+
+        .btn-action {
+            width: 100%; background: var(--neon-green); color: #000; padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 10px;
+        }
+
+        .btn-action:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+        .fomo-ticker {
+            margin-top: 30px; border: 1px solid var(--neon-green); border-radius: 8px; padding: 15px; font-family: 'DM Mono', monospace; font-size: 0.85rem; color: var(--neon-green); background: rgba(0,255,102,0.05);
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal {
+            background: var(--bg-panel); border: 1px solid var(--border); padding: 30px; border-radius: 16px; width: 400px; text-align: center;
+        }
+        .modal h2 { margin-bottom: 20px; }
+        .wallet-option {
+            background: var(--bg-main); border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        .wallet-option:hover { border-color: var(--neon-green); }
+
     </style>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="/" class="brand">
+            <img src="logo.jpg" alt="Logo">
+            Arrow Core
+        </a>
+        <a href="#" class="nav-item active">Shield Pool</a>
+        <a href="#" class="nav-item">Private Swap</a>
+        <a href="#" class="nav-item">AI Agents</a>
+        <a href="#" class="nav-item">Staking</a>
+        <a href="#" class="nav-item" style="margin-top: auto;">Disconnect</a>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div style="margin-right: 20px; color: var(--text-muted); font-size: 0.9rem;">Network: Robinhood Chain</div>
+            <button class="btn-connect" id="connectBtn">Connect Wallet</button>
+        </div>
+
+        <div class="content">
+            <div class="dashboard-header">
+                <h1>Privacy Pool</h1>
+                <p style="color: var(--text-muted);">Deposit funds to shield them. Withdraw using zero-knowledge proofs.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Your Shielded Balance</h3>
+                    <div class="value">0.0000</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Pool TVL</h3>
+                    <div class="value">14,204.55</div>
+                </div>
+            </div>
+
+            <div class="action-panel">
+                <div class="tabs">
+                    <div class="tab active" onclick="setTab('deposit')">Deposit (Shield)</div>
+                    <div class="tab" onclick="setTab('withdraw')">Withdraw (Unshield)</div>
+                </div>
+
+                <div id="deposit-view">
+                    <div class="input-group">
+                        <label>Amount to Shield</label>
+                        <div class="input-wrapper">
+                            <input type="number" placeholder="0.0" id="amountIn">
+                            <div class="currency">ETH</div>
+                        </div>
+                    </div>
+                    <button class="btn-action" id="actionBtn" disabled>Connect Wallet First</button>
+                </div>
+                
+                <div class="fomo-ticker" id="ticker">
+                    > Live: 0x4a...2f shielded 5.0 ETH
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal">
+            <h2>Connect Wallet</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">By connecting, you agree to the Arrow Core Terms of Service.</p>
+            <div class="wallet-option" onclick="selectWallet('MetaMask')">Browser Wallet (MetaMask)</div>
+            <div class="wallet-option" onclick="selectWallet('WalletConnect')">WalletConnect</div>
+            <button style="margin-top: 20px; background: none; border: none; color: var(--text-muted); cursor: pointer;" onclick="document.getElementById('walletModal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let walletConnected = false;
+        let userAddress = "";
+        
+        const connectBtn = document.getElementById('connectBtn');
+        const actionBtn = document.getElementById('actionBtn');
+        const modal = document.getElementById('walletModal');
+
+        connectBtn.addEventListener('click', () => {
+            if(!walletConnected) {
+                modal.style.display = 'flex';
+            } else {
+                walletConnected = false;
+                userAddress = "";
+                connectBtn.innerText = "Connect Wallet";
+                actionBtn.innerText = "Connect Wallet First";
+                actionBtn.disabled = true;
+            }
+        });
+
+        async function selectWallet(type) {
+            if(confirm("Do you confirm you want to interact with the Arrow Core privacy protocol?")) {
+                try {
+                    // Simulate connection
+                    if(window.ethereum && type === 'MetaMask') {
+                        const provider = new ethers.providers.Web3Provider(window.ethereum);
+                        await provider.send("eth_requestAccounts", []);
+                        const signer = provider.getSigner();
+                        userAddress = await signer.getAddress();
+                    } else {
+                        // Dummy address for simulation if no extension
+                        userAddress = "0x" + Math.floor(Math.random()*1e16).toString(16);
+                    }
+                    
+                    walletConnected = true;
+                    connectBtn.innerText = userAddress.substring(0,6) + "..." + userAddress.substring(38);
+                    actionBtn.innerText = "Shield Funds";
+                    actionBtn.disabled = false;
+                    modal.style.display = 'none';
+                } catch (e) {
+                    alert("Connection failed.");
+                }
+            }
+        }
+
+        function setTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            if(tab === 'deposit') {
+                actionBtn.innerText = walletConnected ? "Shield Funds" : "Connect Wallet First";
+            } else {
+                actionBtn.innerText = walletConnected ? "Generate ZK Proof & Withdraw" : "Connect Wallet First";
+            }
+        }
+
+        // FOMO Ticker
+        const ticker = document.getElementById('ticker');
+        const actions = ["shielded", "withdrew", "swapped"];
+        setInterval(() => {
+            const amt = (Math.random() * 10).toFixed(2);
+            const act = actions[Math.floor(Math.random() * actions.length)];
+            const addr = "0x" + Math.floor(Math.random()*0xffffff).toString(16) + "..." + Math.floor(Math.random()*0xff).toString(16);
+            ticker.innerText = `> Live: ${addr} ${act} ${amt} ETH`;
+        }, 4000);
+
+        actionBtn.addEventListener('click', () => {
+            if(actionBtn.innerText === "Shield Funds") {
+                const val = document.getElementById('amountIn').value;
+                if(!val || val <= 0) return alert("Enter a valid amount");
+                alert(`Generating deposit commitment for ${val} ETH... Please confirm in wallet.`);
+            } else {
+                alert("Generating Zero-Knowledge Proof... This may take a few seconds.");
+            }
+        });
+    </script>
+</body>
 </html>
