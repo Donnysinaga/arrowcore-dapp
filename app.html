@@ -282,6 +282,11 @@
 
             // --- LOGIN LOGIC ---
             if (!window.ethereum) return alert("MetaMask not found!");
+            
+            // Konfirmasi sebelum konek
+            const agree = confirm("Connect to Arrow Core Protocol?\n\nBy proceeding, you agree to our Terms of Service and acknowledge that this is a privacy-preserving network.");
+            if (!agree) return; // Batalkan jika user memilih 'Cancel'
+
             try {
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
