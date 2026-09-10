@@ -1,18 +1,6 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./logo.jpg" />
-    <link rel="alternate icon" type="image/png" href="./logo.jpg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <title>Arrow Core</title>
-    <script type="module" crossorigin src="./assets/index-vZxJGxcY.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-sb9ALmBQ.css">
-  
-    <style>
+import re
+
+css_inject = """<style>
       /* Hide original SVG logos */
       span[style*="color:var(--vio-lift)"] > svg,
       span[style*="color: var(--vio-lift)"] > svg,
@@ -74,9 +62,16 @@
               height: 250px;
           }
       }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
+    </style>"""
+
+for html_f in ['index.html', 'app.html']:
+    with open(html_f, 'r', encoding='utf-8') as f:
+        html = f.read()
+    
+    # Replace old style block with new one
+    html = re.sub(r'<style>.*?</style>', css_inject, html, flags=re.DOTALL)
+    
+    with open(html_f, 'w', encoding='utf-8') as f:
+        f.write(html)
+
+print("CSS Fixed!")

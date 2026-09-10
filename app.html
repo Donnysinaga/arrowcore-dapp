@@ -22,22 +22,14 @@
   
     <style>
       /* Hide original SVG logos */
-      span[style*="color:var(--vio-lift)"] svg,
-      span[style*="color: var(--vio-lift)"] svg,
+      span[style*="color:var(--vio-lift)"] > svg,
+      span[style*="color: var(--vio-lift)"] > svg,
       .lg > svg,
-      .fl > svg,
-      .fl > span:first-child > svg {
+      .fl > svg {
           display: none !important;
       }
       
-      /* Inject custom logo image */
-      span[style*="color:var(--vio-lift)"],
-      span[style*="color: var(--vio-lift)"] {
-          display: inline-flex !important;
-          align-items: center;
-          justify-content: center;
-      }
-      
+      /* Inject custom logo image ONLY on the span wrappers */
       span[style*="color:var(--vio-lift)"]::before,
       span[style*="color: var(--vio-lift)"]::before {
           content: "";
@@ -49,13 +41,14 @@
           background-position: center;
           border-radius: 50%;
           margin-right: 6px;
+          vertical-align: middle;
       }
       
-      .lg {
-          display: flex !important;
-          align-items: center !important;
+      /* If .lg directly has an SVG (no span), replace it */
+      .lg > svg {
+          display: none !important;
       }
-      .lg::before {
+      .lg:not(:has(span[style*="color"]))::before {
           content: "";
           display: inline-block;
           width: 28px;
@@ -65,6 +58,29 @@
           background-position: center;
           border-radius: 50%;
           margin-right: 8px;
+          vertical-align: middle;
+      }
+
+      /* Replace the massive right-side hero graphic (purple arches) with the logo */
+      .art .arc, .art .core, .art .orb {
+          display: none !important;
+      }
+      .art {
+          background-image: url('./logo.jpg') !important;
+          background-size: contain !important;
+          background-position: center !important;
+          background-repeat: no-repeat !important;
+          border-radius: 50%;
+          box-shadow: 0 0 100px rgba(0, 255, 100, 0.2);
+          width: 400px;
+          height: 400px;
+          margin: 0 auto;
+      }
+      @media (max-width: 768px) {
+          .art {
+              width: 250px;
+              height: 250px;
+          }
       }
     </style>
   </head>
