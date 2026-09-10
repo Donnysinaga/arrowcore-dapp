@@ -265,6 +265,22 @@
         }
 
         async function connectWallet() {
+            // --- LOGOUT LOGIC ---
+            if (signer != null) {
+                if (confirm("Log out and disconnect wallet?")) {
+                    signer = null;
+                    userAddress = null;
+                    document.getElementById('walletBtn').innerText = "Connect Wallet";
+                    document.getElementById('networkBadge').innerHTML = "<i></i> Not Connected";
+                    document.getElementById('balTransfer').innerText = "0.00";
+                    document.getElementById('balSwap').innerText = "0.00";
+                    document.getElementById('btnTransfer').innerText = "Please Connect Wallet";
+                    document.getElementById('btnSwap').innerText = "Please Connect Wallet";
+                }
+                return;
+            }
+
+            // --- LOGIN LOGIC ---
             if (!window.ethereum) return alert("MetaMask not found!");
             try {
                 const provider = new ethers.BrowserProvider(window.ethereum);
@@ -275,7 +291,8 @@
                 const balanceWei = await provider.getBalance(userAddress);
                 const bal = parseFloat(ethers.formatEther(balanceWei)).toFixed(4);
                 
-                document.getElementById('walletBtn').innerText = userAddress.substring(0,6) + "..." + userAddress.substring(38);
+                // Ubah teks tombol dan tambahkan ikon X kecil untuk menandakan bisa Log Out
+                document.getElementById('walletBtn').innerHTML = userAddress.substring(0,6) + "..." + userAddress.substring(38) + ' <span style="opacity:0.6; margin-left:6px; font-size:10px;">✖</span>';
                 document.getElementById('networkBadge').innerHTML = "<i></i> Connected";
                 
                 document.getElementById('balTransfer').innerText = bal;
