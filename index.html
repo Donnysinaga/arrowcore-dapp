@@ -11,6 +11,54 @@
     <title>Arrow Core</title>
     <script type="module" crossorigin src="./assets/index-vZxJGxcY.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-sb9ALmBQ.css">
+  
+    <style>
+      /* Hide original SVG logos */
+      span[style*="color:var(--vio-lift)"] svg,
+      span[style*="color: var(--vio-lift)"] svg,
+      .lg > svg,
+      .fl > svg,
+      .fl > span:first-child > svg {
+          display: none !important;
+      }
+      
+      /* Inject custom logo image */
+      span[style*="color:var(--vio-lift)"],
+      span[style*="color: var(--vio-lift)"] {
+          display: inline-flex !important;
+          align-items: center;
+          justify-content: center;
+      }
+      
+      span[style*="color:var(--vio-lift)"]::before,
+      span[style*="color: var(--vio-lift)"]::before {
+          content: "";
+          display: inline-block;
+          width: 28px;
+          height: 28px;
+          background-image: url('./logo.jpg');
+          background-size: cover;
+          background-position: center;
+          border-radius: 50%;
+          margin-right: 6px;
+      }
+      
+      .lg {
+          display: flex !important;
+          align-items: center !important;
+      }
+      .lg::before {
+          content: "";
+          display: inline-block;
+          width: 28px;
+          height: 28px;
+          background-image: url('./logo.jpg');
+          background-size: cover;
+          background-position: center;
+          border-radius: 50%;
+          margin-right: 8px;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
