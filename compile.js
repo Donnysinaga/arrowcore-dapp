@@ -47,6 +47,7 @@ function compileContract(fileName, contractName) {
 
 const vault = compileContract('ArrowCoreVault.sol', 'ArrowCoreVault');
 const staking = compileContract('ArrowCoreStaking.sol', 'ArrowCoreStaking');
+const swap = compileContract('ArrowCoreSwap.sol', 'ArrowCoreSwap');
 
 fs.mkdirSync(path.join(__dirname, 'build'), { recursive: true });
 
@@ -60,14 +61,20 @@ fs.writeFileSync(
     JSON.stringify(staking, null, 2)
 );
 
-// Also generate a JS bundle of artifacts that can be loaded in frontend!
+fs.writeFileSync(
+    path.join(__dirname, 'build', 'ArrowCoreSwap.json'),
+    JSON.stringify(swap, null, 2)
+);
+
+// Generate JS bundle
 const bundleJs = `// Auto-generated Arrow Core Smart Contract Artifacts
 window.ARROW_CONTRACTS = {
     Vault: ${JSON.stringify(vault)},
-    Staking: ${JSON.stringify(staking)}
+    Staking: ${JSON.stringify(staking)},
+    Swap: ${JSON.stringify(swap)}
 };
 `;
 
 fs.writeFileSync(path.join(__dirname, 'contracts-bundle.js'), bundleJs);
 
-console.log('Compilation successful! Generated build/ and contracts-bundle.js');
+console.log('Compilation successful! Generated build/ and contracts-bundle.js with Vault, Staking, and Swap!');

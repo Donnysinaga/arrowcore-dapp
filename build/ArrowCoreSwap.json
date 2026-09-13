@@ -1,0 +1,180 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "TransferFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroAmount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "ethIn",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokensOut",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "SwapExecuted",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getStats",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "volume",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "swaps",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expectedRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "swapETHForTokens",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokensOut",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalSwaps",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalVolumeETH",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userShieldedTokens",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "bytecode": "6080604052348015600e575f5ffd5b505f80546001600160a01b031916331790556103ee8061002d5f395ff3fe608060405260043610610071575f3560e01c8063b4a800ce1161004c578063b4a800ce1461011a578063c59d48471461012f578063f2c2ca6c14610156578063f8b2cb4f1461016b575f5ffd5b80632da826df1461009357806351422e97146100d15780638da5cb5b146100e4575f5ffd5b3661008f573460015f82825461008791906102ee565b925050819055005b5f5ffd5b34801561009e575f5ffd5b506100be6100ad366004610322565b60036020525f908152604090205481565b6040519081526020015b60405180910390f35b6100be6100df366004610342565b61019f565b3480156100ef575f5ffd5b505f54610102906001600160a01b031681565b6040516001600160a01b0390911681526020016100c8565b348015610125575f5ffd5b506100be60025481565b34801561013a575f5ffd5b50600154600254604080519283526020830191909152016100c8565b348015610161575f5ffd5b506100be60015481565b348015610176575f5ffd5b506100be610185366004610322565b6001600160a01b03165f9081526003602052604090205490565b5f345f036101c057604051631f2a200560e01b815260040160405180910390fd5b6001600160a01b03831661020e5760405162461bcd60e51b8152602060048201526011602482015270125b9d985b1a59081c9958da5c1a595b9d607a1b604482015260640160405180910390fd5b670de0b6b3a7640000610221833461036a565b61022b9190610381565b6001600160a01b0384165f908152600360205260408120805492935083929091906102579084906102ee565b925050819055503460015f82825461026f91906102ee565b909155505060028054905f610283836103a0565b90915550506040805134815260208101839052428183015290516001600160a01b0385169133917f28c738dbec11a1bed94ba127a3712d54bcd39cf4ae95b6ebd671aaf10fd0287b9181900360600190a392915050565b634e487b7160e01b5f52601160045260245ffd5b80820180821115610301576103016102da565b92915050565b80356001600160a01b038116811461031d575f5ffd5b919050565b5f60208284031215610332575f5ffd5b61033b82610307565b9392505050565b5f5f60408385031215610353575f5ffd5b61035c83610307565b946020939093013593505050565b8082028115828204841417610301576103016102da565b5f8261039b57634e487b7160e01b5f52601260045260245ffd5b500490565b5f600182016103b1576103b16102da565b506001019056fea2646970667358221220d99c82324b4ac937ffac5935681f12c9e472d10b0b1c049daee8cb91d2319ab164736f6c63430008250033"
+}
