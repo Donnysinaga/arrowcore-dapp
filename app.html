@@ -1713,7 +1713,7 @@ async function doStake() {
             const staking = new ethers.Contract(stakingAddr, window.ARROW_CONTRACTS.Staking.abi, signer);
             tx = await staking.stake({ value: ethers.utils.parseEther(amt) });
             await tx.wait();
-            toast('⚡ Staked On-Chain', amt + ' ETH staked at 12.4% APY.', tx.hash);
+            toast('✓ Staked On-Chain', amt + ' ETH staked at 12.4% APY.', tx.hash);
         } else {
             tx = await signer.sendTransaction({
                 to: address,
@@ -1721,7 +1721,7 @@ async function doStake() {
                 data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes("ArrowCore:stake:" + amt + "ETH"))
             });
             await tx.wait();
-            toast('⚡ Staked On-Chain', `${amt} ETH staked at 12.4% APY.`, tx.hash);
+            toast('✓ Staked On-Chain', `${amt} ETH staked at 12.4% APY.`, tx.hash);
         }
         stakedEthAmount += parseFloat(amt);
         localStorage.setItem('arrow_staked_amt', stakedEthAmount.toString());

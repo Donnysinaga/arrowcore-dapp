@@ -157,6 +157,24 @@
         }
         .sphere-title .hl { color: var(--green); }
         .sphere-title .sym { font-weight: 400; opacity: 0.8; }
+        .hero-bolt-ico {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 0.85em; height: 0.85em; border-radius: 12px;
+            background: rgba(180,255,71,0.12); border: 1px solid rgba(180,255,71,0.4);
+            box-shadow: 0 0 24px rgba(180,255,71,0.3);
+            vertical-align: middle; margin: 0 4px; position: relative; top: -0.06em;
+        }
+        .hero-bolt-ico svg {
+            width: 65%; height: 65%;
+            filter: drop-shadow(0 0 6px rgba(180,255,71,0.7));
+        }
+        .hero-hash-ico {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 0.85em; height: 0.85em; border-radius: 12px;
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border2);
+            color: var(--white); font-weight: 700; font-size: 0.65em;
+            vertical-align: middle; margin: 0 4px; position: relative; top: -0.06em;
+        }
         .sphere-arrow-btn {
             width: 52px; height: 52px; border-radius: 50%;
             border: 1px solid var(--border2); background: rgba(255,255,255,0.03);
@@ -543,7 +561,7 @@
                 AI-powered system suggests personalized privacy routes based on user preferences
             </div>
             <h1 class="sphere-title">
-                Private by <span class="sym">⚡</span> <span class="hl">construction</span> and <span class="sym">#</span> zero knowledge
+                Private by <span class="hero-bolt-ico" title="Instant Finality"><svg viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="var(--green)" stroke="var(--green)" stroke-width="1.5"/></svg></span> <span class="hl">construction</span> and <span class="hero-hash-ico">#</span> zero knowledge
             </h1>
             <a href="app.html" class="sphere-arrow-btn">↗</a>
         </div>
@@ -605,7 +623,7 @@
 
         <!-- Big statement paragraph with inline badges (exact reference style) -->
         <div class="about-statement">
-            Our protocol <span class="statement-badge">+</span> has been creating <span class="statement-badge">⚡</span> a unique and powerful privacy protocol for <span class="statement-badge network">Arrow Core</span> on Robinhood Chain. A community of 24k+ <span class="circle-dot"></span> users
+            Our protocol <span class="statement-badge">+</span> has been creating <span class="statement-badge" title="Speed & Privacy"><svg width="14" height="14" viewBox="0 0 24 24" fill="#000" stroke="#000" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> a unique and powerful privacy protocol for <span class="statement-badge network">Arrow Core</span> on Robinhood Chain. A community of 24k+ <span class="circle-dot"></span> users
         </div>
 
         <!-- 3 Feature Cards (Reference Style) -->
