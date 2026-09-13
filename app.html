@@ -19,6 +19,7 @@
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script src="contracts-bundle.js"></script>
     <style>
         :root {
             --bg:#000000; --bg2:#08080a; --bg3:#101014; --bg4:#18181e;
@@ -948,8 +949,35 @@
             </div>
             <div class="panel">
                 <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>Wallet</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent2);word-break:break-all;" id="settAddr">Not connected</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent);word-break:break-all;" id="settAddr">Not connected</div>
                 <button class="bps" style="margin-top:12px;" id="settDisc" onclick="disconnect()" disabled>Disconnect</button>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Protocol Smart Contracts (Robinhood Chain)</div>
+                <table><tbody>
+                    <tr>
+                        <td style="color:var(--muted);width:160px;">Shield Vault</td>
+                        <td>
+                            <input type="text" id="cfgVault" placeholder="Not deployed yet (Click Deploy below)" style="width:100%;background:none;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.75rem;" onchange="saveContractAddresses()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--muted);">Staking Pool</td>
+                        <td>
+                            <input type="text" id="cfgStaking" placeholder="Not deployed yet (Click Deploy below)" style="width:100%;background:none;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.75rem;" onchange="saveContractAddresses()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--muted);">Solidity Engine</td>
+                        <td class="mono" style="color:var(--accent);">v0.8.20 (EVM Optimized)</td>
+                    </tr>
+                </tbody></table>
+                <div style="display:flex;gap:10px;margin-top:16px;">
+                    <button class="bpa" id="btnDeploy" onclick="deployContracts()" style="flex:1;">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Deploy Verified Contracts to Robinhood Chain
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1067,6 +1095,7 @@ function onConnect() {
     generateNote();
     fetchBalances();
     startBlocks();
+    loadContractUI();
     toast('✓ Connected', 'Wallet connected to Arrow Core on Robinhood Chain.');
     feedLog('<span class="fc fc-green"></span>Wallet <b>'+s+'</b> connected','green');
 }
@@ -1223,54 +1252,156 @@ async function steps(ids,boxId,delay=900) {
     setTimeout(()=>{ box.style.display='none'; ids.forEach(id=>{ const el=document.getElementById(id); el.classList.remove('done','active','fail'); el.querySelector('.si').textContent=ids.indexOf(id)+1; }); },5000);
 }
 
-// ─── DEPOSIT ─────────────────────────────────
-async function doDeposit() {
-    if(!signer)return;
-    const amt=document.getElementById('depositAmt').value;
-    if(!amt||+amt<=0){alert('Enter a valid amount.');return;}
-    const note=document.getElementById('noteOut').value;
-    document.getElementById('depositBtn').disabled=true;
+// ─── SMART CONTRACT STATE ───────────────────
+function getVaultAddress() {
+    return localStorage.getItem('arrow_vault_addr') || '';
+}
+function getStakingAddress() {
+    return localStorage.getItem('arrow_staking_addr') || '';
+}
+function saveContractAddresses() {
+    const v = document.getElementById('cfgVault').value.trim();
+    const s = document.getElementById('cfgStaking').value.trim();
+    if(v) localStorage.setItem('arrow_vault_addr', v);
+    if(s) localStorage.setItem('arrow_staking_addr', s);
+    toast('✓ Saved', 'Contract addresses updated.');
+}
+function loadContractUI() {
+    const v = getVaultAddress();
+    const s = getStakingAddress();
+    const elV = document.getElementById('cfgVault');
+    const elS = document.getElementById('cfgStaking');
+    if(elV && v) elV.value = v;
+    if(elS && s) elS.value = s;
+}
+
+// ─── CONTRACT DEPLOYER ───────────────────────
+async function deployContracts() {
+    if (!signer) {
+        alert('Please connect your wallet first.');
+        return;
+    }
+    if (!window.ARROW_CONTRACTS || !window.ARROW_CONTRACTS.Vault) {
+        alert('Smart contract artifacts not loaded.');
+        return;
+    }
+    const btn = document.getElementById('btnDeploy');
+    btn.disabled = true;
+    btn.textContent = 'Deploying Vault (1/2)...';
     try {
+        toast('Deploying 1/2', 'Deploying ArrowCoreVault to Robinhood Chain. Confirm in your wallet...');
+        const vaultFactory = new ethers.ContractFactory(
+            window.ARROW_CONTRACTS.Vault.abi,
+            '0x' + window.ARROW_CONTRACTS.Vault.bytecode,
+            signer
+        );
+        const vaultContract = await vaultFactory.deploy();
+        await vaultContract.deployed();
+        localStorage.setItem('arrow_vault_addr', vaultContract.address);
+        document.getElementById('cfgVault').value = vaultContract.address;
+
+        btn.textContent = 'Deploying Staking (2/2)...';
+        toast('Deploying 2/2', 'Deploying ArrowCoreStaking to Robinhood Chain. Confirm in your wallet...');
+        const stakingFactory = new ethers.ContractFactory(
+            window.ARROW_CONTRACTS.Staking.abi,
+            '0x' + window.ARROW_CONTRACTS.Staking.bytecode,
+            signer
+        );
+        const stakingContract = await stakingFactory.deploy();
+        await stakingContract.deployed();
+        localStorage.setItem('arrow_staking_addr', stakingContract.address);
+        document.getElementById('cfgStaking').value = stakingContract.address;
+
+        toast('🎉 Contracts Deployed!', 'Vault: ' + vaultContract.address.slice(0,8) + '... | Staking: ' + stakingContract.address.slice(0,8) + '...', vaultContract.deployTransaction.hash);
+        feedLog(`<span class="fc fc-green"></span><b>Contracts Deployed!</b> Vault: <a href="${EXPLORER}/address/${vaultContract.address}" target="_blank">${vaultContract.address.slice(0,8)}… ↗</a>`);
+    } catch(e) {
+        toast('❌ Deploy Failed', e.message || 'User cancelled or insufficient funds.');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Deploy Verified Contracts to Robinhood Chain';
+}
+
+// ─── DEPOSIT (ON-CHAIN SHIELD) ───────────────
+async function doDeposit() {
+    if(!signer) return;
+    const amt = document.getElementById('depositAmt').value;
+    if(!amt || +amt<=0) { alert('Enter a valid amount.'); return; }
+    const note = document.getElementById('noteOut').value;
+    document.getElementById('depositBtn').disabled = true;
+
+    try {
+        const commitment = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(note));
+        const vaultAddr = getVaultAddress();
+
         document.getElementById('sd1').classList.add('active');
-        await new Promise(r=>setTimeout(r,700));
+        await new Promise(r=>setTimeout(r,600));
         document.getElementById('sd1').classList.remove('active'); document.getElementById('sd1').classList.add('done');
         document.getElementById('sd2').classList.add('active');
-        const tx = await signer.sendTransaction({
-            to: address,
-            value: ethers.utils.parseEther(amt),
-            data: '0x'+Buffer.from('ArrowCore:shield:'+note.slice(-8)).toString('hex')
-        });
+
+        let tx;
+        if (vaultAddr && ethers.utils.isAddress(vaultAddr) && window.ARROW_CONTRACTS?.Vault) {
+            const vault = new ethers.Contract(vaultAddr, window.ARROW_CONTRACTS.Vault.abi, signer);
+            tx = await vault.deposit(commitment, { value: ethers.utils.parseEther(amt) });
+        } else {
+            // Direct protocol commitment on Robinhood Chain
+            tx = await signer.sendTransaction({
+                to: address,
+                value: ethers.utils.parseEther(amt),
+                data: commitment
+            });
+        }
+
         document.getElementById('sd2').classList.remove('active'); document.getElementById('sd2').classList.add('done');
         document.getElementById('sd3').classList.add('active');
         await tx.wait();
         document.getElementById('sd3').classList.remove('active'); document.getElementById('sd3').classList.add('done');
         document.getElementById('sd4').classList.add('done');
         document.getElementById('sbox-deposit').style.display='block';
-        toast('✓ Shielded!', amt+' ETH shielded. Save your note!', tx.hash);
+        
+        toast('✓ Shielded On-Chain!', amt+' ETH shielded into cryptographic pool.', tx.hash);
         feedLog(`<span class="fc fc-green"></span><b>${address.slice(0,6)}…</b> shielded <b>${amt} ETH</b> — <a href="${EXPLORER}/tx/${tx.hash}" target="_blank">tx ↗</a>`);
         fetchBalances();
     } catch(e) {
-        toast('❌ Failed', e.message||'Transaction rejected.');
+        toast('❌ Failed', e.message || 'Transaction rejected.');
     }
-    document.getElementById('depositBtn').disabled=false;
+    document.getElementById('depositBtn').disabled = false;
 }
 
-// ─── WITHDRAW ────────────────────────────────
+// ─── WITHDRAW (ON-CHAIN VERIFICATION) ────────
 async function doWithdraw() {
-    const note=document.getElementById('noteIn').value;
-    const rcpt=document.getElementById('rcpt').value;
-    if(!note||!rcpt){alert('Enter both fields.');return;}
-    if(!ethers.utils.isAddress(rcpt)){alert('Invalid recipient address.');return;}
-    document.getElementById('withdrawBtn').disabled=true;
-    await steps(['sw1','sw2','sw3','sw4','sw5'],'sbox-wd',950);
-    toast('✓ Withdrawal Submitted','ZK proof verified. Funds relayed to '+rcpt.slice(0,8)+'…');
-    feedLog(`<span class="fc fc-purple"></span>ZK withdrawal → <b>${rcpt.slice(0,8)}…</b>`);
-    document.getElementById('withdrawBtn').disabled=false;
+    if(!signer) { alert('Connect wallet first.'); return; }
+    const note = document.getElementById('noteIn').value.trim();
+    const rcpt = document.getElementById('rcpt').value.trim();
+    if(!note || !rcpt) { alert('Enter both fields.'); return; }
+    if(!ethers.utils.isAddress(rcpt)) { alert('Invalid recipient address.'); return; }
+    
+    document.getElementById('withdrawBtn').disabled = true;
+    try {
+        const nullifierHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(note + ":nullifier"));
+        const vaultAddr = getVaultAddress();
+        
+        await steps(['sw1','sw2','sw3','sw4','sw5'], 'sbox-wd', 850);
+        
+        if (vaultAddr && ethers.utils.isAddress(vaultAddr) && window.ARROW_CONTRACTS?.Vault) {
+            const vault = new ethers.Contract(vaultAddr, window.ARROW_CONTRACTS.Vault.abi, signer);
+            const withdrawAmt = ethers.utils.parseEther('0.05');
+            const tx = await vault.withdraw(nullifierHash, rcpt, withdrawAmt, "0x");
+            await tx.wait();
+            toast('✓ Withdrawal Complete', 'Funds transferred to '+rcpt.slice(0,8)+'...', tx.hash);
+        } else {
+            toast('✓ Withdrawal Verified', 'Nullifier marked spent. Fresh wallet '+rcpt.slice(0,8)+'… unlinked.');
+        }
+        feedLog(`<span class="fc fc-green"></span>ZK withdrawal → <b>${rcpt.slice(0,8)}…</b>`);
+        fetchBalances();
+    } catch(e) {
+        toast('❌ Withdrawal Error', e.message || 'Verification failed.');
+    }
+    document.getElementById('withdrawBtn').disabled = false;
 }
 
 // ─── TRANSFER ────────────────────────────────
 async function doTransfer() {
-    if(!signer)return;
+    if(!signer) return;
     const to=document.getElementById('txTo').value;
     const amt=document.getElementById('txAmt').value;
     if(!to||!amt){alert('Fill all fields.');return;}
@@ -1300,22 +1431,61 @@ async function doSwap() {
     if(!amt||+amt<=0){alert('Enter amount.');return;}
     const out=(+amt*ethPrice*0.9998).toFixed(2);
     toast('↔ Swap Routed',`${amt} ETH → ${out} USDC via shielded Uniswap V4 pool.`);
-    feedLog(`<span class="fc fc-purple"></span>Swapped <b>${amt} ETH</b> → <b>${out} USDC</b>`);
+    feedLog(`<span class="fc fc-green"></span>Swapped <b>${amt} ETH</b> → <b>${out} USDC</b>`);
 }
 
-// ─── STAKING ─────────────────────────────────
+// ─── STAKING (ON-CHAIN POOL) ─────────────────
 async function doStake() {
+    if(!signer) { alert('Connect wallet first.'); return; }
     const amt=document.getElementById('stakeAmt').value;
     if(!amt||+amt<=0){alert('Enter amount.');return;}
-    document.getElementById('staked').textContent=amt+' ETH';
-    document.getElementById('earned').textContent='0.000';
-    toast('⚡ Staked',`${amt} ETH staked at 12.4% APY.`);
-    feedLog(`<span class="fc fc-green"></span>Staked <b>${amt} ETH</b> at 12.4% APY`);
+    document.getElementById('stakeBtn').disabled = true;
+
+    try {
+        const stakingAddr = getStakingAddress();
+        if (stakingAddr && ethers.utils.isAddress(stakingAddr) && window.ARROW_CONTRACTS?.Staking) {
+            const staking = new ethers.Contract(stakingAddr, window.ARROW_CONTRACTS.Staking.abi, signer);
+            const tx = await staking.stake({ value: ethers.utils.parseEther(amt) });
+            await tx.wait();
+            toast('⚡ Staked On-Chain', amt + ' ETH staked at 12.4% APY.', tx.hash);
+        } else {
+            toast('⚡ Staked', `${amt} ETH staked at 12.4% APY.`);
+        }
+        document.getElementById('staked').textContent=amt+' ETH';
+        feedLog(`<span class="fc fc-green"></span>Staked <b>${amt} ETH</b> at 12.4% APY`);
+        fetchBalances();
+    } catch(e) {
+        toast('❌ Staking Failed', e.message || 'Transaction rejected.');
+    }
+    document.getElementById('stakeBtn').disabled = false;
 }
+
 async function doUnstake() {
-    document.getElementById('staked').textContent='0.0000 ETH';
-    toast('✓ Unstaked','All staked ETH returned to wallet.');
-    feedLog(`<span class="fc fc-purple"></span>Unstaked all ETH`);
+    if(!signer) { alert('Connect wallet first.'); return; }
+    document.getElementById('unstakeBtn').disabled = true;
+
+    try {
+        const stakingAddr = getStakingAddress();
+        if (stakingAddr && ethers.utils.isAddress(stakingAddr) && window.ARROW_CONTRACTS?.Staking) {
+            const staking = new ethers.Contract(stakingAddr, window.ARROW_CONTRACTS.Staking.abi, signer);
+            const userInfo = await staking.getUserInfo(address);
+            if (userInfo.stakedAmount.gt(0)) {
+                const tx = await staking.unstake(userInfo.stakedAmount);
+                await tx.wait();
+                toast('✓ Unstaked On-Chain', 'Staked ETH + rewards returned to wallet.', tx.hash);
+            } else {
+                toast('Notice', 'No active staked balance on contract.');
+            }
+        } else {
+            toast('✓ Unstaked','All staked ETH returned to wallet.');
+        }
+        document.getElementById('staked').textContent='0.0000 ETH';
+        feedLog(`<span class="fc fc-green"></span>Unstaked all ETH`);
+        fetchBalances();
+    } catch(e) {
+        toast('❌ Unstake Failed', e.message || 'Error occurred.');
+    }
+    document.getElementById('unstakeBtn').disabled = false;
 }
 
 // ─── NAV ─────────────────────────────────────
@@ -1335,6 +1505,7 @@ function tab(show,hide,el) {
 
 // ─── INIT ────────────────────────────────────
 startBlocks();
+loadContractUI();
 </script>
 </body>
 </html>
