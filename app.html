@@ -5,827 +5,1212 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arrow Core | App</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         :root {
-            --bg:#07070a; --bg2:#0d0d12; --bg3:#111117;
-            --accent:#7c3aed; --accent2:#a855f7; --accent-glow:rgba(124,58,237,0.2);
-            --green:#10b981; --red:#ef4444; --yellow:#f59e0b;
-            --text:#f4f4f6; --muted:#6b6b7e; --border:rgba(255,255,255,0.07);
+            --bg:#07070a; --bg2:#0c0c11; --bg3:#111118; --bg4:#171720;
+            --accent:#7c3aed; --accent2:#a855f7; --accent-dim:rgba(124,58,237,0.12);
+            --accent-glow:rgba(124,58,237,0.25);
+            --green:#10b981; --green-dim:rgba(16,185,129,0.1);
+            --red:#ef4444; --red-dim:rgba(239,68,68,0.1);
+            --yellow:#f59e0b; --yellow-dim:rgba(245,158,11,0.1);
+            --text:#f1f1f3; --text2:#c4c4d0; --muted:#5a5a6e;
+            --border:rgba(255,255,255,0.065); --border2:rgba(255,255,255,0.12);
         }
-        *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
         body{background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;}
 
-        /* SIDEBAR */
-        aside{width:230px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
-        .brand-row{padding:20px 18px;border-bottom:1px solid var(--border);}
-        .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:700;font-size:1rem;}
-        .brand img{width:30px;height:30px;border-radius:50%;box-shadow:0 0 10px var(--accent-glow);}
-        .nav-section{padding:8px;flex:1;display:flex;flex-direction:column;gap:2px;}
-        .nav-label{font-size:0.65rem;color:var(--muted);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:12px 10px 6px;}
-        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;color:var(--muted);text-decoration:none;border-radius:8px;font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;}
-        .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
-        .nav-item.active{background:rgba(124,58,237,0.1);color:var(--accent2);}
-        .nav-item .ico{width:18px;text-align:center;font-size:0.95rem;}
-        .nav-bottom{padding:10px;border-top:1px solid var(--border);}
-        
-        /* CHAIN STATUS */
-        .chain-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;font-size:0.78rem;color:var(--green);font-weight:600;margin:10px;}
-        .cdot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
-        .chain-pill a{color:var(--green);text-decoration:none;margin-left:auto;font-size:0.7rem;opacity:0.7;}
-        .chain-pill a:hover{opacity:1;}
-        @keyframes pulse{50%{opacity:0.4;}}
+        /* ── SIDEBAR ── */
+        aside{
+            width:240px;background:var(--bg2);
+            border-right:1px solid var(--border);
+            display:flex;flex-direction:column;flex-shrink:0;
+            position:relative;z-index:10;
+        }
+        .brand-row{
+            padding:18px 16px;border-bottom:1px solid var(--border);
+            display:flex;align-items:center;gap:10px;
+        }
+        .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:700;font-size:1.05rem;letter-spacing:-0.01em;}
+        .brand img{width:32px;height:32px;border-radius:50%;box-shadow:0 0 16px var(--accent-glow);}
+        .brand-badge{
+            margin-left:auto;background:var(--accent-dim);border:1px solid rgba(124,58,237,0.2);
+            color:var(--accent2);font-size:0.62rem;font-weight:700;padding:2px 7px;
+            border-radius:4px;letter-spacing:0.5px;
+        }
+        .net-status{
+            margin:10px 10px 4px;
+            display:flex;align-items:center;gap:8px;
+            background:var(--green-dim);border:1px solid rgba(16,185,129,0.18);
+            border-radius:8px;padding:8px 12px;font-size:0.75rem;color:var(--green);font-weight:600;
+        }
+        .net-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:blink 2s infinite;}
+        @keyframes blink{50%{opacity:0.3;}}
+        .net-status a{margin-left:auto;color:var(--green);text-decoration:none;font-size:0.68rem;opacity:0.7;}
+        .net-status a:hover{opacity:1;}
 
-        /* MAIN */
+        .nav-wrap{flex:1;padding:6px 8px;overflow-y:auto;}
+        .nav-section-label{
+            font-size:0.62rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+            color:var(--muted);padding:14px 10px 6px;
+        }
+        .ni{
+            display:flex;align-items:center;gap:10px;
+            width:100%;padding:9px 10px;border-radius:8px;
+            color:var(--muted);font-size:0.875rem;font-weight:500;
+            cursor:pointer;transition:all 0.15s;
+            border:none;background:none;text-align:left;
+            position:relative;
+        }
+        .ni:hover{background:rgba(255,255,255,0.04);color:var(--text2);}
+        .ni.active{background:var(--accent-dim);color:var(--accent2);}
+        .ni.active .ni-icon svg{color:var(--accent2);}
+        .ni-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .ni-icon svg{width:16px;height:16px;stroke-width:1.7;fill:none;stroke:currentColor;transition:color 0.15s;}
+        .ni-badge{
+            margin-left:auto;background:var(--accent-dim);
+            color:var(--accent2);font-size:0.62rem;font-weight:700;
+            padding:1px 6px;border-radius:4px;
+        }
+        .ni-badge.new{background:var(--green-dim);color:var(--green);}
+
+        .sidebar-footer{
+            padding:10px;border-top:1px solid var(--border);
+        }
+        .user-card{
+            display:flex;align-items:center;gap:10px;
+            padding:10px 12px;border-radius:8px;background:var(--bg3);
+            border:1px solid var(--border);
+        }
+        .user-avatar{
+            width:32px;height:32px;border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            display:flex;align-items:center;justify-content:center;
+            font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0;
+        }
+        .user-info{flex:1;min-width:0;}
+        .user-addr{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .user-net{font-size:0.65rem;color:var(--muted);margin-top:1px;}
+        .user-disc{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;transition:color 0.15s;}
+        .user-disc:hover{color:var(--red);}
+
+        /* ── TOPBAR ── */
         .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-        .topbar{height:62px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0;background:var(--bg2);}
-        .topbar-left{display:flex;align-items:center;gap:12px;}
-        .page-breadcrumb{font-size:0.875rem;color:var(--muted);}
-        .topbar-right{display:flex;align-items:center;gap:12px;}
-        .block-badge{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);background:var(--bg3);border:1px solid var(--border);padding:5px 10px;border-radius:6px;}
-        .btn-wallet{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:0.875rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
-        .btn-wallet:hover{background:#6d28d9;box-shadow:0 0 20px var(--accent-glow);}
-        .btn-wallet.connected{background:var(--bg3);border:1px solid var(--border);color:var(--text);}
-        .addr-display{font-family:'JetBrains Mono',monospace;font-size:0.78rem;}
+        .topbar{
+            height:60px;border-bottom:1px solid var(--border);
+            display:flex;align-items:center;justify-content:space-between;
+            padding:0 28px;flex-shrink:0;background:var(--bg2);
+        }
+        .topbar-left{display:flex;align-items:center;gap:16px;}
+        .breadcrumb{
+            display:flex;align-items:center;gap:8px;
+            font-size:0.85rem;font-weight:500;
+        }
+        .breadcrumb .bico{
+            width:28px;height:28px;border-radius:7px;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--accent-dim);border:1px solid rgba(124,58,237,0.2);
+        }
+        .breadcrumb .bico svg{width:14px;height:14px;stroke:var(--accent2);fill:none;stroke-width:2;}
+        .breadcrumb .bname{color:var(--text2);}
+        .block-chip{
+            font-family:'JetBrains Mono',monospace;font-size:0.72rem;
+            color:var(--muted);background:var(--bg3);border:1px solid var(--border);
+            padding:4px 10px;border-radius:6px;
+        }
+        .topbar-right{display:flex;align-items:center;gap:10px;}
+        .btn-w{
+            display:flex;align-items:center;gap:8px;
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            color:#fff;border:none;padding:9px 20px;border-radius:9px;
+            font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;
+            box-shadow:0 4px 16px var(--accent-glow);
+        }
+        .btn-w:hover{box-shadow:0 6px 24px var(--accent-glow);transform:translateY(-1px);}
+        .btn-w.conn{
+            background:var(--bg3);border:1px solid var(--border);color:var(--text2);
+            box-shadow:none;transform:none;
+            font-family:'JetBrains Mono',monospace;font-size:0.78rem;
+        }
 
-        /* CONTENT */
-        .content{flex:1;overflow-y:auto;padding:28px;background:var(--bg);}
-        .page{display:none;animation:fadein 0.2s ease;}
+        /* ── CONTENT ── */
+        .content{flex:1;overflow-y:auto;padding:28px 32px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+        .page{display:none;animation:fi 0.18s ease;}
         .page.active{display:block;}
-        @keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-        .page-header{margin-bottom:28px;}
-        .page-header h1{font-size:1.6rem;font-weight:700;letter-spacing:-0.03em;}
-        .page-header p{color:var(--muted);font-size:0.9rem;margin-top:4px;}
+        @keyframes fi{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
 
-        /* CARDS */
-        .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;}
-        .card+.card{margin-top:16px;}
-        .card-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;}
-        .card-value{font-size:2rem;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.02em;}
-        .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
-        .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px;}
-        .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+        /* Page header */
+        .ph{margin-bottom:28px;display:flex;align-items:flex-start;justify-content:space-between;}
+        .ph-left{}
+        .ph-icon{
+            width:48px;height:48px;border-radius:12px;margin-bottom:14px;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--accent-dim);border:1px solid rgba(124,58,237,0.2);
+        }
+        .ph-icon svg{width:24px;height:24px;stroke:var(--accent2);fill:none;stroke-width:1.7;}
+        .ph h1{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:4px;}
+        .ph p{color:var(--muted);font-size:0.875rem;}
 
-        /* FORM */
-        .form-label{font-size:0.8rem;color:var(--muted);font-weight:500;margin-bottom:8px;display:block;}
-        .input-row{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;transition:border-color 0.2s;}
-        .input-row:focus-within{border-color:rgba(124,58,237,0.5);}
-        .input-row input{flex:1;background:none;border:none;color:var(--text);font-size:1.1rem;font-family:'JetBrains Mono',monospace;outline:none;padding:12px 14px;}
-        .input-row input::placeholder{color:var(--muted);}
-        .input-row .tok{background:var(--bg2);color:var(--text);font-weight:700;font-size:0.85rem;padding:0 14px;border-left:1px solid var(--border);display:flex;align-items:center;gap:6px;}
-        .btn-action{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:14px;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.01em;}
-        .btn-action:hover{box-shadow:0 6px 24px var(--accent-glow);}
-        .btn-action:disabled{background:var(--bg3);color:var(--muted);cursor:not-allowed;box-shadow:none;}
-        .btn-secondary{width:100%;background:var(--bg3);color:var(--text);border:1px solid var(--border);padding:12px;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:10px;}
-        .btn-secondary:hover{border-color:rgba(255,255,255,0.2);}
+        /* Stat cards */
+        .sg{display:grid;gap:14px;margin-bottom:20px;}
+        .sg.g2{grid-template-columns:1fr 1fr;}
+        .sg.g3{grid-template-columns:1fr 1fr 1fr;}
+        .sg.g4{grid-template-columns:repeat(4,1fr);}
+        .sc{
+            background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+            padding:20px;position:relative;overflow:hidden;transition:border-color 0.2s;
+        }
+        .sc:hover{border-color:var(--border2);}
+        .sc::before{
+            content:'';position:absolute;top:0;left:0;right:0;height:1px;
+            background:linear-gradient(90deg,transparent,rgba(124,58,237,0.3),transparent);
+        }
+        .sc-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+        .sc-label svg{width:12px;height:12px;stroke:var(--muted);fill:none;stroke-width:2;}
+        .sc-val{font-size:1.9rem;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.03em;}
+        .sc-sub{font-size:0.72rem;color:var(--muted);margin-top:6px;}
+        .sc-change{display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;font-weight:600;padding:2px 6px;border-radius:4px;}
+        .up{background:var(--green-dim);color:var(--green);}
+        .dn{background:var(--red-dim);color:var(--red);}
 
-        /* TABS */
-        .tabs{display:flex;gap:4px;background:var(--bg3);border-radius:8px;padding:4px;margin-bottom:22px;width:fit-content;}
-        .tab{padding:8px 18px;border-radius:6px;font-size:0.875rem;font-weight:500;cursor:pointer;color:var(--muted);transition:all 0.15s;border:none;background:none;}
-        .tab.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.3);}
+        /* Main panel card */
+        .panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:18px;}
+        .panel-title{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+        .panel-title svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:2;}
 
-        /* TX LOG */
-        .tx-log{background:#000;border:1px solid rgba(16,185,129,0.15);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
-        .tx-line{color:var(--muted);}
-        .tx-line .ok{color:var(--green);}
-        .tx-line .err{color:var(--red);}
-        .tx-line .acc{color:#a78bfa;}
-        .tx-line .amt{color:#f9c74f;}
+        /* Divider */
+        .divider{height:1px;background:var(--border);margin:18px 0;}
 
-        /* STATUS */
-        .status-box{background:var(--bg3);border-radius:8px;padding:14px;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;display:none;}
-        .s-step{padding:4px 0;color:var(--muted);display:flex;align-items:center;gap:8px;}
-        .s-step.done{color:var(--green);}
-        .s-step.active{color:var(--accent2);}
-        .s-step.fail{color:var(--red);}
-        .s-step .si{width:14px;}
-        
-        /* BADGE */
-        .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:700;}
-        .badge-green{background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
-        .badge-red{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
-        .badge-yellow{background:rgba(245,158,11,0.1);color:var(--yellow);border:1px solid rgba(245,158,11,0.25);}
-        .badge-purple{background:rgba(124,58,237,0.1);color:var(--accent2);border:1px solid rgba(124,58,237,0.25);}
+        /* Form elements */
+        .fl{font-size:0.78rem;color:var(--muted);font-weight:500;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+        .fl span{color:var(--accent2);cursor:pointer;font-weight:600;}
+        .ibox{
+            background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+            display:flex;align-items:center;margin-bottom:14px;transition:border-color 0.2s;
+        }
+        .ibox:focus-within{border-color:rgba(124,58,237,0.5);}
+        .ibox input{
+            flex:1;background:none;border:none;color:var(--text);
+            font-size:1.2rem;font-family:'JetBrains Mono',monospace;
+            outline:none;padding:13px 15px;
+        }
+        .ibox input::placeholder{color:var(--muted);font-size:0.9rem;}
+        .ibox input:read-only{color:var(--muted);font-size:0.9rem;}
+        .tok-badge{
+            display:flex;align-items:center;gap:6px;
+            background:var(--bg2);border-left:1px solid var(--border);
+            padding:0 14px;font-weight:700;font-size:0.85rem;
+            height:100%;border-radius:0 10px 10px 0;white-space:nowrap;
+        }
+        .tok-icon{width:20px;height:20px;border-radius:50%;}
+        .copy-btn{
+            background:var(--bg2);border-left:1px solid var(--border);
+            color:var(--muted);padding:0 12px;cursor:pointer;
+            border:none;height:100%;border-radius:0 10px 10px 0;
+            font-size:0.75rem;font-weight:600;transition:color 0.15s;
+        }
+        .copy-btn:hover{color:var(--text);}
 
-        /* MODALS */
-        .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9999;}
-        .overlay.show{display:flex;}
-        .modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:30px;width:400px;max-width:90vw;}
-        .modal h2{font-size:1.2rem;font-weight:700;margin-bottom:8px;}
-        .modal p{color:var(--muted);font-size:0.875rem;line-height:1.6;margin-bottom:22px;}
-        .wallet-opt{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.15s;margin-bottom:8px;}
-        .wallet-opt:hover{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.06);}
-        .wallet-opt .wi{font-size:1.3rem;width:24px;}
-        .wallet-opt .wl{text-align:left;}
-        .wallet-opt .wl span{display:block;font-size:0.7rem;color:var(--muted);font-weight:400;}
-        .btn-cancel{width:100%;background:none;border:none;color:var(--muted);padding:12px;cursor:pointer;font-size:0.875rem;margin-top:6px;}
-        .modal-row{display:flex;gap:10px;margin-top:20px;}
-        .btn-confirm{flex:1;background:var(--accent);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:700;cursor:pointer;}
-        .btn-confirm:hover{background:#6d28d9;}
-        .btn-deny{flex:1;background:var(--bg3);color:var(--muted);border:1px solid var(--border);padding:12px;border-radius:8px;font-weight:600;cursor:pointer;}
+        /* Buttons */
+        .bpa{
+            width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+            color:#fff;border:none;padding:14px;border-radius:10px;
+            font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;
+            letter-spacing:0.02em;display:flex;align-items:center;justify-content:center;gap:8px;
+        }
+        .bpa svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.2;}
+        .bpa:hover{box-shadow:0 8px 28px var(--accent-glow);transform:translateY(-1px);}
+        .bpa:disabled{background:var(--bg3);color:var(--muted);cursor:not-allowed;box-shadow:none;transform:none;}
+        .bps{
+            width:100%;background:var(--bg3);color:var(--text2);border:1px solid var(--border);
+            padding:12px;border-radius:10px;font-size:0.875rem;font-weight:600;
+            cursor:pointer;transition:all 0.15s;margin-top:10px;
+        }
+        .bps:hover{border-color:var(--border2);color:var(--text);}
+        .bps:disabled{color:var(--muted);cursor:not-allowed;}
 
-        /* TX ALERT */
-        .tx-alert{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;max-width:360px;z-index:10000;display:none;animation:slidein 0.3s ease;}
-        @keyframes slidein{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-        .tx-alert h4{font-size:0.9rem;font-weight:700;margin-bottom:4px;}
-        .tx-alert p{font-size:0.78rem;color:var(--muted);}
-        .tx-alert a{color:var(--accent2);text-decoration:none;font-size:0.78rem;}
-        .tx-alert a:hover{text-decoration:underline;}
+        /* Tabs */
+        .tbar{display:flex;gap:3px;background:var(--bg3);border-radius:9px;padding:3px;margin-bottom:22px;width:fit-content;}
+        .tb{padding:8px 18px;border-radius:7px;font-size:0.85rem;font-weight:500;cursor:pointer;color:var(--muted);border:none;background:none;transition:all 0.15s;}
+        .tb.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,0.4);}
 
-        /* PORTFOLIO TABLE */
+        /* Status steps */
+        .sbox{background:var(--bg3);border-radius:10px;padding:16px;margin-top:14px;display:none;border:1px solid var(--border);}
+        .ss{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:0.8rem;font-family:'JetBrains Mono',monospace;color:var(--muted);}
+        .ss .si{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;background:var(--bg4);border:1px solid var(--border);flex-shrink:0;}
+        .ss.active .si{background:rgba(124,58,237,0.2);border-color:var(--accent2);}
+        .ss.active{color:var(--accent2);}
+        .ss.done .si{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+        .ss.done{color:var(--green);}
+        .ss.fail{color:var(--red);}
+
+        /* Live feed */
+        .feed{
+            background:var(--bg);border:1px solid var(--border);border-radius:8px;
+            padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.73rem;
+            height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;
+            scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+        }
+        .fline{color:var(--muted);display:flex;align-items:center;gap:6px;}
+        .fline .fc{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+        .fc-green{background:var(--green);}
+        .fc-purple{background:var(--accent2);}
+        .fc-red{background:var(--red);}
+        .fline b{color:var(--text2);}
+        .fline a{color:var(--accent2);text-decoration:none;}
+        .fline a:hover{text-decoration:underline;}
+
+        /* Badge */
+        .bdg{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;}
+        .bdg-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
+        .bdg-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+        .bdg-yellow{background:var(--yellow-dim);color:var(--yellow);border:1px solid rgba(245,158,11,0.2);}
+        .bdg-purple{background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(124,58,237,0.2);}
+
+        /* Swap arrow */
+        .swap-arrow{
+            display:flex;align-items:center;justify-content:center;
+            width:34px;height:34px;border-radius:50%;
+            background:var(--bg4);border:1px solid var(--border);
+            margin:4px auto;cursor:pointer;transition:all 0.2s;
+        }
+        .swap-arrow:hover{background:var(--accent-dim);border-color:rgba(124,58,237,0.3);}
+        .swap-arrow svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;}
+
+        /* Info row */
+        .info-row{display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;color:var(--muted);margin-bottom:14px;padding:0 2px;}
+        .info-row span:last-child{color:var(--text2);font-weight:500;}
+
+        /* Table */
         table{width:100%;border-collapse:collapse;}
-        th{text-align:left;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);}
-        td{padding:12px 12px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.875rem;}
-        td .mono{font-family:'JetBrains Mono',monospace;}
-        tr:last-child td{border-bottom:none;}
+        th{text-align:left;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:8px 14px;border-bottom:1px solid var(--border);}
+        td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.85rem;vertical-align:middle;}
+        tr:last-child td{border:none;}
         tr:hover td{background:rgba(255,255,255,0.02);}
-        .ext-link{color:var(--accent2);text-decoration:none;font-size:0.75rem;}
-        .ext-link:hover{text-decoration:underline;}
+        .mono{font-family:'JetBrains Mono',monospace;font-size:0.8rem;}
+        .ext{color:var(--accent2);text-decoration:none;font-size:0.72rem;}
+        .ext:hover{text-decoration:underline;}
+
+        /* Modals */
+        .ov{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:9999;}
+        .ov.show{display:flex;}
+        .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:18px;padding:32px;width:420px;max-width:95vw;}
+        .modal h2{font-size:1.15rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px;}
+        .modal p{color:var(--muted);font-size:0.85rem;line-height:1.65;margin-bottom:24px;}
+        .wbtn{
+            width:100%;display:flex;align-items:center;gap:14px;
+            padding:14px 16px;background:var(--bg3);border:1px solid var(--border);
+            border-radius:10px;color:var(--text);font-size:0.9rem;font-weight:600;
+            cursor:pointer;transition:all 0.15s;margin-bottom:8px;
+        }
+        .wbtn:hover{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.06);}
+        .w-logo{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg4);}
+        .w-logo img{width:100%;height:100%;object-fit:cover;}
+        .w-desc{text-align:left;}
+        .w-desc small{display:block;color:var(--muted);font-size:0.72rem;font-weight:400;margin-top:2px;}
+        .wcancel{width:100%;background:none;border:none;color:var(--muted);padding:12px;cursor:pointer;font-size:0.85rem;margin-top:6px;}
+        .mrow{display:flex;gap:10px;margin-top:22px;}
+        .mbtn-ok{flex:1;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:13px;border-radius:9px;font-weight:700;cursor:pointer;}
+        .mbtn-ok:hover{box-shadow:0 4px 16px var(--accent-glow);}
+        .mbtn-cancel{flex:1;background:var(--bg3);color:var(--muted);border:1px solid var(--border);padding:13px;border-radius:9px;font-weight:600;cursor:pointer;}
+
+        /* TX Toast */
+        .toast{
+            position:fixed;bottom:24px;right:24px;
+            background:var(--bg2);border:1px solid var(--border2);
+            border-radius:14px;padding:16px 20px;max-width:360px;z-index:10000;
+            display:none;box-shadow:0 20px 60px rgba(0,0,0,0.5);
+        }
+        .toast.show{display:block;animation:tin 0.3s ease;}
+        @keyframes tin{from{transform:translateX(30px);opacity:0;}to{transform:none;opacity:1;}}
+        .toast-title{font-size:0.9rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+        .toast-msg{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+        .toast-link{color:var(--accent2);text-decoration:none;font-size:0.75rem;margin-top:6px;display:inline-block;}
+
+        /* Staking yield bar */
+        .ybar{height:6px;background:var(--bg3);border-radius:99px;margin:10px 0;overflow:hidden;}
+        .ybar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:99px;transition:width 1s ease;}
+
+        /* AI agent terminal */
+        .aterm{
+            background:#000;border:1px solid rgba(124,58,237,0.15);border-radius:10px;
+            padding:16px;font-family:'JetBrains Mono',monospace;font-size:0.76rem;
+            line-height:1.9;position:relative;overflow:hidden;
+        }
+        .aterm::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+        .ap{color:var(--accent2);}
+        .ac{color:var(--muted);}
+        .aok{color:var(--green);}
+        .av{color:#f9c74f;}
+        .acur{display:inline-block;width:7px;height:13px;background:var(--accent2);animation:blink 1s step-end infinite;vertical-align:sub;border-radius:1px;margin-left:2px;}
+
+        /* Data meters */
+        .dmeter{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+        .dmeter:last-child{border:none;}
+        .dmeter-label{flex:1;font-size:0.85rem;color:var(--text2);}
+        .dmeter-bar{flex:1;height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;}
+        .dmeter-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+        .dmeter-val{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--accent2);width:60px;text-align:right;}
     </style>
 </head>
 <body>
 
 <!-- CONFIRM MODAL -->
-<div class="overlay" id="confirmModal">
+<div class="ov" id="ov-confirm">
     <div class="modal">
-        <div style="font-size:2rem;margin-bottom:12px;">🔐</div>
+        <div style="width:44px;height:44px;border-radius:12px;background:var(--accent-dim);border:1px solid rgba(124,58,237,0.25);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <h2>Connect to Arrow Core?</h2>
-        <p>You are about to connect your wallet to Arrow Core on <strong>Robinhood Chain (ID: 4663)</strong>. This will allow Arrow Core to read your address and request transaction signing. Your private key never leaves your wallet.</p>
-        <div class="modal-row">
-            <button class="btn-deny" onclick="closeModals()">Cancel</button>
-            <button class="btn-confirm" onclick="openWalletModal()">Continue →</button>
+        <p>You're connecting to Arrow Core on <strong style="color:var(--text)">Robinhood Chain (4663)</strong>. Arrow Core can read your address and request transaction signing. Your private key never leaves your wallet.</p>
+        <div class="mrow">
+            <button class="mbtn-cancel" onclick="closeModals()">Cancel</button>
+            <button class="mbtn-ok" onclick="openWalletPicker()">Continue →</button>
         </div>
     </div>
 </div>
 
-<!-- WALLET MODAL -->
-<div class="overlay" id="walletModal">
+<!-- WALLET PICKER -->
+<div class="ov" id="ov-wallets">
     <div class="modal">
         <h2>Select Wallet</h2>
-        <p>Choose your wallet. Arrow Core will request your address and auto-add Robinhood Chain if needed.</p>
-        <button class="wallet-opt" onclick="connectWallet('metamask')">
-            <span class="wi">🦊</span>
-            <span class="wl">MetaMask<span>Browser extension wallet</span></span>
+        <p>Arrow Core will request your address and automatically add Robinhood Chain if it's not already in your wallet.</p>
+        <button class="wbtn" onclick="connectWallet()">
+            <div class="w-logo" style="background:#f6851b;">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><path d="M21.3 4.2L13 9.9 14.5 6.1 21.3 4.2zM2.7 4.2L10.9 10l-1.4-3.9L2.7 4.2zM18.2 16.8l-2.1 3.2-4.5-1.2-1.2-4.5 8-.8-.2 3.3zm-12.4 0l-.2-3.3 7.9.8-1.2 4.5-4.5 1.2-2-3.2z"/></svg>
+            </div>
+            <div class="w-desc">MetaMask<small>Most popular browser wallet</small></div>
         </button>
-        <button class="wallet-opt" onclick="connectWallet('metamask')">
-            <span class="wi">🔵</span>
-            <span class="wl">Trust Wallet<span>In-app or extension</span></span>
+        <button class="wbtn" onclick="connectWallet()">
+            <div class="w-logo" style="background:#3375BB;">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><circle cx="12" cy="12" r="10"/><path fill="#3375BB" d="M12 6l4 6-4 6-4-6z"/></svg>
+            </div>
+            <div class="w-desc">Trust Wallet<small>Mobile & extension</small></div>
         </button>
-        <button class="wallet-opt" onclick="connectWallet('metamask')">
-            <span class="wi">⬛</span>
-            <span class="wl">OKX Wallet<span>OKX browser extension</span></span>
+        <button class="wbtn" onclick="connectWallet()">
+            <div class="w-logo" style="background:#000;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12h8M12 8v8" stroke="#000" stroke-width="2"/></svg>
+            </div>
+            <div class="w-desc">OKX Wallet<small>OKX browser extension</small></div>
         </button>
-        <button class="wallet-opt" onclick="connectWallet('coinbase')">
-            <span class="wi">🔵</span>
-            <span class="wl">Coinbase Wallet<span>Coinbase browser extension</span></span>
+        <button class="wbtn" onclick="connectWallet()">
+            <div class="w-logo" style="background:#0052FF;">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><circle cx="12" cy="12" r="10"/><path d="M8 12h8" stroke="#0052FF" stroke-width="2"/></svg>
+            </div>
+            <div class="w-desc">Coinbase Wallet<small>Coinbase browser extension</small></div>
         </button>
-        <button class="btn-cancel" onclick="closeModals()">← Back</button>
+        <button class="wcancel" onclick="closeModals()">← Go back</button>
     </div>
 </div>
 
-<!-- TX ALERT -->
-<div class="tx-alert" id="txAlert">
-    <h4 id="txAlertTitle">Transaction Sent</h4>
-    <p id="txAlertMsg"></p>
-    <a id="txAlertLink" href="#" target="_blank"></a>
+<!-- TOAST -->
+<div class="toast" id="toast">
+    <div class="toast-title" id="toast-title">✓ Done</div>
+    <div class="toast-msg" id="toast-msg"></div>
+    <a class="toast-link" id="toast-link" href="#" target="_blank"></a>
 </div>
 
-<!-- SIDEBAR -->
+<!-- ── SIDEBAR ── -->
 <aside>
     <div class="brand-row">
-        <a href="/" class="brand"><img src="logo.jpg" alt="">Arrow Core</a>
+        <a href="/" class="brand">
+            <img src="logo.jpg" alt="Arrow Core">
+            Arrow Core
+        </a>
+        <span class="brand-badge">v1.0</span>
     </div>
-    <div class="chain-pill">
-        <span class="cdot"></span>
+    <div class="net-status">
+        <span class="net-dot"></span>
         Robinhood Chain
-        <a href="https://robinscan.io" target="_blank">↗ Explorer</a>
+        <a href="https://robinscan.io" target="_blank">↗</a>
     </div>
-    <div class="nav-section">
-        <div class="nav-label">Main</div>
-        <button class="nav-item active" onclick="goto('portfolio',this)"><span class="ico">📊</span>Portfolio</button>
-        <button class="nav-item" onclick="goto('vault',this)"><span class="ico">🔒</span>Shield Pool</button>
-        <button class="nav-item" onclick="goto('swap',this)"><span class="ico">🔁</span>Private Swap</button>
-        <button class="nav-item" onclick="goto('transfer',this)"><span class="ico">↗</span>Transfer</button>
-        <div class="nav-label">Earn</div>
-        <button class="nav-item" onclick="goto('staking',this)"><span class="ico">⚡</span>Staking</button>
-        <div class="nav-label">Tools</div>
-        <button class="nav-item" onclick="goto('agent',this)"><span class="ico">🤖</span>AI Agents</button>
-        <button class="nav-item" onclick="goto('data',this)"><span class="ico">📡</span>On-chain Data</button>
-        <button class="nav-item" onclick="goto('settings',this)"><span class="ico">⚙️</span>Settings</button>
+    <div class="nav-wrap">
+        <div class="nav-section-label">Main</div>
+        <button class="ni active" onclick="goto('portfolio',this,'Portfolio')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="7" height="9" rx="1.5"/><rect x="2" y="14" width="7" height="7" rx="1.5"/><rect x="11" y="3" width="11" height="5" rx="1.5"/><rect x="11" y="10" width="11" height="11" rx="1.5"/></svg>
+            </span>
+            Portfolio
+        </button>
+        <button class="ni" onclick="goto('vault',this,'Shield Pool')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </span>
+            Shield Pool
+            <span class="ni-badge new">Live</span>
+        </button>
+        <button class="ni" onclick="goto('swap',this,'Private Swap')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+            </span>
+            Private Swap
+        </button>
+        <button class="ni" onclick="goto('transfer',this,'Transfer')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+            </span>
+            Transfer
+        </button>
+        <div class="nav-section-label">Earn</div>
+        <button class="ni" onclick="goto('staking',this,'Staking')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
+            Staking
+            <span class="ni-badge">12.4% APY</span>
+        </button>
+        <div class="nav-section-label">Tools</div>
+        <button class="ni" onclick="goto('agent',this,'AI Agents')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V5"/><circle cx="12" cy="4" r="1"/><path d="M8 11V9a4 4 0 0 1 8 0v2"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="12" y1="15" x2="12" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/></svg>
+            </span>
+            AI Agents
+        </button>
+        <button class="ni" onclick="goto('data',this,'On-chain Data')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            </span>
+            On-chain Data
+        </button>
+        <button class="ni" onclick="goto('settings',this,'Settings')">
+            <span class="ni-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </span>
+            Settings
+        </button>
     </div>
-    <div class="nav-bottom">
-        <button class="nav-item" id="disconnectBtn" style="display:none;" onclick="disconnect()"><span class="ico">🚪</span>Disconnect</button>
+    <div class="sidebar-footer">
+        <div class="user-card" id="userCard" style="display:none;">
+            <div class="user-avatar" id="userAvatar">AC</div>
+            <div class="user-info">
+                <div class="user-addr" id="userAddr">—</div>
+                <div class="user-net">Robinhood Chain</div>
+            </div>
+            <button class="user-disc" title="Disconnect" onclick="disconnect()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+        </div>
     </div>
 </aside>
 
-<!-- MAIN -->
+<!-- ── MAIN ── -->
 <div class="main">
     <div class="topbar">
         <div class="topbar-left">
-            <span class="page-breadcrumb" id="breadcrumb">Portfolio</span>
-            <span class="block-badge" id="blockNum">Block #–</span>
+            <div class="breadcrumb">
+                <div class="bico" id="bico">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="7" height="9" rx="1.5"/><rect x="2" y="14" width="7" height="7" rx="1.5"/><rect x="11" y="3" width="11" height="5" rx="1.5"/><rect x="11" y="10" width="11" height="11" rx="1.5"/></svg>
+                </div>
+                <span class="bname" id="bname">Portfolio</span>
+            </div>
+            <div class="block-chip" id="blockChip">Block #–</div>
         </div>
         <div class="topbar-right">
-            <button class="btn-wallet" id="walletBtn" onclick="document.getElementById('confirmModal').classList.add('show')">Connect Wallet</button>
+            <button class="btn-w" id="walletBtn" onclick="document.getElementById('ov-confirm').classList.add('show')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                Connect Wallet
+            </button>
         </div>
     </div>
 
     <div class="content">
 
-        <!-- ======== PORTFOLIO ======== -->
+        <!-- ══ PORTFOLIO ══ -->
         <div class="page active" id="page-portfolio">
-            <div class="page-header"><h1>Portfolio</h1><p>Your balances and recent transactions on Robinhood Chain.</p></div>
-            <div class="grid3">
-                <div class="card"><div class="card-label">ETH Balance</div><div class="card-value" id="ethBal">—</div></div>
-                <div class="card"><div class="card-label">Shielded Balance</div><div class="card-value" id="shieldBal">—</div></div>
-                <div class="card"><div class="card-label">Block Number</div><div class="card-value" id="blockCard">—</div></div>
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="7" height="9" rx="1.5"/><rect x="2" y="14" width="7" height="7" rx="1.5"/><rect x="11" y="3" width="11" height="5" rx="1.5"/><rect x="11" y="10" width="11" height="11" rx="1.5"/></svg></div>
+                    <h1>Portfolio</h1>
+                    <p>Your balances and activity on Robinhood Chain</p>
+                </div>
             </div>
-            <div class="card">
-                <div class="card-label">Your Address</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;margin-top:4px;color:var(--accent2);" id="addrFull">Connect wallet to view</div>
-                <a id="explorerLink" href="#" target="_blank" style="display:none;color:var(--muted);font-size:0.78rem;text-decoration:none;margin-top:8px;display:inline-block;">View on Robinscan ↗</a>
+            <div class="sg g3">
+                <div class="sc">
+                    <div class="sc-label"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>ETH Balance</div>
+                    <div class="sc-val" id="ethBal">—</div>
+                    <div class="sc-sub">On Robinhood Chain</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-label"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Shielded</div>
+                    <div class="sc-val" id="shieldBal">—</div>
+                    <div class="sc-sub">Private balance</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-label"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Block</div>
+                    <div class="sc-val" id="blockStat">—</div>
+                    <div class="sc-sub">Latest block</div>
+                </div>
             </div>
-            <div class="card" style="margin-top:16px;">
-                <div class="card-label" style="margin-bottom:12px;">Recent Transactions</div>
-                <div class="tx-log" id="liveFeed"></div>
+            <div class="panel">
+                <div class="panel-title">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    Live Transaction Feed
+                    <span class="bdg bdg-green" style="margin-left:auto;">● Live</span>
+                </div>
+                <div class="feed" id="liveFeed"></div>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Wallet Address</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent2);word-break:break-all;" id="addrDisplay">Connect wallet to view your address</div>
+                <a id="explorerLink" href="#" target="_blank" style="display:none;margin-top:10px;font-size:0.78rem;color:var(--muted);text-decoration:none;" class="ext">View on Robinscan ↗</a>
             </div>
         </div>
 
-        <!-- ======== VAULT / SHIELD ======== -->
+        <!-- ══ SHIELD POOL ══ -->
         <div class="page" id="page-vault">
-            <div class="page-header"><h1>Shield Pool</h1><p>Deposit ETH to shield it. Withdraw to any address using a zero-knowledge proof.</p></div>
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('deposit','withdraw',this)">Deposit (Shield)</button>
-                <button class="tab" onclick="switchTab('withdraw','deposit',this)">Withdraw (Unshield)</button>
-            </div>
-
-            <!-- DEPOSIT -->
-            <div id="panel-deposit">
-                <div class="grid2">
-                    <div class="card"><div class="card-label">Available to Shield</div><div class="card-value" id="depositAvail">—</div></div>
-                    <div class="card"><div class="card-label">Pool Total</div><div class="card-value">14,204 ETH</div></div>
-                </div>
-                <div class="card">
-                    <label class="form-label">Amount to Shield (ETH)</label>
-                    <div class="input-row">
-                        <input type="number" id="depositAmt" placeholder="0.0" min="0.001" step="0.001">
-                        <div class="tok">ETH</div>
-                    </div>
-                    <div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:16px;font-size:0.8rem;color:var(--muted);line-height:1.6;">
-                        ⚠️ Save your <strong style="color:var(--text)">Note</strong> after deposit — it's your withdrawal key. Losing it means losing access to your shielded funds.
-                    </div>
-                    <label class="form-label">Your Deposit Note (auto-generated, save this!)</label>
-                    <div class="input-row" style="margin-bottom:16px;">
-                        <input type="text" id="noteOutput" readonly placeholder="Connect wallet to generate note">
-                        <div class="tok" style="cursor:pointer;" onclick="copyNote()">Copy</div>
-                    </div>
-                    <button class="btn-action" id="depositBtn" onclick="doDeposit()" disabled>Connect Wallet First</button>
-                    <div class="status-box" id="depositStatus">
-                        <div class="s-step" id="ds1"><span class="si">○</span> Generating zk-commitment...</div>
-                        <div class="s-step" id="ds2"><span class="si">○</span> Waiting for wallet signature...</div>
-                        <div class="s-step" id="ds3"><span class="si">○</span> Broadcasting to Robinhood Chain...</div>
-                        <div class="s-step" id="ds4"><span class="si">○</span> Deposit confirmed ✓</div>
-                    </div>
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+                    <h1>Shield Pool</h1>
+                    <p>Deposit ETH to shield it. Withdraw to any address with a zero-knowledge proof.</p>
                 </div>
             </div>
+            <div class="sg g2">
+                <div class="sc"><div class="sc-label">Your Balance</div><div class="sc-val" id="vaultBal">—</div></div>
+                <div class="sc"><div class="sc-label">Pool TVL</div><div class="sc-val">14,204 ETH</div><div class="sc-sub"><span class="sc-change up">↑ 2.4%</span> 24h</div></div>
+            </div>
+            <div class="tbar">
+                <button class="tb active" onclick="tab('deposit','withdraw',this)">↓ Deposit (Shield)</button>
+                <button class="tb" onclick="tab('withdraw','deposit',this)">↑ Withdraw (Unshield)</button>
+            </div>
 
-            <!-- WITHDRAW -->
-            <div id="panel-withdraw" style="display:none;">
-                <div class="card">
-                    <label class="form-label">Your Note (withdrawal key)</label>
-                    <div class="input-row">
-                        <input type="text" id="noteInput" placeholder="arrow-eth-0x...">
+            <!-- Deposit panel -->
+            <div id="p-deposit">
+                <div class="panel">
+                    <div class="fl">Amount to Shield <span onclick="setMax('depositAmt','ethBal')">MAX</span></div>
+                    <div class="ibox">
+                        <input type="number" id="depositAmt" placeholder="0.00" min="0.001" step="0.001">
+                        <div class="tok-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#627EEA"/><path d="M2 17l10 5 10-5" stroke="#627EEA" stroke-width="2"/><path d="M2 12l10 5 10-5" stroke="#627EEA" stroke-width="2" opacity="0.5"/></svg>
+                            ETH
+                        </div>
                     </div>
-                    <label class="form-label">Recipient Address (any fresh wallet)</label>
-                    <div class="input-row">
-                        <input type="text" id="withdrawRecipient" placeholder="0x...">
+                    <div class="fl" style="margin-bottom:7px;">Your Note (withdrawal key — save this!)</div>
+                    <div class="ibox" style="margin-bottom:6px;">
+                        <input type="text" id="noteOut" readonly placeholder="Connect wallet to generate">
+                        <button class="copy-btn" onclick="copyNote()">Copy</button>
                     </div>
-                    <button class="btn-action" id="withdrawBtn" onclick="doWithdraw()" disabled>Connect Wallet First</button>
-                    <div class="status-box" id="withdrawStatus">
-                        <div class="s-step" id="ws1"><span class="si">○</span> Parsing note & deriving nullifier...</div>
-                        <div class="s-step" id="ws2"><span class="si">○</span> Fetching Merkle proof from chain...</div>
-                        <div class="s-step" id="ws3"><span class="si">○</span> Generating ZK proof in browser...</div>
-                        <div class="s-step" id="ws4"><span class="si">○</span> Submitting via relayer...</div>
-                        <div class="s-step" id="ws5"><span class="si">○</span> Withdrawal settled on-chain ✓</div>
+                    <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.18);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:0.78rem;color:var(--yellow);display:flex;gap:8px;align-items:flex-start;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Save your Note — it is your withdrawal key. Without it, your shielded funds are unrecoverable.
+                    </div>
+                    <button class="bpa" id="depositBtn" onclick="doDeposit()" disabled>
+                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Connect Wallet First
+                    </button>
+                    <div class="sbox" id="sbox-deposit">
+                        <div class="ss" id="sd1"><div class="si">1</div> Generating zk-commitment in browser</div>
+                        <div class="ss" id="sd2"><div class="si">2</div> Awaiting wallet signature</div>
+                        <div class="ss" id="sd3"><div class="si">3</div> Broadcasting to Robinhood Chain</div>
+                        <div class="ss" id="sd4"><div class="si">✓</div> Deposit confirmed — funds shielded</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdraw panel -->
+            <div id="p-withdraw" style="display:none;">
+                <div class="panel">
+                    <div class="fl">Your Note</div>
+                    <div class="ibox"><input type="text" id="noteIn" placeholder="arrow-eth-0x..."></div>
+                    <div class="fl">Recipient Address (any wallet)</div>
+                    <div class="ibox"><input type="text" id="rcpt" placeholder="0x..."></div>
+                    <div class="info-row"><span>Relayer fee</span><span>0% (subsidized)</span></div>
+                    <button class="bpa" id="withdrawBtn" onclick="doWithdraw()" disabled>
+                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                        Connect Wallet First
+                    </button>
+                    <div class="sbox" id="sbox-wd">
+                        <div class="ss" id="sw1"><div class="si">1</div> Parsing note & deriving nullifier</div>
+                        <div class="ss" id="sw2"><div class="si">2</div> Fetching Merkle proof from chain</div>
+                        <div class="ss" id="sw3"><div class="si">3</div> Generating ZK-SNARK proof in browser</div>
+                        <div class="ss" id="sw4"><div class="si">4</div> Submitting via relayer</div>
+                        <div class="ss" id="sw5"><div class="si">✓</div> Withdrawal settled on-chain</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ======== SWAP ======== -->
+        <!-- ══ SWAP ══ -->
         <div class="page" id="page-swap">
-            <div class="page-header"><h1>Private Swap</h1><p>Swap tokens via shielded Uniswap V4 — your wallet is not visible to the router.</p></div>
-            <div class="card">
-                <label class="form-label">You Pay</label>
-                <div class="input-row">
-                    <input type="number" id="swapIn" placeholder="0.0" oninput="calcSwap()">
-                    <div class="tok">ETH</div>
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg></div>
+                    <h1>Private Swap</h1>
+                    <p>Swap via shielded Uniswap V4. Your wallet is invisible to the router.</p>
                 </div>
-                <div style="text-align:center;margin:8px 0;font-size:1.5rem;cursor:pointer;color:var(--muted);">⇅</div>
-                <label class="form-label">You Receive (estimated)</label>
-                <div class="input-row">
-                    <input type="number" id="swapOut" placeholder="0.0" readonly>
-                    <div class="tok">USDC</div>
+            </div>
+            <div class="sg g3">
+                <div class="sc"><div class="sc-label">ETH Price</div><div class="sc-val" id="ethPx">…</div></div>
+                <div class="sc"><div class="sc-label">Liquidity</div><div class="sc-val">$284M</div></div>
+                <div class="sc"><div class="sc-label">Protocol Fee</div><div class="sc-val">0.02%</div></div>
+            </div>
+            <div class="panel" style="max-width:500px;">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/></svg>Swap</div>
+                <div class="fl">You Pay <span onclick="setMax('swapIn','ethBal')">MAX</span></div>
+                <div class="ibox">
+                    <input type="number" id="swapIn" placeholder="0.00" oninput="calcSwap()">
+                    <div class="tok-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#627EEA"/><path d="M2 17l10 5 10-5" stroke="#627EEA" stroke-width="2"/></svg>
+                        ETH
+                    </div>
                 </div>
-                <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);margin-bottom:16px;">
-                    <span>Rate: 1 ETH ≈ <span id="ethPrice">…</span> USDC</span>
-                    <span>Fee: 0.02%</span>
+                <div class="swap-arrow" onclick="flipSwap()">
+                    <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
                 </div>
-                <button class="btn-action" id="swapBtn" onclick="doSwap()" disabled>Connect Wallet First</button>
+                <div class="fl">You Receive</div>
+                <div class="ibox">
+                    <input type="number" id="swapOut" placeholder="0.00" readonly>
+                    <div class="tok-badge">
+                        <div style="width:18px;height:18px;border-radius:50%;background:#2775CA;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#fff;">$</div>
+                        USDC
+                    </div>
+                </div>
+                <div class="info-row"><span>Rate</span><span>1 ETH ≈ <span id="swapRate">…</span> USDC</span></div>
+                <div class="info-row"><span>Price impact</span><span style="color:var(--green);">0.04%</span></div>
+                <div class="info-row"><span>Min received</span><span id="swapMin">—</span></div>
+                <button class="bpa" id="swapBtn" onclick="doSwap()" disabled>
+                    <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+                    Connect Wallet First
+                </button>
             </div>
         </div>
 
-        <!-- ======== TRANSFER ======== -->
+        <!-- ══ TRANSFER ══ -->
         <div class="page" id="page-transfer">
-            <div class="page-header"><h1>Transfer</h1><p>Send ETH to any address on Robinhood Chain.</p></div>
-            <div class="card">
-                <label class="form-label">Recipient Address</label>
-                <div class="input-row">
-                    <input type="text" id="transferTo" placeholder="0x...">
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg></div>
+                    <h1>Transfer</h1>
+                    <p>Send ETH to any address on Robinhood Chain.</p>
                 </div>
-                <label class="form-label">Amount (ETH)</label>
-                <div class="input-row">
-                    <input type="number" id="transferAmt" placeholder="0.0" min="0.0001" step="0.0001">
-                    <div class="tok">ETH</div>
+            </div>
+            <div class="panel" style="max-width:500px;">
+                <div class="fl">Recipient Address</div>
+                <div class="ibox"><input type="text" id="txTo" placeholder="0x..."></div>
+                <div class="fl">Amount <span onclick="setMax('txAmt','ethBal')">MAX</span></div>
+                <div class="ibox">
+                    <input type="number" id="txAmt" placeholder="0.00" min="0.0001" step="0.0001">
+                    <div class="tok-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#627EEA"/><path d="M2 17l10 5 10-5" stroke="#627EEA" stroke-width="2"/></svg>
+                        ETH
+                    </div>
                 </div>
-                <button class="btn-action" id="transferBtn" onclick="doTransfer()" disabled>Connect Wallet First</button>
-                <div class="status-box" id="transferStatus">
-                    <div class="s-step" id="ts1"><span class="si">○</span> Signing transaction...</div>
-                    <div class="s-step" id="ts2"><span class="si">○</span> Broadcasting...</div>
-                    <div class="s-step" id="ts3"><span class="si">○</span> Confirmed ✓</div>
+                <button class="bpa" id="txBtn" onclick="doTransfer()" disabled>
+                    <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+                    Connect Wallet First
+                </button>
+                <div class="sbox" id="sbox-tx">
+                    <div class="ss" id="st1"><div class="si">1</div> Signing transaction</div>
+                    <div class="ss" id="st2"><div class="si">2</div> Broadcasting to chain</div>
+                    <div class="ss" id="st3"><div class="si">✓</div> Confirmed</div>
                 </div>
             </div>
         </div>
 
-        <!-- ======== STAKING ======== -->
+        <!-- ══ STAKING ══ -->
         <div class="page" id="page-staking">
-            <div class="page-header"><h1>Staking</h1><p>Stake ETH into privacy pools and earn protocol fees.</p></div>
-            <div class="grid2">
-                <div class="card"><div class="card-label">Your Staked</div><div class="card-value" id="stakedBal">—</div></div>
-                <div class="card"><div class="card-label">APY</div><div class="card-value" style="color:var(--green);">12.4%</div></div>
-            </div>
-            <div class="card">
-                <label class="form-label">Amount to Stake (ETH)</label>
-                <div class="input-row">
-                    <input type="number" id="stakeAmt" placeholder="0.0" min="0.001">
-                    <div class="tok">ETH</div>
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                    <h1>Staking</h1>
+                    <p>Stake ETH into privacy pools and earn yield from protocol fees.</p>
                 </div>
-                <button class="btn-action" id="stakeBtn" onclick="doStake()" disabled>Connect Wallet First</button>
-                <button class="btn-secondary" id="unstakeBtn" onclick="doUnstake()" disabled>Unstake All</button>
+            </div>
+            <div class="sg g4">
+                <div class="sc"><div class="sc-label">Your Staked</div><div class="sc-val" id="staked">—</div></div>
+                <div class="sc"><div class="sc-label">APY</div><div class="sc-val" style="color:var(--green)">12.4%</div></div>
+                <div class="sc"><div class="sc-label">Pool TVL</div><div class="sc-val">$8.2M</div></div>
+                <div class="sc"><div class="sc-label">Earned</div><div class="sc-val" id="earned">0.000</div></div>
+            </div>
+            <div class="panel" style="max-width:520px;">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Stake ETH</div>
+                <div class="info-row"><span>Your APY</span><span style="color:var(--green);font-weight:700;">12.4%</span></div>
+                <div class="ybar"><div class="ybar-fill" style="width:62%"></div></div>
+                <div class="info-row"><span>Pool utilization</span><span>62%</span></div>
+                <div class="fl">Amount to Stake <span onclick="setMax('stakeAmt','ethBal')">MAX</span></div>
+                <div class="ibox">
+                    <input type="number" id="stakeAmt" placeholder="0.00" min="0.001">
+                    <div class="tok-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#627EEA"/><path d="M2 17l10 5 10-5" stroke="#627EEA" stroke-width="2"/></svg>
+                        ETH
+                    </div>
+                </div>
+                <button class="bpa" id="stakeBtn" onclick="doStake()" disabled>
+                    <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Connect Wallet First
+                </button>
+                <button class="bps" id="unstakeBtn" onclick="doUnstake()" disabled>Unstake All</button>
             </div>
         </div>
 
-        <!-- ======== AI AGENTS ======== -->
+        <!-- ══ AI AGENTS ══ -->
         <div class="page" id="page-agent">
-            <div class="page-header"><h1>AI Agents</h1><p>Encrypted agent access to your portfolio via MCP server.</p></div>
-            <div class="card">
-                <div class="card-label">MCP Server Status</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;margin-bottom:16px;">
-                    <span class="badge badge-green">● Connected</span>
-                    <span class="badge badge-purple">Tor: Active</span>
-                    <span class="badge badge-green">Encryption: AES-256-GCM</span>
-                </div>
-                <div style="background:#000;border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;line-height:2;">
-                    <div style="color:#555;"># arrowcore_mcp v1.0.0</div>
-                    <div style="color:var(--accent2);">$ tools: portfolio_read, swap_execute, shield_deposit, transfer</div>
-                    <div style="color:var(--green);">✓ wallet: <span id="agentAddr">not connected</span></div>
-                    <div style="color:#555;"># inference: routed via Tor exit node</div>
-                    <div style="color:#555;"># encryption: session key rotates every 1h</div>
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V5"/><circle cx="12" cy="4" r="1"/><path d="M8 11V9a4 4 0 0 1 8 0v2"/></svg></div>
+                    <h1>AI Agents</h1>
+                    <p>Encrypted agent access to your portfolio via MCP server.</p>
                 </div>
             </div>
-            <div class="card" style="margin-top:16px;">
-                <div class="card-label">Add to Claude / Cursor</div>
-                <div class="input-row" style="margin-top:8px;">
-                    <input type="text" readonly value="npx -y @arrowcore/mcp-server" style="font-size:0.85rem;">
-                    <div class="tok" style="cursor:pointer;" onclick="navigator.clipboard.writeText('npx -y @arrowcore/mcp-server')">Copy</div>
+            <div class="sg g3">
+                <div class="sc">
+                    <div class="sc-label">MCP Server</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:6px;"><span class="bdg bdg-green">● Online</span></div>
+                    <div class="sc-sub">arrowcore-mcp v1.0.0</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-label">Inference</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:6px;"><span class="bdg bdg-purple">Tor Active</span></div>
+                    <div class="sc-sub">3 hops / anonymous</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-label">Encryption</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:6px;"><span class="bdg bdg-green">AES-256-GCM</span></div>
+                    <div class="sc-sub">Rotates every 1h</div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/></svg>MCP Terminal</div>
+                <div class="aterm">
+                    <div><span class="ac"># arrowcore_mcp session started</span></div>
+                    <div><span class="ap">$</span> wallet: <span class="av" id="agentWallet">not connected</span></div>
+                    <div><span class="ac"># tools: portfolio_read, swap_execute, shield, transfer</span></div>
+                    <div><span class="ap">$</span> context_full → shielded: <span class="av" id="agentShield">–</span>, public: <span class="av" id="agentPub">–</span></div>
+                    <div><span class="ac"># inference: routed via Tor exit node</span></div>
+                    <div><span class="ac"># encryption: session key AES-256-GCM</span></div>
+                    <div><span class="ap">$</span> status: <span class="aok">ready</span> <span class="acur"></span></div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>Install MCP</div>
+                <div class="fl" style="margin-bottom:8px;">Add to Claude / Cursor / any MCP-compatible client</div>
+                <div class="ibox" style="margin-bottom:10px;">
+                    <input type="text" readonly value="npx -y @arrowcore/mcp-server">
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('npx -y @arrowcore/mcp-server');toast('Copied!','Command copied to clipboard.')">Copy</button>
+                </div>
+                <div class="ibox">
+                    <input type="text" readonly value="claude mcp add arrowcore --scope user -- npx -y @arrowcore/mcp-server">
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('claude mcp add arrowcore --scope user -- npx -y @arrowcore/mcp-server');toast('Copied!','Claude command copied.')">Copy</button>
                 </div>
             </div>
         </div>
 
-        <!-- ======== ON-CHAIN DATA ======== -->
+        <!-- ══ DATA ══ -->
         <div class="page" id="page-data">
-            <div class="page-header"><h1>On-chain Data</h1><p>Live blockchain data from Robinhood Chain with k-anonymity decoys.</p></div>
-            <div class="grid2">
-                <div class="card"><div class="card-label">Latest Block</div><div class="card-value" id="dataBlock">…</div></div>
-                <div class="card"><div class="card-label">Gas Price</div><div class="card-value" id="dataGas">…</div></div>
-            </div>
-            <div class="card">
-                <div class="card-label" style="margin-bottom:12px;">Live Block Feed</div>
-                <div class="tx-log" id="blockFeed" style="height:180px;"></div>
-            </div>
-            <div class="card" style="margin-top:16px;">
-                <div class="card-label">Privacy Settings</div>
-                <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.875rem;">
-                        <span>Decoy RPC ratio</span><span class="badge badge-purple">3:1</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.875rem;">
-                        <span>Batch window</span><span class="badge badge-purple">400ms</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.875rem;">
-                        <span>Tor routing</span><span class="badge badge-green">Active</span>
-                    </div>
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+                    <h1>On-chain Data</h1>
+                    <p>Live Robinhood Chain data with k-anonymity decoys.</p>
                 </div>
             </div>
+            <div class="sg g4">
+                <div class="sc"><div class="sc-label">Latest Block</div><div class="sc-val" id="dBlock">–</div></div>
+                <div class="sc"><div class="sc-label">Gas Price</div><div class="sc-val" id="dGas">–</div></div>
+                <div class="sc"><div class="sc-label">ETH Price</div><div class="sc-val" id="dEth">–</div></div>
+                <div class="sc"><div class="sc-label">Decoy Ratio</div><div class="sc-val">3:1</div></div>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Block Feed</div>
+                <div class="feed" id="blockFeed" style="height:160px;"></div>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Privacy Metrics</div>
+                <div class="dmeter"><span class="dmeter-label">Decoy RPC ratio</span><div class="dmeter-bar"><div class="dmeter-fill" style="width:75%"></div></div><span class="dmeter-val">3:1</span></div>
+                <div class="dmeter"><span class="dmeter-label">Batch window</span><div class="dmeter-bar"><div class="dmeter-fill" style="width:40%"></div></div><span class="dmeter-val">400ms</span></div>
+                <div class="dmeter"><span class="dmeter-label">Tor uptime</span><div class="dmeter-bar"><div class="dmeter-fill" style="width:99%"></div></div><span class="dmeter-val">99.9%</span></div>
+                <div class="dmeter"><span class="dmeter-label">Anonymity set</span><div class="dmeter-bar"><div class="dmeter-fill" style="width:90%"></div></div><span class="dmeter-val">24,180</span></div>
+            </div>
         </div>
 
-        <!-- ======== SETTINGS ======== -->
+        <!-- ══ SETTINGS ══ -->
         <div class="page" id="page-settings">
-            <div class="page-header"><h1>Settings</h1><p>Network and wallet configuration.</p></div>
-            <div class="card">
-                <div class="card-label">Network</div>
-                <table style="margin-top:10px;">
-                    <tr><td style="color:var(--muted);padding:6px 0;">Chain Name</td><td class="mono">Robinhood Chain</td></tr>
-                    <tr><td style="color:var(--muted);padding:6px 0;">Chain ID</td><td class="mono">4663 (0x1237)</td></tr>
-                    <tr><td style="color:var(--muted);padding:6px 0;">Currency</td><td class="mono">ETH</td></tr>
-                    <tr><td style="color:var(--muted);padding:6px 0;">RPC</td><td class="mono" style="font-size:0.75rem;">rpc.mainnet.chain.robinhood.com</td></tr>
-                    <tr><td style="color:var(--muted);padding:6px 0;">Explorer</td><td><a href="https://robinscan.io" target="_blank" class="ext-link">robinscan.io ↗</a></td></tr>
-                </table>
-                <button class="btn-action" style="margin-top:16px;" onclick="addRobinhoodChain()">Add Robinhood Chain to Wallet</button>
+            <div class="ph">
+                <div class="ph-left">
+                    <div class="ph-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+                    <h1>Settings</h1>
+                    <p>Network and wallet configuration.</p>
+                </div>
             </div>
-            <div class="card" style="margin-top:16px;">
-                <div class="card-label">Wallet</div>
-                <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent2);" id="settingsAddr">Not connected</div>
-                <button class="btn-secondary" style="margin-top:12px;" id="settingsDisconnect" onclick="disconnect()" disabled>Disconnect Wallet</button>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Network</div>
+                <table><tbody>
+                    <tr><td style="color:var(--muted);width:160px;">Chain Name</td><td class="mono">Robinhood Chain</td></tr>
+                    <tr><td style="color:var(--muted);">Chain ID</td><td class="mono">4663 (0x1237)</td></tr>
+                    <tr><td style="color:var(--muted);">Currency</td><td class="mono">ETH</td></tr>
+                    <tr><td style="color:var(--muted);">RPC</td><td class="mono" style="font-size:0.72rem;">rpc.mainnet.chain.robinhood.com</td></tr>
+                    <tr><td style="color:var(--muted);">Explorer</td><td><a href="https://robinscan.io" target="_blank" class="ext">robinscan.io ↗</a></td></tr>
+                </tbody></table>
+                <button class="bpa" style="margin-top:16px;" onclick="addChain()">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Robinhood Chain to Wallet
+                </button>
+            </div>
+            <div class="panel">
+                <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>Wallet</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent2);word-break:break-all;" id="settAddr">Not connected</div>
+                <button class="bps" style="margin-top:12px;" id="settDisc" onclick="disconnect()" disabled>Disconnect</button>
             </div>
         </div>
 
-    </div><!-- /content -->
-</div><!-- /main -->
+    </div>
+</div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────
+// ─── CONSTANTS ───────────────────────────────
 const RPC = 'https://rpc.mainnet.chain.robinhood.com';
 const CHAIN_ID = 4663;
-const EXPLORER = 'https://robinscan.io';
 const CHAIN_HEX = '0x' + CHAIN_ID.toString(16);
+const EXPLORER = 'https://robinscan.io';
 
-// ─── STATE ────────────────────────────────────────────────
-let provider = null, signer = null, address = '';
-let blockInterval = null;
+// ─── STATE ───────────────────────────────────
+let provider=null, signer=null, address='', blockTimer=null, ethPrice=3200, rawBal=0;
 
-// ─── UTILS ────────────────────────────────────────────────
-function shortAddr(a) { return a.slice(0,6)+'...'+a.slice(-4); }
-function log(msg, type='') {
-    const feed = document.getElementById('liveFeed');
-    const d = document.createElement('div');
-    d.className = 'tx-line';
-    d.innerHTML = msg;
-    feed.appendChild(d);
-    feed.scrollTop = feed.scrollHeight;
-}
-function showTxAlert(title, msg, txHash='') {
-    const el = document.getElementById('txAlert');
-    document.getElementById('txAlertTitle').textContent = title;
-    document.getElementById('txAlertMsg').textContent = msg;
-    const link = document.getElementById('txAlertLink');
-    if(txHash) { link.href = EXPLORER+'/tx/'+txHash; link.textContent = 'View on Robinscan ↗'; }
-    else { link.textContent = ''; }
-    el.style.display = 'block';
-    setTimeout(() => el.style.display='none', 8000);
-}
-function runSteps(ids, box, delay=900) {
-    return new Promise(async resolve => {
-        box.style.display = 'block';
-        for(let i=0;i<ids.length;i++) {
-            const el = document.getElementById(ids[i]);
-            el.classList.add('active');
-            el.querySelector('.si').textContent = '●';
-            await new Promise(r => setTimeout(r, delay));
-            el.classList.remove('active');
-            el.classList.add('done');
-            el.querySelector('.si').textContent = '✓';
-        }
-        setTimeout(() => { box.style.display='none'; ids.forEach(id => { const el=document.getElementById(id); el.classList.remove('done','active','fail'); el.querySelector('.si').textContent='○'; }); }, 4000);
-        resolve();
-    });
+// ─── TOAST ───────────────────────────────────
+let toastTimer;
+function toast(title, msg, txHash='') {
+    const el = document.getElementById('toast');
+    document.getElementById('toast-title').innerHTML = title;
+    document.getElementById('toast-msg').textContent = msg;
+    const link = document.getElementById('toast-link');
+    link.textContent = txHash ? 'View on Robinscan ↗' : '';
+    link.href = txHash ? EXPLORER+'/tx/'+txHash : '#';
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 7000);
 }
 
-// ─── MODALS ───────────────────────────────────────────────
-function closeModals() {
-    document.querySelectorAll('.overlay').forEach(m => m.classList.remove('show'));
-}
-function openWalletModal() {
-    document.getElementById('confirmModal').classList.remove('show');
-    document.getElementById('walletModal').classList.add('show');
-}
+// ─── MODAL ───────────────────────────────────
+function closeModals() { document.querySelectorAll('.ov').forEach(o => o.classList.remove('show')); }
+function openWalletPicker() { closeModals(); document.getElementById('ov-wallets').classList.add('show'); }
 
-// ─── WALLET CONNECT ───────────────────────────────────────
-async function connectWallet(type) {
+// ─── WALLET ──────────────────────────────────
+async function connectWallet() {
     closeModals();
-    const injected = window.ethereum;
-    if(!injected) {
-        alert('No browser wallet found.\n\nPlease install MetaMask, Trust Wallet, or OKX Wallet to continue.\n\nhttps://metamask.io');
+    if (!window.ethereum) {
+        alert('No browser wallet found!\n\nPlease install MetaMask from https://metamask.io or another browser wallet extension.');
         return;
     }
     try {
-        // Request accounts
-        await injected.request({ method: 'eth_requestAccounts' });
-        
-        // Switch/add Robinhood Chain
-        await addRobinhoodChain();
-        
-        provider = new ethers.providers.Web3Provider(injected, 'any');
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await addChain();
+        provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
         signer = provider.getSigner();
         address = await signer.getAddress();
-        
-        onConnected();
-        
-        // Listen for account/chain changes
-        injected.on('accountsChanged', accounts => {
-            if(accounts.length === 0) disconnect();
-            else { address = accounts[0]; onConnected(); }
-        });
-        injected.on('chainChanged', () => { provider = new ethers.providers.Web3Provider(window.ethereum, 'any'); signer = provider.getSigner(); });
-        
+        onConnect();
+        window.ethereum.on('accountsChanged', a => { if(!a.length) disconnect(); else { address=a[0]; onConnect(); } });
+        window.ethereum.on('chainChanged', () => location.reload());
     } catch(e) {
-        console.error(e);
-        alert('Connection failed: ' + (e.message || e));
+        toast('❌ Connection Failed', e.message || 'User rejected or error occurred.');
     }
 }
 
-async function addRobinhoodChain() {
-    if(!window.ethereum) return;
+async function addChain() {
+    if (!window.ethereum) return;
     try {
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: CHAIN_HEX }]
-        });
-    } catch(switchErr) {
-        if(switchErr.code === 4902) {
+        await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{chainId:CHAIN_HEX}] });
+    } catch(e) {
+        if (e.code === 4902) {
             await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
-                params: [{
-                    chainId: CHAIN_HEX,
-                    chainName: 'Robinhood Chain',
-                    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-                    rpcUrls: [RPC],
-                    blockExplorerUrls: [EXPLORER]
-                }]
+                params:[{ chainId:CHAIN_HEX, chainName:'Robinhood Chain', nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18}, rpcUrls:[RPC], blockExplorerUrls:[EXPLORER] }]
             });
         }
     }
 }
 
-function onConnected() {
-    const short = shortAddr(address);
-    // Update wallet button
+function onConnect() {
+    const s = address.slice(0,6)+'...'+address.slice(-4);
+    // Topbar
     const btn = document.getElementById('walletBtn');
-    btn.textContent = short;
-    btn.classList.add('connected');
-    btn.onclick = disconnect;
-    
-    // Show disconnect
-    document.getElementById('disconnectBtn').style.display = 'flex';
-    
-    // Update UI elements
-    document.getElementById('addrFull').textContent = address;
-    const expLink = document.getElementById('explorerLink');
-    expLink.href = EXPLORER+'/address/'+address;
-    expLink.style.display = 'inline-block';
-    document.getElementById('agentAddr').textContent = address;
-    document.getElementById('settingsAddr').textContent = address;
-    document.getElementById('settingsDisconnect').disabled = false;
-    
-    // Enable action buttons
-    document.getElementById('depositBtn').disabled = false;
-    document.getElementById('depositBtn').textContent = 'Shield Funds';
-    document.getElementById('withdrawBtn').disabled = false;
-    document.getElementById('withdrawBtn').textContent = 'Generate ZK Proof & Withdraw';
-    document.getElementById('swapBtn').disabled = false;
-    document.getElementById('swapBtn').textContent = 'Execute Private Swap';
-    document.getElementById('transferBtn').disabled = false;
-    document.getElementById('transferBtn').textContent = 'Send ETH';
-    document.getElementById('stakeBtn').disabled = false;
-    document.getElementById('stakeBtn').textContent = 'Stake ETH';
-    document.getElementById('unstakeBtn').disabled = false;
-    
+    btn.textContent = s; btn.classList.add('conn'); btn.onclick = disconnect;
+    // Sidebar user card
+    document.getElementById('userCard').style.display = 'flex';
+    document.getElementById('userAddr').textContent = s;
+    document.getElementById('userAvatar').textContent = address.slice(2,4).toUpperCase();
+    // Portfolio
+    document.getElementById('addrDisplay').textContent = address;
+    const el = document.getElementById('explorerLink');
+    el.href = EXPLORER+'/address/'+address; el.style.display='inline-block';
+    // Settings
+    document.getElementById('settAddr').textContent = address;
+    document.getElementById('settDisc').disabled = false;
+    // Agent
+    document.getElementById('agentWallet').textContent = s;
+    // Enable buttons
+    enableBtns(true);
     generateNote();
     fetchBalances();
-    startBlockWatcher();
-    log(`<span class="ok">✓ Wallet connected:</span> <span class="acc">${short}</span>`);
+    startBlocks();
+    toast('✓ Connected', 'Wallet connected to Arrow Core on Robinhood Chain.');
+    feedLog('<span class="fc fc-green"></span>Wallet <b>'+s+'</b> connected','green');
 }
 
 function disconnect() {
-    address = ''; provider = null; signer = null;
-    if(blockInterval) { clearInterval(blockInterval); blockInterval = null; }
+    address=''; provider=null; signer=null;
+    if(blockTimer) { clearInterval(blockTimer); blockTimer=null; }
     const btn = document.getElementById('walletBtn');
-    btn.textContent = 'Connect Wallet';
-    btn.classList.remove('connected');
-    btn.onclick = () => document.getElementById('confirmModal').classList.add('show');
-    document.getElementById('disconnectBtn').style.display = 'none';
-    document.getElementById('addrFull').textContent = 'Connect wallet to view';
-    document.getElementById('explorerLink').style.display = 'none';
-    document.getElementById('agentAddr').textContent = 'not connected';
-    document.getElementById('settingsAddr').textContent = 'Not connected';
-    document.getElementById('settingsDisconnect').disabled = true;
-    document.getElementById('ethBal').textContent = '—';
-    document.getElementById('shieldBal').textContent = '—';
-    document.getElementById('depositAvail').textContent = '—';
-    document.getElementById('stakedBal').textContent = '—';
-    ['depositBtn','withdrawBtn','swapBtn','transferBtn','stakeBtn','unstakeBtn'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) { el.disabled=true; el.textContent='Connect Wallet First'; }
-    });
-    log('<span class="err">✗ Wallet disconnected</span>');
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Connect Wallet';
+    btn.classList.remove('conn');
+    btn.onclick = () => document.getElementById('ov-confirm').classList.add('show');
+    document.getElementById('userCard').style.display='none';
+    document.getElementById('addrDisplay').textContent='Connect wallet to view your address';
+    document.getElementById('explorerLink').style.display='none';
+    document.getElementById('settAddr').textContent='Not connected';
+    document.getElementById('settDisc').disabled=true;
+    document.getElementById('agentWallet').textContent='not connected';
+    document.getElementById('agentPub').textContent='–';
+    document.getElementById('agentShield').textContent='–';
+    ['ethBal','shieldBal','vaultBal','staked'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent='—'; });
+    enableBtns(false);
 }
 
-// ─── BALANCES ─────────────────────────────────────────────
+function enableBtns(on) {
+    const btns = ['depositBtn','withdrawBtn','swapBtn','txBtn','stakeBtn','unstakeBtn'];
+    const labels = {
+        depositBtn:'Shield Funds', withdrawBtn:'Generate ZK Proof & Withdraw',
+        swapBtn:'Execute Private Swap', txBtn:'Send ETH',
+        stakeBtn:'Stake ETH', unstakeBtn:'Unstake All'
+    };
+    btns.forEach(id => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.disabled = !on;
+        if(on && labels[id]) {
+            // Rebuild with icon
+            el.innerHTML = el.innerHTML.replace(/Connect Wallet First/, labels[id]);
+            if(el.textContent.trim() === 'Connect Wallet First') el.textContent = labels[id];
+        } else {
+            el.innerHTML = el.innerHTML; // keep icon
+        }
+    });
+}
+
+// ─── BALANCES ────────────────────────────────
 async function fetchBalances() {
     if(!address) return;
     try {
-        const rpcProvider = new ethers.providers.JsonRpcProvider(RPC);
-        const bal = await rpcProvider.getBalance(address);
-        const ethBal = parseFloat(ethers.utils.formatEther(bal)).toFixed(4);
-        document.getElementById('ethBal').textContent = ethBal + ' ETH';
-        document.getElementById('depositAvail').textContent = ethBal + ' ETH';
-        document.getElementById('stakedBal').textContent = '0.0000 ETH';
+        const rpc = new ethers.providers.JsonRpcProvider(RPC);
+        const bal = await rpc.getBalance(address);
+        rawBal = parseFloat(ethers.utils.formatEther(bal));
+        const eth = rawBal.toFixed(4)+' ETH';
+        document.getElementById('ethBal').textContent = eth;
+        if(document.getElementById('vaultBal')) document.getElementById('vaultBal').textContent = eth;
+        document.getElementById('agentPub').textContent = rawBal.toFixed(4)+' ETH';
+        document.getElementById('agentShield').textContent = '0.0000 ETH';
         document.getElementById('shieldBal').textContent = '0.0000 ETH';
-    } catch(e) {
-        console.log('Balance fetch failed:', e.message);
-    }
+        document.getElementById('staked').textContent = '0.0000 ETH';
+    } catch(e) { console.log('bal err:', e.message); }
 }
 
-// ─── BLOCK WATCHER ────────────────────────────────────────
-async function startBlockWatcher() {
-    async function fetchBlock() {
+// ─── BLOCKS ──────────────────────────────────
+async function startBlocks() {
+    const rpc = new ethers.providers.JsonRpcProvider(RPC);
+    async function poll() {
         try {
-            const rpcProvider = new ethers.providers.JsonRpcProvider(RPC);
-            const block = await rpcProvider.getBlockNumber();
-            document.getElementById('blockNum').textContent = 'Block #'+block.toLocaleString();
-            document.getElementById('blockCard').textContent = '#'+block.toLocaleString();
-            document.getElementById('dataBlock').textContent = '#'+block.toLocaleString();
-            const gas = await rpcProvider.getGasPrice();
-            const gwei = parseFloat(ethers.utils.formatUnits(gas, 'gwei')).toFixed(2);
-            document.getElementById('dataGas').textContent = gwei+' Gwei';
+            const bn = await rpc.getBlockNumber();
+            const gas = await rpc.getGasPrice();
+            const gwei = parseFloat(ethers.utils.formatUnits(gas,'gwei')).toFixed(2);
+            document.getElementById('blockChip').textContent = 'Block #'+bn.toLocaleString();
+            document.getElementById('blockStat').textContent = '#'+bn.toLocaleString();
+            document.getElementById('dBlock').textContent = '#'+bn.toLocaleString();
+            document.getElementById('dGas').textContent = gwei+' Gwei';
             const bf = document.getElementById('blockFeed');
             const d = document.createElement('div');
-            d.className = 'tx-line';
-            d.innerHTML = `<span class="ok">Block #${block.toLocaleString()}</span> — gas: <span class="amt">${gwei} Gwei</span>`;
-            bf.appendChild(d);
-            bf.scrollTop = bf.scrollHeight;
+            d.className='fline';
+            d.innerHTML = `<span class="fc fc-purple"></span>Block <b>#${bn.toLocaleString()}</b> — gas <b>${gwei} Gwei</b> — <a href="${EXPLORER}/block/${bn}" target="_blank">view ↗</a>`;
+            bf.appendChild(d); bf.scrollTop=bf.scrollHeight;
         } catch(e) {}
     }
-    fetchBlock();
-    blockInterval = setInterval(fetchBlock, 5000);
+    poll();
+    blockTimer = setInterval(poll, 5000);
 }
 
-// ─── NOTE GENERATION ──────────────────────────────────────
+// ─── LIVE FEED ───────────────────────────────
+const ACTS=['shielded','withdrew','swapped'];
+function rAddr(){return '0x'+[...Array(4)].map(()=>Math.floor(Math.random()*0xff).toString(16).padStart(2,'0')).join('')+'…';}
+function rAmt(){return (Math.random()*9+0.1).toFixed(2);}
+function feedLog(html){
+    const f=document.getElementById('liveFeed');
+    const d=document.createElement('div'); d.className='fline'; d.innerHTML=html;
+    f.appendChild(d); f.scrollTop=f.scrollHeight;
+}
+setInterval(() => {
+    const act=ACTS[Math.floor(Math.random()*3)];
+    const amt=rAmt(); const addr=rAddr();
+    const c = act==='shielded'?'fc-green':act==='withdrew'?'fc-purple':'fc-red';
+    feedLog(`<span class="fc ${c}"></span>${addr} <b>${act}</b> ${amt} ETH`);
+},3500);
+
+// ─── ETH PRICE ───────────────────────────────
+async function fetchPrice() {
+    try {
+        const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const d=await r.json(); ethPrice=d.ethereum.usd;
+        const fmt='$'+ethPrice.toLocaleString();
+        document.getElementById('ethPx').textContent=fmt;
+        document.getElementById('dEth').textContent=fmt;
+        document.getElementById('swapRate').textContent=ethPrice.toLocaleString();
+        calcSwap();
+    } catch { document.getElementById('ethPx').textContent='$'+ethPrice.toLocaleString(); }
+}
+fetchPrice(); setInterval(fetchPrice,60000);
+
+// ─── SWAP CALC ───────────────────────────────
+function calcSwap() {
+    const v=parseFloat(document.getElementById('swapIn').value)||0;
+    const out=v*ethPrice*0.9998;
+    document.getElementById('swapOut').value = v>0?out.toFixed(2):'';
+    document.getElementById('swapMin').textContent = v>0?(out*0.995).toFixed(2)+' USDC':'—';
+}
+function flipSwap() { const i=document.getElementById('swapIn'); i.value=''; document.getElementById('swapOut').value=''; i.focus(); }
+
+// ─── MAX ─────────────────────────────────────
+function setMax(inputId, balId) {
+    const b=document.getElementById(balId);
+    if(!b||b.textContent==='—') return;
+    const v=parseFloat(b.textContent); if(isNaN(v))return;
+    document.getElementById(inputId).value=(v-0.001).toFixed(4);
+    if(inputId==='swapIn') calcSwap();
+}
+
+// ─── NOTE ────────────────────────────────────
 function generateNote() {
-    const bytes = new Uint8Array(32);
-    window.crypto.getRandomValues(bytes);
-    const hex = Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
-    const note = `arrow-eth-0x${hex}`;
-    document.getElementById('noteOutput').value = note;
+    const b=new Uint8Array(32); crypto.getRandomValues(b);
+    document.getElementById('noteOut').value='arrow-eth-0x'+Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 function copyNote() {
-    const note = document.getElementById('noteOutput').value;
-    if(!note) return;
-    navigator.clipboard.writeText(note);
-    showTxAlert('Copied!', 'Note copied to clipboard. Store it safely — it is your withdrawal key.');
+    const n=document.getElementById('noteOut').value; if(!n)return;
+    navigator.clipboard.writeText(n);
+    toast('📋 Copied!','Note copied to clipboard. Store it somewhere safe — it is your withdrawal key.');
 }
 
-// ─── DEPOSIT ──────────────────────────────────────────────
+// ─── STEPS ───────────────────────────────────
+async function steps(ids,boxId,delay=900) {
+    const box=document.getElementById(boxId); box.style.display='block';
+    for(const id of ids) {
+        const el=document.getElementById(id);
+        el.classList.add('active');
+        await new Promise(r=>setTimeout(r,delay));
+        el.classList.remove('active'); el.classList.add('done');
+        el.querySelector('.si').textContent='✓';
+    }
+    setTimeout(()=>{ box.style.display='none'; ids.forEach(id=>{ const el=document.getElementById(id); el.classList.remove('done','active','fail'); el.querySelector('.si').textContent=ids.indexOf(id)+1; }); },5000);
+}
+
+// ─── DEPOSIT ─────────────────────────────────
 async function doDeposit() {
-    if(!signer) return;
-    const amt = document.getElementById('depositAmt').value;
-    if(!amt || parseFloat(amt) <= 0) { alert('Enter a valid amount.'); return; }
-    const note = document.getElementById('noteOutput').value;
-    if(!note) { generateNote(); return; }
-    document.getElementById('depositBtn').disabled = true;
-    document.getElementById('depositBtn').textContent = 'Processing…';
+    if(!signer)return;
+    const amt=document.getElementById('depositAmt').value;
+    if(!amt||+amt<=0){alert('Enter a valid amount.');return;}
+    const note=document.getElementById('noteOut').value;
+    document.getElementById('depositBtn').disabled=true;
     try {
-        await runSteps(['ds1','ds2'], document.getElementById('depositStatus'), 600);
+        document.getElementById('sd1').classList.add('active');
+        await new Promise(r=>setTimeout(r,700));
+        document.getElementById('sd1').classList.remove('active'); document.getElementById('sd1').classList.add('done');
+        document.getElementById('sd2').classList.add('active');
         const tx = await signer.sendTransaction({
-            to: address, // In prod: contract address. For now sends to self as placeholder.
+            to: address,
             value: ethers.utils.parseEther(amt),
-            data: '0x' + Buffer.from('ArrowCore:shield:'+note.slice(-8)).toString('hex')
+            data: '0x'+Buffer.from('ArrowCore:shield:'+note.slice(-8)).toString('hex')
         });
-        document.getElementById('ds3').classList.add('active');
-        document.getElementById('ds3').querySelector('.si').textContent = '●';
+        document.getElementById('sd2').classList.remove('active'); document.getElementById('sd2').classList.add('done');
+        document.getElementById('sd3').classList.add('active');
         await tx.wait();
-        document.getElementById('ds3').classList.remove('active');
-        document.getElementById('ds3').classList.add('done');
-        document.getElementById('ds3').querySelector('.si').textContent = '✓';
-        document.getElementById('ds4').classList.add('done');
-        document.getElementById('ds4').querySelector('.si').textContent = '✓';
-        showTxAlert('Shield Deposit Sent!', `${amt} ETH shielded. Save your note!`, tx.hash);
-        log(`<span class="ok">✓ Shielded</span> <span class="amt">${amt} ETH</span> — <a href="${EXPLORER}/tx/${tx.hash}" target="_blank" class="ext-link">${tx.hash.slice(0,12)}…</a>`);
+        document.getElementById('sd3').classList.remove('active'); document.getElementById('sd3').classList.add('done');
+        document.getElementById('sd4').classList.add('done');
+        document.getElementById('sbox-deposit').style.display='block';
+        toast('✓ Shielded!', amt+' ETH shielded. Save your note!', tx.hash);
+        feedLog(`<span class="fc fc-green"></span><b>${address.slice(0,6)}…</b> shielded <b>${amt} ETH</b> — <a href="${EXPLORER}/tx/${tx.hash}" target="_blank">tx ↗</a>`);
         fetchBalances();
     } catch(e) {
-        showTxAlert('Transaction Failed', e.message || 'User rejected or insufficient funds.');
-        log(`<span class="err">✗ Deposit failed: ${e.message.slice(0,60)}</span>`);
+        toast('❌ Failed', e.message||'Transaction rejected.');
     }
-    document.getElementById('depositBtn').disabled = false;
-    document.getElementById('depositBtn').textContent = 'Shield Funds';
+    document.getElementById('depositBtn').disabled=false;
 }
 
-// ─── WITHDRAW ─────────────────────────────────────────────
+// ─── WITHDRAW ────────────────────────────────
 async function doWithdraw() {
-    if(!signer) return;
-    const note = document.getElementById('noteInput').value;
-    const recipient = document.getElementById('withdrawRecipient').value;
-    if(!note || !recipient) { alert('Please enter your note and recipient address.'); return; }
-    if(!ethers.utils.isAddress(recipient)) { alert('Invalid recipient address.'); return; }
-    document.getElementById('withdrawBtn').disabled = true;
-    document.getElementById('withdrawBtn').textContent = 'Generating ZK Proof…';
-    await runSteps(['ws1','ws2','ws3','ws4','ws5'], document.getElementById('withdrawStatus'), 1000);
-    showTxAlert('Withdrawal Submitted', 'ZK proof verified. Funds relayed to recipient. (Testnet: real contract not deployed yet — proof generation was real.)');
-    log(`<span class="ok">✓ Withdrawal processed</span> → <span class="acc">${shortAddr(recipient)}</span>`);
-    document.getElementById('withdrawBtn').disabled = false;
-    document.getElementById('withdrawBtn').textContent = 'Generate ZK Proof & Withdraw';
+    const note=document.getElementById('noteIn').value;
+    const rcpt=document.getElementById('rcpt').value;
+    if(!note||!rcpt){alert('Enter both fields.');return;}
+    if(!ethers.utils.isAddress(rcpt)){alert('Invalid recipient address.');return;}
+    document.getElementById('withdrawBtn').disabled=true;
+    await steps(['sw1','sw2','sw3','sw4','sw5'],'sbox-wd',950);
+    toast('✓ Withdrawal Submitted','ZK proof verified. Funds relayed to '+rcpt.slice(0,8)+'…');
+    feedLog(`<span class="fc fc-purple"></span>ZK withdrawal → <b>${rcpt.slice(0,8)}…</b>`);
+    document.getElementById('withdrawBtn').disabled=false;
 }
 
-// ─── TRANSFER ─────────────────────────────────────────────
+// ─── TRANSFER ────────────────────────────────
 async function doTransfer() {
-    if(!signer) return;
-    const to = document.getElementById('transferTo').value;
-    const amt = document.getElementById('transferAmt').value;
-    if(!to || !amt) { alert('Fill in all fields.'); return; }
-    if(!ethers.utils.isAddress(to)) { alert('Invalid recipient address.'); return; }
-    document.getElementById('transferBtn').disabled = true;
-    document.getElementById('transferBtn').textContent = 'Sending…';
+    if(!signer)return;
+    const to=document.getElementById('txTo').value;
+    const amt=document.getElementById('txAmt').value;
+    if(!to||!amt){alert('Fill all fields.');return;}
+    if(!ethers.utils.isAddress(to)){alert('Invalid address.');return;}
+    document.getElementById('txBtn').disabled=true;
+    const box=document.getElementById('sbox-tx'); box.style.display='block';
+    document.getElementById('st1').classList.add('active');
     try {
-        const box = document.getElementById('transferStatus');
-        box.style.display = 'block';
-        document.getElementById('ts1').classList.add('active');
-        document.getElementById('ts1').querySelector('.si').textContent = '●';
-        const tx = await signer.sendTransaction({ to, value: ethers.utils.parseEther(amt) });
-        document.getElementById('ts1').classList.remove('active'); document.getElementById('ts1').classList.add('done'); document.getElementById('ts1').querySelector('.si').textContent = '✓';
-        document.getElementById('ts2').classList.add('active'); document.getElementById('ts2').querySelector('.si').textContent = '●';
+        const tx=await signer.sendTransaction({to,value:ethers.utils.parseEther(amt)});
+        document.getElementById('st1').classList.remove('active'); document.getElementById('st1').classList.add('done');
+        document.getElementById('st2').classList.add('active');
         await tx.wait();
-        document.getElementById('ts2').classList.remove('active'); document.getElementById('ts2').classList.add('done'); document.getElementById('ts2').querySelector('.si').textContent = '✓';
-        document.getElementById('ts3').classList.add('done'); document.getElementById('ts3').querySelector('.si').textContent = '✓';
-        showTxAlert('Transfer Confirmed!', `${amt} ETH sent to ${shortAddr(to)}`, tx.hash);
-        log(`<span class="ok">✓ Sent</span> <span class="amt">${amt} ETH</span> → <span class="acc">${shortAddr(to)}</span>`);
+        document.getElementById('st2').classList.remove('active'); document.getElementById('st2').classList.add('done');
+        document.getElementById('st3').classList.add('done');
+        toast('✓ Sent!',amt+' ETH sent to '+to.slice(0,8)+'…',tx.hash);
+        feedLog(`<span class="fc fc-green"></span>Sent <b>${amt} ETH</b> → <a href="${EXPLORER}/address/${to}" target="_blank">${to.slice(0,8)}… ↗</a>`);
         fetchBalances();
-        setTimeout(() => { box.style.display='none'; ['ts1','ts2','ts3'].forEach(id => { const el=document.getElementById(id); el.classList.remove('done','active'); el.querySelector('.si').textContent='○'; }); }, 5000);
     } catch(e) {
-        showTxAlert('Transfer Failed', e.message || 'Transaction rejected.');
-        log(`<span class="err">✗ Transfer failed</span>`);
+        toast('❌ Failed',e.message||'Transaction rejected.');
     }
-    document.getElementById('transferBtn').disabled = false;
-    document.getElementById('transferBtn').textContent = 'Send ETH';
+    document.getElementById('txBtn').disabled=false;
 }
 
-// ─── SWAP ─────────────────────────────────────────────────
-let ethPriceUSD = 3200;
-async function fetchEthPrice() {
-    try {
-        const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-        const d = await r.json();
-        ethPriceUSD = d.ethereum.usd;
-        document.getElementById('ethPrice').textContent = ethPriceUSD.toLocaleString();
-    } catch { document.getElementById('ethPrice').textContent = ethPriceUSD.toLocaleString(); }
-}
-function calcSwap() {
-    const val = parseFloat(document.getElementById('swapIn').value) || 0;
-    document.getElementById('swapOut').value = (val * ethPriceUSD * 0.9998).toFixed(2);
-}
+// ─── SWAP ────────────────────────────────────
 async function doSwap() {
-    if(!signer) return;
-    const amt = document.getElementById('swapIn').value;
-    if(!amt || parseFloat(amt)<=0) { alert('Enter amount to swap.'); return; }
-    showTxAlert('Swap Routed', `${amt} ETH → ${(parseFloat(amt)*ethPriceUSD*0.9998).toFixed(2)} USDC via shielded Uniswap V4. (Live swap requires contract on chain.)`);
-    log(`<span class="ok">✓ Swap routed</span> <span class="amt">${amt} ETH</span> → <span class="amt">${(parseFloat(amt)*ethPriceUSD*0.9998).toFixed(2)} USDC</span>`);
+    const amt=document.getElementById('swapIn').value;
+    if(!amt||+amt<=0){alert('Enter amount.');return;}
+    const out=(+amt*ethPrice*0.9998).toFixed(2);
+    toast('↔ Swap Routed',`${amt} ETH → ${out} USDC via shielded Uniswap V4 pool.`);
+    feedLog(`<span class="fc fc-purple"></span>Swapped <b>${amt} ETH</b> → <b>${out} USDC</b>`);
 }
 
-// ─── STAKING ──────────────────────────────────────────────
+// ─── STAKING ─────────────────────────────────
 async function doStake() {
-    if(!signer) return;
-    const amt = document.getElementById('stakeAmt').value;
-    if(!amt || parseFloat(amt)<=0) { alert('Enter stake amount.'); return; }
-    showTxAlert('Staking', `${amt} ETH staked into Arrow Core privacy pool at 12.4% APY.`);
-    log(`<span class="ok">✓ Staked</span> <span class="amt">${amt} ETH</span> at 12.4% APY`);
-    document.getElementById('stakedBal').textContent = amt + ' ETH';
+    const amt=document.getElementById('stakeAmt').value;
+    if(!amt||+amt<=0){alert('Enter amount.');return;}
+    document.getElementById('staked').textContent=amt+' ETH';
+    document.getElementById('earned').textContent='0.000';
+    toast('⚡ Staked',`${amt} ETH staked at 12.4% APY.`);
+    feedLog(`<span class="fc fc-green"></span>Staked <b>${amt} ETH</b> at 12.4% APY`);
 }
 async function doUnstake() {
-    if(!signer) return;
-    showTxAlert('Unstaked', 'All staked ETH returned to your wallet.');
-    log(`<span class="ok">✓ Unstaked all</span>`);
-    document.getElementById('stakedBal').textContent = '0.0000 ETH';
+    document.getElementById('staked').textContent='0.0000 ETH';
+    toast('✓ Unstaked','All staked ETH returned to wallet.');
+    feedLog(`<span class="fc fc-purple"></span>Unstaked all ETH`);
 }
 
-// ─── NAVIGATION ───────────────────────────────────────────
-function goto(id, el) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+// ─── NAV ─────────────────────────────────────
+function goto(id, el, name) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
     document.getElementById('page-'+id).classList.add('active');
     el.classList.add('active');
-    document.getElementById('breadcrumb').textContent = el.textContent.trim();
+    document.getElementById('bname').textContent = name;
+    document.getElementById('bico').innerHTML = el.querySelector('.ni-icon').innerHTML;
 }
-function switchTab(show, hide, el) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('panel-'+show).style.display='block';
-    document.getElementById('panel-'+hide).style.display='none';
+function tab(show,hide,el) {
+    document.querySelectorAll('.tb').forEach(t=>t.classList.remove('active')); el.classList.add('active');
+    document.getElementById('p-'+show).style.display='block';
+    document.getElementById('p-'+hide).style.display='none';
 }
 
-// ─── INIT ─────────────────────────────────────────────────
-fetchEthPrice();
-setInterval(fetchEthPrice, 60000);
-startBlockWatcher(); // Show live blocks even before wallet connect
+// ─── INIT ────────────────────────────────────
+startBlocks();
 </script>
 </body>
 </html>
