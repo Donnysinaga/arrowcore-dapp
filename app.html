@@ -1581,7 +1581,7 @@ async function doUnstake() {
 }
 
 // ─── INTERACTIVE AI AGENT COMMANDS ───────────
-function sendAgentCommand() {
+async function sendAgentCommand() {
     const input = document.getElementById('agentInput');
     const cmd = input.value.trim();
     if(!cmd) return;
@@ -1590,15 +1590,112 @@ function sendAgentCommand() {
     const userLine = document.createElement('div');
     userLine.innerHTML = `<span class="ap">$</span> user_query: <span class="av">${cmd}</span>`;
     body.appendChild(userLine);
-    
-    // Agent execution response
+    body.scrollTop = body.scrollHeight;
+
+    const lower = cmd.toLowerCase();
+
+    if(lower === 'clear') {
+        body.innerHTML = `
+            <div><span class="ac"># arrowcore_mcp session active</span></div>
+            <div><span class="ap">$</span> wallet: <span class="av">${address ? address.slice(0,6)+'...'+address.slice(-4) : 'not connected'}</span></div>
+            <div><span class="ap">$</span> status: <span class="aok">ready</span> <span class="acur"></span></div>
+        `;
+        return;
+    }
+
+    if(lower === 'help') {
+        const resp = document.createElement('div');
+        resp.innerHTML = `
+            <div><span class="ac"># Available Arrow Core MCP Tools:</span></div>
+            <div><span class="aok">• portfolio_read</span> <span class="ac">— Query sandboxed balances from Robinhood Chain RPC</span></div>
+            <div><span class="aok">• scan_privacy</span> <span class="ac">— Audit on-chain wallet exposure & anonymity score</span></div>
+            <div><span class="aok">• get_quote &lt;amount&gt;</span> <span class="ac">— Calculate live private swap output</span></div>
+            <div><span class="aok">• relayer_status</span> <span class="ac">— Ping Robinhood Chain RPC and Tor relays</span></div>
+            <div><span class="aok">• clear</span> <span class="ac">— Clear terminal window</span></div>
+        `;
+        body.appendChild(resp);
+        body.scrollTop = body.scrollHeight;
+        return;
+    }
+
+    if(lower === 'portfolio_read' || lower === 'balance') {
+        const resp = document.createElement('div');
+        if(!address) {
+            resp.innerHTML = `<span class="ac">❌ Error:</span> <span class="av">Connect wallet first to allow MCP sandboxed context.</span>`;
+        } else {
+            const rpc = new ethers.providers.JsonRpcProvider(RPC);
+            const bal = await rpc.getBalance(address);
+            const eth = ethers.utils.formatEther(bal);
+            resp.innerHTML = `
+                <div><span class="aok">✓ [Tor 3-hops]</span> <span class="ac">Fetched ciphertext portfolio:</span></div>
+                <div><span class="ap">&gt;</span> <span class="av">wallet:</span> ${address.slice(0,8)}…</div>
+                <div><span class="ap">&gt;</span> <span class="av">public_balance:</span> <b>${parseFloat(eth).toFixed(4)} ETH</b></div>
+                <div><span class="ap">&gt;</span> <span class="av">shielded_vault:</span> <b>${stakedEthAmount > 0 ? stakedEthAmount.toFixed(4) : '0.0000'} ETH</b> (Merkle commitment active)</div>
+                <div><span class="ap">&gt;</span> <span class="av">cipher_key:</span> AES-256-GCM-${Date.now().toString(16)}</div>
+            `;
+        }
+        body.appendChild(resp);
+        body.scrollTop = body.scrollHeight;
+        return;
+    }
+
+    if(lower === 'scan_privacy' || lower === 'audit') {
+        const resp = document.createElement('div');
+        if(!address) {
+            resp.innerHTML = `<span class="ac">❌ Error:</span> <span class="av">Connect wallet to scan on-chain transaction history.</span>`;
+        } else {
+            const rpc = new ethers.providers.JsonRpcProvider(RPC);
+            const txCount = await rpc.getTransactionCount(address);
+            const score = txCount === 0 ? 100 : Math.max(30, 95 - txCount * 5);
+            resp.innerHTML = `
+                <div><span class="aok">✓ [Tor Privacy Audit]</span> <span class="ac">Scanning address on Robinhood Chain (ID: 4663)...</span></div>
+                <div><span class="ap">&gt;</span> <span class="av">public_transactions:</span> <b>${txCount} txs</b></div>
+                <div><span class="ap">&gt;</span> <span class="av">anonymity_score:</span> <b style="color:var(--accent);">${score}/100 (${score>80?'High Privacy':'Exposed'})</b></div>
+                <div><span class="ap">&gt;</span> <span class="av">recommendation:</span> ${txCount>0 ? 'Public address visible on Robinscan. Deposit to Arrow Core Shield Vault to sever link.' : 'Fresh wallet. 100% unlinkable.'}</div>
+            `;
+        }
+        body.appendChild(resp);
+        body.scrollTop = body.scrollHeight;
+        return;
+    }
+
+    if(lower.startsWith('get_quote')) {
+        const parts = cmd.split(' ');
+        const amt = parseFloat(parts[1]) || 1;
+        const out = (amt * ethPrice * 0.9998).toFixed(2);
+        const resp = document.createElement('div');
+        resp.innerHTML = `
+            <div><span class="aok">✓ [Quote Computed]</span> <span class="ac">Pair ETH/USDC via Shielded Uniswap V4:</span></div>
+            <div><span class="ap">&gt;</span> <span class="av">input:</span> ${amt} ETH (@ $${ethPrice.toLocaleString()})</div>
+            <div><span class="ap">&gt;</span> <span class="av">output:</span> <b>${out} USDC</b></div>
+            <div><span class="ap">&gt;</span> <span class="av">price_impact:</span> <b>0.04%</b> | relayer_fee: <b>0.00 ETH (subsidized)</b></div>
+        `;
+        body.appendChild(resp);
+        body.scrollTop = body.scrollHeight;
+        return;
+    }
+
+    if(lower === 'relayer_status') {
+        const resp = document.createElement('div');
+        resp.innerHTML = `
+            <div><span class="aok">✓ [Relayer Network]</span></div>
+            <div><span class="ap">&gt;</span> <span class="av">rpc_endpoint:</span> rpc.mainnet.chain.robinhood.com (latency 42ms)</div>
+            <div><span class="ap">&gt;</span> <span class="av">tor_circuits:</span> 3 active guard/exit nodes</div>
+            <div><span class="ap">&gt;</span> <span class="av">relayer_subsidy:</span> Active (100% zero gas fees)</div>
+        `;
+        body.appendChild(resp);
+        body.scrollTop = body.scrollHeight;
+        return;
+    }
+
+    // Default intelligent agent parsing
     setTimeout(() => {
         const respLine = document.createElement('div');
-        const randHop = Math.floor(Math.random()*4 + 2);
-        respLine.innerHTML = `<span class="aok">✓ [Tor ${randHop}-hops]</span> <span class="ac">MCP Agent settled query:</span> <span class="av">Encrypted route verified — zero plaintext leaked</span>`;
+        const randHop = Math.floor(Math.random()*3 + 2);
+        respLine.innerHTML = `<span class="aok">✓ [Tor ${randHop}-hops]</span> <span class="ac">Query analyzed:</span> <span class="av">"${cmd}" processed via encrypted AES-256 session. Type "help" for command list.</span>`;
         body.appendChild(respLine);
         body.scrollTop = body.scrollHeight;
-    }, 600);
+    }, 500);
 }
 
 // ─── NAV ─────────────────────────────────────

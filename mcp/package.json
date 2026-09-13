@@ -1,0 +1,22 @@
+{
+  "name": "@arrowcore/mcp-server",
+  "version": "1.0.0",
+  "description": "Official Model Context Protocol (MCP) Server for Arrow Core Privacy Protocol on Robinhood Chain",
+  "main": "server.js",
+  "bin": {
+    "arrowcore-mcp": "./server.js"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "mcp",
+    "arrowcore",
+    "robinhood-chain",
+    "privacy",
+    "zk-snarks",
+    "ai-agents"
+  ],
+  "author": "Arrow Core",
+  "license": "MIT"
+}
