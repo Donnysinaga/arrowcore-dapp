@@ -8,351 +8,433 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050507;
-            --bg2: #0c0c10;
-            --bg3: #111117;
-            --accent: #7c3aed;
-            --accent2: #a855f7;
-            --accent-glow: rgba(124,58,237,0.25);
-            --accent-glow2: rgba(168,85,247,0.12);
-            --green: #10b981;
-            --green-glow: rgba(16,185,129,0.2);
-            --text: #ffffff;
-            --text2: #c4c4d4;
-            --muted: #6b6b7e;
-            --border: rgba(255,255,255,0.06);
-            --border2: rgba(255,255,255,0.1);
+            --black: #000000;
+            --black2: #0a0a0a;
+            --black3: #111111;
+            --black4: #181818;
+            --green: #b4ff47;
+            --green2: #a8f53e;
+            --green-dim: rgba(180,255,71,0.08);
+            --green-glow: rgba(180,255,71,0.2);
+            --white: #ffffff;
+            --gray: #888888;
+            --gray2: #555555;
+            --border: rgba(255,255,255,0.08);
+            --border2: rgba(255,255,255,0.14);
         }
-
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-
         body {
-            background: var(--bg);
-            color: var(--text);
+            background: var(--black);
+            color: var(--white);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ─── NOISE OVERLAY ─── */
-        body::before {
-            content: '';
-            position: fixed; inset: 0; z-index: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-        }
-
-        /* ─── GLOW ORBS ─── */
-        .orb {
-            position: fixed; border-radius: 50%; filter: blur(120px);
-            pointer-events: none; z-index: 0; opacity: 0.6;
-        }
-        .orb1 { width: 600px; height: 600px; background: var(--accent-glow); top: -200px; right: -100px; }
-        .orb2 { width: 400px; height: 400px; background: var(--accent-glow2); bottom: 100px; left: -100px; }
-
-        /* ─── NAVBAR ─── */
+        /* ── NAVBAR ── */
         nav {
             position: fixed; top: 0; width: 100%; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; height: 70px;
-            background: rgba(5,5,7,0.7);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 0 32px; height: 60px;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(24px);
             border-bottom: 1px solid var(--border);
         }
-
         .nav-brand {
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em;
+            display: flex; align-items: center; gap: 9px;
+            text-decoration: none; color: var(--white);
+            font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em;
         }
-        .nav-brand img { width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 0 12px var(--accent-glow); }
-        .nav-brand span { background: linear-gradient(135deg, #fff, var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .nav-links { display: flex; gap: 8px; }
-        .nav-links a {
-            color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500;
-            padding: 8px 14px; border-radius: 8px; transition: all 0.2s;
+        .nav-brand img { width: 26px; height: 26px; border-radius: 50%; }
+        .nav-logo-text { color: var(--green); font-weight: 800; font-size: 0.9rem; }
+        .nav-center { display: flex; gap: 4px; }
+        .nav-center a {
+            color: var(--gray); text-decoration: none; font-size: 0.85rem; font-weight: 500;
+            padding: 6px 14px; border-radius: 6px; transition: color 0.15s;
         }
-        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-
-        .nav-right { display: flex; align-items: center; gap: 12px; }
-        .nav-icon { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; padding: 6px 10px; transition: color 0.2s; }
-        .nav-icon:hover { color: var(--text); }
-
+        .nav-center a:hover { color: var(--white); }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-date { font-size: 0.78rem; color: var(--gray); font-family: 'JetBrains Mono', monospace; }
+        .nav-social { color: var(--gray); text-decoration: none; font-size: 0.82rem; padding: 6px 10px; transition: color 0.15s; }
+        .nav-social:hover { color: var(--white); }
         .btn-launch {
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            color: #fff; padding: 9px 22px; border-radius: 10px;
-            text-decoration: none; font-size: 0.875rem; font-weight: 600;
-            transition: all 0.25s; box-shadow: 0 4px 20px rgba(124,58,237,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--green); color: #000;
+            padding: 7px 18px; border-radius: 8px;
+            text-decoration: none; font-size: 0.82rem; font-weight: 700;
+            transition: all 0.2s; letter-spacing: -0.01em;
         }
-        .btn-launch:hover { transform: translateY(-1px); box-shadow: 0 6px 30px rgba(124,58,237,0.5); }
+        .btn-launch:hover { background: #c8ff60; transform: translateY(-1px); }
 
-        /* ─── TICKER ─── */
+        /* ── TICKER ── */
         .ticker {
-            position: relative; z-index: 1;
-            margin-top: 70px; background: var(--bg2);
+            margin-top: 60px; background: var(--black2);
             border-bottom: 1px solid var(--border);
-            padding: 11px 0; overflow: hidden;
+            padding: 10px 0; overflow: hidden; position: relative; z-index: 1;
         }
         .ticker-track {
-            display: inline-flex; gap: 60px;
-            animation: scroll 50s linear infinite;
+            display: inline-flex; gap: 56px;
+            animation: scroll 60s linear infinite;
             white-space: nowrap;
         }
         .ticker-track:hover { animation-play-state: paused; }
-        .t-item {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem; color: var(--muted);
-        }
-        .t-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green); animation: tpulse 2s infinite; }
+        .t-item { display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--gray); }
+        .t-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; box-shadow: 0 0 5px var(--green); }
         .t-item b { color: var(--green); }
-        .t-addr { color: var(--accent2); }
+        .t-addr { color: #888; }
         @keyframes scroll { to { transform: translateX(-50%); } }
-        @keyframes tpulse { 50% { opacity: 0.4; } }
 
-        /* ─── HERO ─── */
+        /* ── HERO ── */
         .hero {
             position: relative; z-index: 1;
-            min-height: calc(100vh - 110px);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 80px 5% 60px; gap: 60px;
+            min-height: calc(100vh - 100px);
+            display: grid; grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 80px 32px 60px; gap: 40px;
+            overflow: hidden;
         }
+        /* Left side stats column */
+        .hero-side-stats {
+            position: absolute; left: 32px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 28px; z-index: 2;
+        }
+        .hss { }
+        .hss-val { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+        .hss-label { font-size: 0.7rem; color: var(--gray); margin-top: 3px; font-weight: 500; }
 
-        .hero-left { max-width: 620px; }
+        /* Center content */
+        .hero-center {
+            grid-column: 1 / -1;
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; position: relative; z-index: 2;
+        }
+        .hero-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            border: 1px solid var(--border2); border-radius: 99px;
+            padding: 5px 14px; font-size: 0.72rem; color: var(--gray);
+            margin-bottom: 32px; font-weight: 500;
+        }
+        .hero-tag span { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: gdot 2s infinite; }
+        @keyframes gdot { 50% { opacity: 0.3; } }
 
-        .badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(16,185,129,0.08);
-            border: 1px solid rgba(16,185,129,0.2);
-            color: var(--green); padding: 6px 14px; border-radius: 99px;
-            font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-            margin-bottom: 32px;
+        .hero-h1 {
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            font-weight: 900; letter-spacing: -0.05em;
+            line-height: 0.95; margin-bottom: 28px; max-width: 900px;
         }
-        .badge::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); animation: tpulse 2s infinite; }
-
-        .hero h1 {
-            font-size: 5.2rem; font-weight: 900; line-height: 1.0;
-            letter-spacing: -0.05em; margin-bottom: 28px;
-        }
-        .hero h1 .purple {
-            background: linear-gradient(135deg, var(--accent-light, #a78bfa) 0%, var(--accent2) 50%, #c084fc 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        .hero-h1 .g { color: var(--green); }
         .hero-desc {
-            font-size: 1.1rem; color: var(--text2); line-height: 1.75;
-            margin-bottom: 44px; max-width: 500px;
+            font-size: 1rem; color: var(--gray); line-height: 1.7;
+            max-width: 560px; margin-bottom: 44px;
+        }
+        .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--green); color: #000;
+            padding: 13px 30px; border-radius: 10px; text-decoration: none;
+            font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover { background: #c8ff60; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(180,255,71,0.25); }
+        .btn-secondary {
+            color: var(--gray); padding: 13px 26px; border-radius: 10px; text-decoration: none;
+            font-size: 0.95rem; font-weight: 600; background: var(--black3);
+            border: 1px solid var(--border2); transition: all 0.2s;
+        }
+        .btn-secondary:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
+
+        /* Big orb behind hero */
+        .hero-orb {
+            position: absolute; width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, #111 0%, #000 70%);
+            border: 1px solid var(--border);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 1; box-shadow: 0 0 120px rgba(180,255,71,0.04);
+        }
+        /* Arrow button on orb */
+        .orb-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--black3); border: 1px solid var(--border2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; color: var(--green); cursor: pointer; z-index: 2;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .orb-btn:hover { background: var(--green); color: #000; }
+
+        /* Right side stats */
+        .hero-side-right {
+            position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 28px; text-align: right; z-index: 2;
         }
 
-        .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
-        .btn-hero-primary {
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            color: #fff; padding: 15px 32px; border-radius: 12px; text-decoration: none;
-            font-size: 1rem; font-weight: 700; letter-spacing: -0.01em;
-            transition: all 0.25s; box-shadow: 0 8px 32px rgba(124,58,237,0.35);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,58,237,0.55); }
-        .btn-hero-secondary {
-            color: var(--text2); padding: 15px 28px; border-radius: 12px; text-decoration: none;
-            font-size: 1rem; font-weight: 600;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border2);
-            transition: all 0.25s;
-        }
-        .btn-hero-secondary:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); }
-
-        /* ─── TERMINAL ─── */
-        .terminal-wrap {
-            position: relative; flex-shrink: 0; width: 430px;
-        }
-        .terminal-glow {
-            position: absolute; inset: -20px; background: var(--accent-glow);
-            border-radius: 24px; filter: blur(40px); z-index: -1;
-        }
-        .terminal {
-            background: rgba(12,12,16,0.9);
-            border: 1px solid rgba(124,58,237,0.2);
-            border-radius: 16px; overflow: hidden;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
-        }
-        .term-bar {
-            background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid var(--border);
-            padding: 13px 16px; display: flex; align-items: center; gap: 8px;
-        }
-        .tdot { width: 10px; height: 10px; border-radius: 50%; }
-        .tr { background: #ff5f57; } .ty { background: #ffbd2e; } .tg { background: #28ca41; }
-        .term-name { font-size: 0.72rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
-        .term-body { padding: 22px 22px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.9; }
-        .tl { display: block; }
-        .tp { color: var(--accent2); }
-        .tc { color: var(--muted); font-style: italic; }
-        .tv { color: #f9c74f; }
-        .tok { color: var(--green); }
-        .cursor { display: inline-block; width: 7px; height: 14px; background: var(--accent2); animation: blink 1s step-end infinite; vertical-align: sub; margin-left: 2px; border-radius: 1px; }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* ─── STATS BAR ─── */
-        .stats-bar {
+        /* ── STATS STRIP ── */
+        .stats-strip {
             position: relative; z-index: 1;
             display: grid; grid-template-columns: repeat(4, 1fr);
+            background: var(--black2);
             border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-            background: var(--bg2);
         }
         .stat {
-            padding: 36px 0; text-align: center;
+            padding: 32px 20px; text-align: center;
             border-right: 1px solid var(--border);
         }
         .stat:last-child { border-right: none; }
-        .stat .sv {
-            font-size: 2.5rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;
-            letter-spacing: -0.04em; background: linear-gradient(135deg, #fff, var(--text2));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .stat-val {
+            font-size: 2.4rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.04em; color: var(--white);
         }
-        .stat .sl { font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-weight: 500; }
+        .stat-label { font-size: 0.75rem; color: var(--gray); margin-top: 5px; font-weight: 500; }
 
-        /* ─── SECTIONS ─── */
-        .section { position: relative; z-index: 1; padding: 100px 5%; }
-        .section.dark { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .sec-kicker { font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 16px; }
-        .sec-h2 { font-size: 3rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 16px; }
-        .sec-sub { font-size: 1rem; color: var(--text2); line-height: 1.7; max-width: 560px; margin-bottom: 60px; }
+        /* ── SECTION GENERIC ── */
+        .section { position: relative; z-index: 1; padding: 100px 32px; }
+        .section.alt { background: var(--black2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 
-        /* ─── FEATURE GRID ─── */
-        .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        /* Section header with number badge */
+        .sec-tag {
+            display: inline-flex; align-items: center; gap: 10px;
+            border: 1px solid var(--border2); border-radius: 6px;
+            padding: 5px 14px; font-size: 0.75rem; color: var(--gray);
+            margin-bottom: 28px; font-weight: 500;
+        }
+        .sec-num {
+            font-size: 0.7rem; font-weight: 800; color: var(--green);
+            letter-spacing: 0.5px; font-family: 'JetBrains Mono', monospace;
+        }
+        .sec-h2 {
+            font-size: clamp(2rem, 5vw, 3.8rem);
+            font-weight: 900; letter-spacing: -0.05em; line-height: 1.0; margin-bottom: 20px;
+        }
+        .sec-h2 .g { color: var(--green); }
+        .sec-sub { font-size: 1rem; color: var(--gray); line-height: 1.7; max-width: 600px; margin-bottom: 60px; }
+
+        /* ── ABOUT ROW ── (matches reference "inline badge in paragraph" style) */
+        .about-text {
+            font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em;
+            line-height: 1.35; margin-bottom: 60px; max-width: 740px;
+        }
+        .inline-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--green); color: #000;
+            border-radius: 6px; padding: 2px 10px; font-size: 0.75em;
+            font-weight: 800; vertical-align: middle; margin: 0 4px;
+        }
+        .inline-badge.dark {
+            background: var(--black3); color: var(--white);
+            border: 1px solid var(--border2);
+        }
+
+        /* ── FEATURE CARDS GRID ── (reference: 3 column card grid) */
+        .feat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .feat-card {
-            background: var(--bg3); padding: 36px 32px;
-            transition: background 0.25s;
+            background: var(--black3); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px 28px; position: relative;
+            overflow: hidden; transition: border-color 0.2s, transform 0.2s;
         }
-        .feat-card:hover { background: rgba(124,58,237,0.06); }
-        .feat-icon {
-            width: 44px; height: 44px; border-radius: 10px;
-            background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.2);
+        .feat-card:hover { border-color: rgba(180,255,71,0.2); transform: translateY(-2px); }
+        /* Green neon icon area */
+        .feat-icon-wrap {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: var(--green-dim); border: 1px solid rgba(180,255,71,0.15);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; margin-bottom: 20px;
+            margin-bottom: 20px;
         }
+        .feat-icon-wrap svg { width: 24px; height: 24px; stroke: var(--green); fill: none; stroke-width: 1.8; }
         .feat-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.01em; }
-        .feat-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
-        .feat-tag { font-size: 0.7rem; font-weight: 600; color: var(--accent2); margin-top: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .feat-card p { font-size: 0.85rem; color: var(--gray); line-height: 1.65; }
+        .feat-status {
+            display: inline-flex; margin-top: 16px;
+            background: var(--green); color: #000;
+            font-size: 0.65rem; font-weight: 800; padding: 3px 10px; border-radius: 99px;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .feat-status.soon { background: var(--black4); color: var(--gray); border: 1px solid var(--border); }
 
-        /* ─── HOW IT WORKS ─── */
-        .steps-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        /* ── METRICS ROW ── */
+        .metrics-row { display: flex; gap: 60px; flex-wrap: wrap; margin-top: 56px; padding-top: 56px; border-top: 1px solid var(--border); }
+        .metric-val { font-size: 3rem; font-weight: 900; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.05em; color: var(--green); }
+        .metric-label { font-size: 0.8rem; color: var(--gray); margin-top: 4px; font-weight: 500; }
+
+        /* ── HOW IT WORKS ── (reference: numbered steps) */
+        .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
         .step {
+            background: var(--black2); padding: 36px 28px;
+            border-right: 1px solid var(--border); position: relative;
+        }
+        .step:last-child { border-right: none; }
+        .step-dot {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--green); display: flex; align-items: center; justify-content: center;
+            font-size: 0.72rem; font-weight: 800; color: #000;
+            font-family: 'JetBrains Mono', monospace; margin-bottom: 20px;
+        }
+        .step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.01em; }
+        .step p { font-size: 0.82rem; color: var(--gray); line-height: 1.65; }
+        .step-tag { font-size: 0.68rem; color: var(--gray2); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+
+        /* ── ROADMAP ── */
+        .road { display: flex; flex-direction: column; gap: 0; padding-left: 0; }
+        .rd {
+            display: grid; grid-template-columns: 160px 1fr;
+            gap: 40px; align-items: start;
+            padding: 32px 0; border-bottom: 1px solid var(--border);
             position: relative;
-            background: var(--bg3); border: 1px solid var(--border); border-radius: 14px;
-            padding: 32px 24px; overflow: hidden;
         }
-        .step::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        .rd:last-child { border-bottom: none; }
+        .rd-left { }
+        .rd-quarter {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--gray); margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
         }
-        .step-num {
-            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
-            font-weight: 700; color: var(--accent2); letter-spacing: 1px; margin-bottom: 16px;
+        .rd-status-dot {
+            width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+            display: inline-block;
         }
-        .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
-        .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+        .rd-status-dot.done { background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+        .rd-status-dot.live { background: var(--green); animation: gdot 1.5s infinite; }
+        .rd-right { }
+        .rd-title { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+        .rd-desc { font-size: 0.875rem; color: var(--gray); line-height: 1.65; margin-bottom: 12px; }
+        .pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 99px;
+            font-size: 0.68rem; font-weight: 700; letter-spacing: 0.3px;
+        }
+        .pill-done { background: rgba(180,255,71,0.1); color: var(--green); border: 1px solid rgba(180,255,71,0.25); }
+        .pill-live { background: rgba(180,255,71,0.08); color: var(--green); border: 1px solid rgba(180,255,71,0.15); }
+        .pill-next { background: var(--black3); color: var(--gray); border: 1px solid var(--border); }
 
-        /* ─── METRICS ─── */
-        .metrics { display: flex; gap: 50px; margin-top: 60px; flex-wrap: wrap; }
-        .metric .mv { font-size: 3rem; font-weight: 800; letter-spacing: -0.05em; background: linear-gradient(135deg, var(--accent-light, #a78bfa), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .metric .ml { font-size: 0.8rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
-
-        /* ─── ROADMAP ─── */
-        .road { display: flex; flex-direction: column; gap: 0; padding-left: 24px; border-left: 2px solid var(--border); }
-        .rd { padding: 28px 0 28px 36px; position: relative; }
-        .rd::before { content: ''; position: absolute; left: -8px; top: 33px; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 12px var(--accent-glow); }
-        .rd.done::before { background: var(--green); box-shadow: 0 0 12px var(--green-glow); }
-        .rd.next::before { background: var(--border); box-shadow: none; }
-        .rd-quarter { font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-        .rd-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
-        .rd-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.65; max-width: 600px; margin-bottom: 12px; }
-        .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 12px; border-radius: 99px; font-size: 0.7rem; font-weight: 700; }
-        .pill-done { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
-        .pill-live { background: rgba(124,58,237,0.1); color: var(--accent2); border: 1px solid rgba(124,58,237,0.25); }
-        .pill-next { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
-
-        /* ─── FAQ ─── */
-        .faq-list { display: flex; flex-direction: column; max-width: 780px; }
+        /* ── FAQ ── */
+        .faq-wrap { max-width: 760px; }
         details { border-bottom: 1px solid var(--border); }
         details:first-child { border-top: 1px solid var(--border); }
         summary {
-            padding: 22px 0; font-size: 1rem; font-weight: 600; cursor: pointer;
+            padding: 22px 0; font-size: 0.95rem; font-weight: 600; cursor: pointer;
             list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 20px;
-            letter-spacing: -0.01em;
+            letter-spacing: -0.01em; color: var(--white);
         }
         summary::-webkit-details-marker { display: none; }
-        .sum-icon { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; transition: 0.2s; }
-        details[open] .sum-icon { background: var(--accent-glow); border-color: rgba(124,58,237,0.3); transform: rotate(45deg); }
-        .fa { padding: 0 0 22px; font-size: 0.9rem; color: var(--muted); line-height: 1.75; max-width: 640px; }
-
-        /* ─── CTA ─── */
-        .cta {
-            position: relative; z-index: 1;
-            text-align: center; padding: 140px 5%;
-            overflow: hidden;
+        .sum-icon {
+            width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+            background: var(--black3); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; transition: 0.2s; color: var(--gray);
         }
-        .cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(124,58,237,0.2) 0%, transparent 60%); pointer-events: none; }
-        .cta h2 { font-size: 4.5rem; font-weight: 900; letter-spacing: -0.05em; margin-bottom: 20px; line-height: 1.0; }
-        .cta p { font-size: 1.1rem; color: var(--text2); max-width: 500px; margin: 0 auto 44px; line-height: 1.7; }
+        details[open] .sum-icon { background: var(--green); color: #000; border-color: var(--green); transform: rotate(45deg); }
+        .fa { padding: 0 0 22px; font-size: 0.875rem; color: var(--gray); line-height: 1.75; max-width: 640px; }
 
-        /* ─── FOOTER ─── */
+        /* ── CTA ── */
+        .cta {
+            position: relative; z-index: 1; text-align: center;
+            padding: 140px 32px; overflow: hidden;
+        }
+        .cta::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 60% at center, rgba(180,255,71,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cta h2 {
+            font-size: clamp(2.8rem, 8vw, 6rem);
+            font-weight: 900; letter-spacing: -0.05em; line-height: 0.95; margin-bottom: 20px;
+        }
+        .cta h2 .g { color: var(--green); }
+        .cta p { font-size: 1rem; color: var(--gray); max-width: 480px; margin: 0 auto 40px; line-height: 1.7; }
+
+        /* ── TERMINAL CARD ── (hero right side) */
+        .terminal-card {
+            background: var(--black2); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%; max-width: 460px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+        }
+        .term-bar {
+            background: var(--black3); border-bottom: 1px solid var(--border);
+            padding: 12px 16px; display: flex; align-items: center; gap: 7px;
+        }
+        .tdot { width: 10px; height: 10px; border-radius: 50%; }
+        .tr { background: #ff5f57; } .ty { background: #ffbd2e; } .tg { background: #28ca41; }
+        .term-name { font-size: 0.68rem; color: var(--gray); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
+        .term-body { padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.9; }
+        .tl { display: block; }
+        .tp { color: var(--green); }
+        .tc { color: var(--gray2); }
+        .tv { color: #f9c74f; }
+        .tok { color: var(--green); }
+        .cursor { display: inline-block; width: 7px; height: 14px; background: var(--green); animation: blink 1s step-end infinite; vertical-align: sub; margin-left: 2px; border-radius: 1px; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* ── FOOTER ── */
         footer {
             position: relative; z-index: 1;
             border-top: 1px solid var(--border);
-            padding: 44px 5%; background: var(--bg2);
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: gap;
+            padding: 40px 32px; background: var(--black2);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
         }
-        .footer-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; }
-        .footer-brand img { width: 24px; height: 24px; border-radius: 50%; }
-        .footer-links { display: flex; gap: 6px; flex-wrap: wrap; }
-        .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; transition: all 0.2s; }
-        .footer-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-        .footer-copy { font-size: 0.78rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+        .footer-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.9rem; }
+        .footer-brand img { width: 22px; height: 22px; border-radius: 50%; }
+        .footer-links { display: flex; gap: 4px; flex-wrap: wrap; }
+        .footer-links a { color: var(--gray); text-decoration: none; font-size: 0.82rem; padding: 5px 10px; border-radius: 5px; transition: color 0.15s; }
+        .footer-links a:hover { color: var(--white); }
+        .footer-copy { font-size: 0.75rem; color: var(--gray2); font-family: 'JetBrains Mono', monospace; }
 
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 1024px) {
-            .hero { flex-direction: column; align-items: flex-start; }
-            .terminal-wrap { width: 100%; }
-            .hero h1 { font-size: 3.5rem; }
+        /* ── MOBILE MENU TOGGLE ── */
+        .nav-ham { display: none; background: none; border: 1px solid var(--border); color: var(--white); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1100px) {
+            .hero { grid-template-columns: 1fr; padding-left: 24px; padding-right: 24px; }
+            .hero-side-stats, .hero-side-right { position: static; transform: none; display: flex; flex-direction: row; gap: 24px; justify-content: center; flex-wrap: wrap; }
+            .hero-orb { display: none; }
+            .feat-row { grid-template-columns: 1fr 1fr; }
+            .steps-grid { grid-template-columns: 1fr 1fr; }
+            .steps-grid .step { border-bottom: 1px solid var(--border); }
+            .steps-grid .step:nth-child(even) { border-right: none; }
         }
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.8rem; }
-            .feat-grid { grid-template-columns: 1fr; }
-            .steps-row { grid-template-columns: 1fr 1fr; }
-            .stats-bar { grid-template-columns: 1fr 1fr; }
-            .nav-links { display: none; }
-            .cta h2 { font-size: 3rem; }
-            .sec-h2 { font-size: 2.2rem; }
-            footer { flex-direction: column; gap: 24px; align-items: flex-start; }
+            nav { padding: 0 20px; }
+            .nav-center { display: none; }
+            .nav-date { display: none; }
+            .nav-ham { display: block; }
+            .nav-center.open { display: flex; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--black2); border-bottom: 1px solid var(--border); padding: 12px; gap: 4px; z-index: 99; }
+            .section { padding: 70px 20px; }
+            .hero { padding: 70px 20px 50px; }
+            .hero-h1 { font-size: 2.8rem; }
+            .feat-row { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .steps-grid .step { border-right: none; }
+            .stats-strip { grid-template-columns: 1fr 1fr; }
+            .metrics-row { gap: 36px; }
+            .rd { grid-template-columns: 1fr; gap: 12px; }
+            .cta { padding: 80px 20px; }
+            footer { flex-direction: column; gap: 18px; align-items: flex-start; }
+            .hero-side-stats, .hero-side-right { flex-direction: row; gap: 24px; }
+            nav .nav-right .nav-social { display: none; }
+        }
+        @media (max-width: 480px) {
+            .hero-h1 { font-size: 2.2rem; }
+            .stat-val { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-
 <!-- NAV -->
 <nav>
     <a href="/" class="nav-brand">
         <img src="logo.jpg" alt="Arrow Core">
-        <span>Arrow Core</span>
+        <span>✳ </span><span class="nav-logo-text">Arrow Core</span>
     </a>
-    <div class="nav-links">
+    <div class="nav-center" id="navCenter">
         <a href="#product">Product</a>
         <a href="#how">How it works</a>
         <a href="#roadmap">Roadmap</a>
         <a href="#faq">FAQ</a>
     </div>
     <div class="nav-right">
-        <a href="https://x.com/Arrowcore_" target="_blank" class="nav-icon">𝕏 Twitter</a>
-        <a href="https://t.me/Arrowcore" target="_blank" class="nav-icon">Telegram</a>
+        <span class="nav-date" id="navDate"></span>
+        <a href="https://x.com/Arrowcore_" target="_blank" class="nav-social">𝕏 Twitter</a>
+        <a href="https://t.me/Arrowcore" target="_blank" class="nav-social">Telegram</a>
         <a href="app.html" class="btn-launch">Launch app ↗</a>
+        <button class="nav-ham" id="navHam">☰</button>
     </div>
 </nav>
 
@@ -363,166 +445,257 @@
 
 <!-- HERO -->
 <section class="hero">
-    <div class="hero-left">
-        <div class="badge">Live on Robinhood Chain</div>
-        <h1>Private by<br><span class="purple">construction.</span></h1>
+    <!-- Left stats -->
+    <div class="hero-side-stats">
+        <div class="hss">
+            <div class="hss-val">24K+</div>
+            <div class="hss-label">Anonymity set</div>
+        </div>
+        <div class="hss">
+            <div class="hss-val">3.2B</div>
+            <div class="hss-label">Market size</div>
+        </div>
+    </div>
+
+    <!-- Center -->
+    <div class="hero-center">
+        <div class="hero-tag">
+            <span></span>
+            AI-powered privacy protocol — live on Robinhood Chain
+        </div>
+        <h1 class="hero-h1">
+            Private by<br>
+            <span class="g">construction.</span>
+        </h1>
         <p class="hero-desc">Arrow Core is a privacy protocol on Robinhood Chain. Hold shielded balances alongside public ones, swap without publishing a traceable trail, and give AI agents real tooling — without handing over your keys.</p>
         <div class="hero-btns">
-            <a href="app.html" class="btn-hero-primary">Launch app ↗</a>
-            <a href="#product" class="btn-hero-secondary">See what's live</a>
+            <a href="app.html" class="btn-primary">Launch app ↗</a>
+            <a href="#product" class="btn-secondary">See what's live</a>
+        </div>
+
+        <!-- Orb -->
+        <div class="hero-orb">
+            <a href="app.html" class="orb-btn">↗</a>
         </div>
     </div>
 
-    <div class="terminal-wrap">
-        <div class="terminal-glow"></div>
-        <div class="terminal">
-            <div class="term-bar">
-                <div class="tdot tr"></div>
-                <div class="tdot ty"></div>
-                <div class="tdot tg"></div>
-                <span class="term-name">mcp — arrow core</span>
-            </div>
-            <div class="term-body">
-                <span class="tl"><span class="tc"># context_full</span></span>
-                <span class="tl"><span class="tp">$</span> shielded: <span class="tv">4.2 ETH</span>, public: <span class="tv">0.8 ETH</span></span>
-                <span class="tl" style="margin-top:6px"><span class="tc"># agent_run rebalance</span></span>
-                <span class="tl"><span class="tok">✓ settled — no plaintext leaked</span></span>
-                <span class="tl" style="margin-top:6px"><span class="tc"># shield_deposit 2.0</span></span>
-                <span class="tl"><span class="tp">$</span> <span id="typed"></span><span class="cursor"></span></span>
-                <span class="tl" style="margin-top:6px"><span class="tc"># privacy_score</span></span>
-                <span class="tl"><span class="tp">$</span> anonymity_set: <span class="tv">24,180</span> | risk: <span class="tok">none</span></span>
-            </div>
+    <!-- Right stats -->
+    <div class="hero-side-right">
+        <div class="hss">
+            <div class="hss-val">1k+</div>
+            <div class="hss-label">Shielded txns</div>
+        </div>
+        <div class="hss">
+            <div class="hss-val">221k</div>
+            <div class="hss-label">Transactions</div>
         </div>
     </div>
 </section>
 
-<!-- STATS -->
-<div class="stats-bar">
-    <div class="stat"><div class="sv" id="s1">0</div><div class="sl">Anonymity set</div></div>
-    <div class="stat"><div class="sv">0.04%</div><div class="sl">Price impact</div></div>
-    <div class="stat"><div class="sv">40s</div><div class="sl">Shield time</div></div>
-    <div class="stat"><div class="sv" id="s2">$0</div><div class="sl">Total value locked</div></div>
+<!-- STATS STRIP -->
+<div class="stats-strip">
+    <div class="stat"><div class="stat-val" id="s1">0</div><div class="stat-label">Anonymity set</div></div>
+    <div class="stat"><div class="stat-val">0.04%</div><div class="stat-label">Price impact</div></div>
+    <div class="stat"><div class="stat-val">40s</div><div class="stat-label">Shield time</div></div>
+    <div class="stat"><div class="stat-val" id="s2">$0</div><div class="stat-label">Total value locked</div></div>
 </div>
 
-<!-- PRODUCT -->
+<!-- SECTION 01 — PRODUCT -->
 <section class="section" id="product">
-    <div class="sec-kicker">The Stack</div>
-    <h2 class="sec-h2">Nine surfaces.<br>One privacy layer.</h2>
+    <div class="sec-tag">
+        <span class="sec-num">01</span>
+        The Stack — Arrow Core
+    </div>
+    <h2 class="sec-h2">
+        Nine surfaces.<br>
+        One <span class="g">privacy</span> layer.
+    </h2>
     <p class="sec-sub">Every tool Arrow Core offers runs through the same zero-knowledge privacy core — a unified shield for all your on-chain activity.</p>
-    <div class="feat-grid">
+
+    <!-- About style paragraph with inline badges like reference -->
+    <div class="about-text">
+        Arrow Core has been building
+        <span class="inline-badge">+</span>
+        a unique and powerful privacy protocol
+        <span class="inline-badge">⚡</span>
+        on Robinhood Chain.
+        <span class="inline-badge dark">✳ Arrow Core</span>
+        is live with zero gas fees.
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="feat-row">
         <div class="feat-card">
-            <div class="feat-icon">🔒</div>
+            <div class="feat-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
             <h3>Shield Pool</h3>
             <p>Deposit ETH into Arrow Core vault contracts. Funds hide inside a Merkle-tree commitment that severs all chain links between deposit and withdrawal.</p>
-            <div class="feat-tag">Live ↗</div>
+            <span class="feat-status">● Live</span>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">🔁</div>
+            <div class="feat-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+            </div>
             <h3>Private Swap</h3>
             <p>Swaps route through a shielded Uniswap V4 vault. Trade from within the pool without exposing your wallet address to any DEX router or aggregator.</p>
-            <div class="feat-tag">Live ↗</div>
+            <span class="feat-status">● Live</span>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">🌉</div>
+            <div class="feat-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M8 17l4 4 4-4"/><path d="M12 12v9"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            </div>
             <h3>Bridge</h3>
             <p>Move assets cross-chain through private relayers. The destination chain sees only the exit address — never origin wallet, never transaction history.</p>
-            <div class="feat-tag">Coming Q3</div>
+            <span class="feat-status soon">Coming Q3</span>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">🤖</div>
+            <div class="feat-icon-wrap">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V5"/><circle cx="12" cy="4" r="1"/><path d="M8 11V9a4 4 0 0 1 8 0v2"/></svg>
+            </div>
             <h3>AI Agents</h3>
             <p>Give trading agents encrypted MCP access to your shielded portfolio. Strategies stay ciphertext at rest. All AI inference routes through Tor.</p>
-            <div class="feat-tag">Live ↗</div>
+            <span class="feat-status">● Live</span>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">📡</div>
+            <div class="feat-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            </div>
             <h3>Private Data</h3>
             <p>Query on-chain data with k-anonymity. Decoy calls are mixed automatically into your RPC requests to prevent statistical fingerprinting.</p>
-            <div class="feat-tag">Live ↗</div>
+            <span class="feat-status">● Live</span>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">⚡</div>
+            <div class="feat-icon-wrap">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
             <h3>Staking</h3>
             <p>Stake into privacy pools and earn yield from protocol fees. Stakers also deepen the anonymity set for every other user in the system.</p>
-            <div class="feat-tag">Coming Q4</div>
+            <span class="feat-status soon">Coming Q4</span>
         </div>
     </div>
 
-    <div class="metrics">
-        <div class="metric"><div class="mv" id="m1">$14.2M</div><div class="ml">Total value locked</div></div>
-        <div class="metric"><div class="mv" id="m2">8,830+</div><div class="ml">Shielded txns</div></div>
-        <div class="metric"><div class="mv">4663</div><div class="ml">Chain ID</div></div>
-        <div class="metric"><div class="mv">0%</div><div class="ml">Gas fees</div></div>
+    <!-- Metrics -->
+    <div class="metrics-row">
+        <div>
+            <div class="metric-val" id="m1">$14.2M</div>
+            <div class="metric-label">Total value locked</div>
+        </div>
+        <div>
+            <div class="metric-val" id="m2">8,830+</div>
+            <div class="metric-label">Shielded txns</div>
+        </div>
+        <div>
+            <div class="metric-val">4663</div>
+            <div class="metric-label">Chain ID</div>
+        </div>
+        <div>
+            <div class="metric-val">0%</div>
+            <div class="metric-label">Gas fees</div>
+        </div>
     </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="section dark" id="how">
-    <div class="sec-kicker">How it works</div>
-    <h2 class="sec-h2">Deposit → Commit → Prove → Settle.</h2>
+<!-- SECTION 02 — HOW IT WORKS -->
+<section class="section alt" id="how">
+    <div class="sec-tag">
+        <span class="sec-num">02</span>
+        How it works
+    </div>
+    <h2 class="sec-h2">Deposit → Commit →<br>Prove → <span class="g">Settle.</span></h2>
     <p class="sec-sub">A four-step flow that guarantees mathematical unlinkability between your deposit and withdrawal addresses — verified on-chain, no trusted setup.</p>
-    <div class="steps-row">
+    <div class="steps-grid">
         <div class="step">
-            <div class="step-num">01 ─ DEPOSIT</div>
+            <div class="step-tag">01 ─ DEPOSIT</div>
+            <div class="step-dot">01</div>
             <h3>Funds enter the vault</h3>
             <p>ETH moves into the Arrow Core vault contract on Robinhood Chain. A cryptographic commitment is generated entirely in your browser — your keys never leave.</p>
         </div>
         <div class="step">
-            <div class="step-num">02 ─ COMMIT</div>
+            <div class="step-tag">02 ─ COMMIT</div>
+            <div class="step-dot">02</div>
             <h3>Commitment joins the tree</h3>
             <p>Your commitment is inserted as a leaf into an on-chain Merkle tree. The new root is published, but the leaf content — linking you to the deposit — stays hidden.</p>
         </div>
         <div class="step">
-            <div class="step-num">03 ─ PROVE</div>
+            <div class="step-tag">03 ─ PROVE</div>
+            <div class="step-dot">03</div>
             <h3>ZK proof generated</h3>
             <p>To withdraw, your browser computes a zero-knowledge proof that you own a leaf in the tree — without revealing which leaf, nullifier, or deposit amount.</p>
         </div>
         <div class="step">
-            <div class="step-num">04 ─ SETTLE</div>
+            <div class="step-tag">04 ─ SETTLE</div>
+            <div class="step-dot">04</div>
             <h3>On-chain settlement</h3>
             <p>The ZK proof goes to a relayer, which submits the withdrawal and pays gas. Funds arrive at any address you choose. No trace back to origin.</p>
         </div>
     </div>
 </section>
 
-<!-- ROADMAP -->
+<!-- SECTION 03 — ROADMAP -->
 <section class="section" id="roadmap">
-    <div class="sec-kicker">Roadmap</div>
-    <h2 class="sec-h2">What's shipped,<br>what's next.</h2>
-    <p class="sec-sub" style="margin-bottom:50px">Building in public on Robinhood Chain. Every milestone verified on-chain.</p>
+    <div class="sec-tag">
+        <span class="sec-num">03</span>
+        Roadmap
+    </div>
+    <h2 class="sec-h2">What's shipped,<br>what's <span class="g">next.</span></h2>
+    <p class="sec-sub" style="margin-bottom:48px">Building in public on Robinhood Chain. Every milestone verified on-chain.</p>
     <div class="road">
-        <div class="rd done">
-            <div class="rd-quarter">Q1 2025</div>
-            <div class="rd-title">Core Protocol Launch</div>
-            <div class="rd-desc">Shield pool contracts deployed and audited. ZK verifier live on Robinhood Chain testnet. First 1,000 shielded transactions processed.</div>
-            <span class="pill pill-done">✓ Shipped</span>
-        </div>
-        <div class="rd done">
-            <div class="rd-quarter">Q2 2025</div>
-            <div class="rd-title">Private Swap & MCP Server</div>
-            <div class="rd-desc">Shielded Uniswap V4 vault deployed. AI agent integration via encrypted MCP server. Tor-routed inference goes live.</div>
-            <span class="pill pill-done">✓ Shipped</span>
+        <div class="rd">
+            <div class="rd-left">
+                <div class="rd-quarter">Q1 2025</div>
+                <span class="rd-status-dot done"></span>
+            </div>
+            <div class="rd-right">
+                <div class="rd-title">Core Protocol Launch</div>
+                <div class="rd-desc">Shield pool contracts deployed and audited. ZK verifier live on Robinhood Chain testnet. First 1,000 shielded transactions processed.</div>
+                <span class="pill pill-done">✓ Shipped</span>
+            </div>
         </div>
         <div class="rd">
-            <div class="rd-quarter">Q3 2025</div>
-            <div class="rd-title">Cross-Chain Private Bridge</div>
-            <div class="rd-desc">Anonymous relayer network bridges to major EVM chains. Source wallet is never visible to the destination chain.</div>
-            <span class="pill pill-live">↗ In progress</span>
+            <div class="rd-left">
+                <div class="rd-quarter">Q2 2025</div>
+                <span class="rd-status-dot done"></span>
+            </div>
+            <div class="rd-right">
+                <div class="rd-title">Private Swap &amp; MCP Server</div>
+                <div class="rd-desc">Shielded Uniswap V4 vault deployed. AI agent integration via encrypted MCP server. Tor-routed inference goes live.</div>
+                <span class="pill pill-done">✓ Shipped</span>
+            </div>
         </div>
-        <div class="rd next">
-            <div class="rd-quarter">Q4 2025</div>
-            <div class="rd-title">Staking & Yield Layer</div>
-            <div class="rd-desc">Protocol fee distribution to stakers. Pool depth incentives. Governance framework for privacy pool parameters.</div>
-            <span class="pill pill-next">Planned</span>
+        <div class="rd">
+            <div class="rd-left">
+                <div class="rd-quarter">Q3 2025</div>
+                <span class="rd-status-dot live"></span>
+            </div>
+            <div class="rd-right">
+                <div class="rd-title">Cross-Chain Private Bridge</div>
+                <div class="rd-desc">Anonymous relayer network bridges to major EVM chains. Source wallet is never visible to the destination chain.</div>
+                <span class="pill pill-live">↗ In progress</span>
+            </div>
+        </div>
+        <div class="rd">
+            <div class="rd-left">
+                <div class="rd-quarter">Q4 2025</div>
+                <span class="rd-status-dot"></span>
+            </div>
+            <div class="rd-right">
+                <div class="rd-title">Staking &amp; Yield Layer</div>
+                <div class="rd-desc">Protocol fee distribution to stakers. Pool depth incentives. Governance framework for privacy pool parameters.</div>
+                <span class="pill pill-next">Planned</span>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- FAQ -->
-<section class="section dark" id="faq">
-    <div class="sec-kicker">FAQ</div>
-    <h2 class="sec-h2">Questions worth<br>answering upfront.</h2>
-    <div class="faq-list">
+<!-- SECTION 04 — FAQ -->
+<section class="section alt" id="faq">
+    <div class="sec-tag">
+        <span class="sec-num">04</span>
+        FAQ
+    </div>
+    <h2 class="sec-h2">Questions worth<br>answering <span class="g">upfront.</span></h2>
+    <div class="faq-wrap">
         <details open>
             <summary>How does Arrow Core protect my privacy? <span class="sum-icon">+</span></summary>
             <div class="fa">Arrow Core uses zero-knowledge Merkle proofs (zk-SNARKs). When you deposit, a cryptographic commitment is created entirely in your browser. When you withdraw, a ZK proof shows you own a valid commitment in the Merkle tree without revealing which one — permanently breaking the on-chain link between your deposit and withdrawal addresses.</div>
@@ -548,15 +721,15 @@
 
 <!-- CTA -->
 <section class="cta">
-    <h2>Stop publishing<br>your position.</h2>
+    <h2>Stop publishing<br>your <span class="g">position.</span></h2>
     <p>Deposit, shield, and give your agents real tools — without giving up your privacy.</p>
-    <a href="app.html" class="btn-hero-primary" style="font-size: 1.1rem; padding: 18px 44px;">Launch Arrow Core ↗</a>
+    <a href="app.html" class="btn-primary" style="font-size:1.05rem;padding:16px 40px;">Launch Arrow Core ↗</a>
 </section>
 
 <!-- FOOTER -->
 <footer>
     <div class="footer-brand">
-        <img src="logo.jpg" alt="Arrow Core"> Arrow Core
+        <img src="logo.jpg" alt="Arrow Core"> ✳ Arrow Core
     </div>
     <div class="footer-links">
         <a href="#product">Product</a>
@@ -571,52 +744,53 @@
 </footer>
 
 <script>
-// Typing animation
-const lines = ["generating commitment...", "computing merkle root...", "creating zk-proof...", "proof verified ✓", "shield complete ✓"];
-let li = 0, ci = 0; const el = document.getElementById('typed');
-function type() {
-    if (ci < lines[li].length) { el.textContent += lines[li][ci++]; setTimeout(type, 55); }
-    else { setTimeout(() => { el.textContent = ''; ci = 0; li = (li + 1) % lines.length; type(); }, 2200); }
-}
-type();
+// ── Date in nav ──
+(function(){
+    const d = new Date();
+    const s = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    const el = document.getElementById('navDate');
+    if(el) el.textContent = s;
+})();
 
-// Counter animation
-function counter(el, end, prefix='', suffix='', dur=2200) {
-    let s = 0, inc = end / (dur / 16);
-    const t = setInterval(() => {
-        s = Math.min(s + inc, end);
-        el.textContent = prefix + Math.floor(s).toLocaleString() + suffix;
-        if (s >= end) clearInterval(t);
-    }, 16);
-}
+// ── Mobile nav ──
+document.getElementById('navHam').addEventListener('click', function(){
+    document.getElementById('navCenter').classList.toggle('open');
+});
 
-// Intersection observer for counters
-const ob = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) {
-            counter(document.getElementById('s1'), 24180);
-            counter(document.getElementById('s2'), 14204, '$', 'K');
+// ── Ticker ──
+const ACTS=['shielded','withdrew','swapped'];
+function rAddr(){return '0x'+[...Array(4)].map(()=>Math.floor(Math.random()*0xff).toString(16).padStart(2,'0')).join('')+'…'+Math.floor(Math.random()*0xff).toString(16).padStart(2,'0');}
+function rAmt(){return (Math.random()*9.5+0.1).toFixed(2);}
+function buildTicker(){
+    let html='';
+    for(let i=0;i<20;i++){
+        const act=ACTS[Math.floor(Math.random()*3)];
+        html+=`<span class="t-item"><span class="t-dot"></span><span class="t-addr">${rAddr()}</span> ${act} <b>${rAmt()} ETH</b></span>`;
+    }
+    document.getElementById('tickerTrack').innerHTML=html+html;
+}
+buildTicker();
+setInterval(buildTicker,30000);
+
+// ── Counter animation ──
+function counter(el,end,prefix='',suffix='',dur=2200){
+    let s=0,inc=end/(dur/16);
+    const t=setInterval(()=>{
+        s=Math.min(s+inc,end);
+        el.textContent=prefix+Math.floor(s).toLocaleString()+suffix;
+        if(s>=end)clearInterval(t);
+    },16);
+}
+const ob=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+        if(e.isIntersecting){
+            counter(document.getElementById('s1'),24180);
+            counter(document.getElementById('s2'),14204,'$','K');
             ob.disconnect();
         }
     });
-}, { threshold: 0.3 });
-ob.observe(document.querySelector('.stats-bar'));
-
-// Live Ticker
-const ACTS = ['shielded', 'withdrew', 'swapped'];
-function rAddr() { return '0x' + [...Array(4)].map(() => Math.floor(Math.random()*0xff).toString(16).padStart(2,'0')).join('') + '…' + Math.floor(Math.random()*0xff).toString(16).padStart(2,'0'); }
-function rAmt() { return (Math.random() * 9.5 + 0.1).toFixed(2); }
-function buildTicker() {
-    let html = '';
-    for (let i = 0; i < 20; i++) {
-        const act = ACTS[Math.floor(Math.random() * 3)];
-        const amt = rAmt();
-        html += `<span class="t-item"><span class="t-dot"></span><span class="t-addr">${rAddr()}</span> ${act} <b>${amt} ETH</b></span>`;
-    }
-    document.getElementById('tickerTrack').innerHTML = html + html;
-}
-buildTicker();
-setInterval(buildTicker, 30000);
+},{threshold:0.3});
+ob.observe(document.querySelector('.stats-strip'));
 </script>
 </body>
 </html>
