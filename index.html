@@ -448,6 +448,14 @@
         .footer-links a:hover { color: var(--white); }
         .footer-copy { font-size: 0.75rem; color: var(--gray2); font-family: 'JetBrains Mono', monospace; }
 
+        .nav-ham {
+            display: none; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+            color: var(--white); width: 38px; height: 38px; border-radius: 50%;
+            cursor: pointer; font-size: 1.1rem; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .nav-ham:hover { background: rgba(255,255,255,0.12); color: var(--green); }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 1024px) {
             .cards-row-ref { grid-template-columns: 1fr; }
@@ -458,8 +466,22 @@
         }
         @media (max-width: 768px) {
             nav { padding: 0 20px; }
-            .nav-center { display: none; }
             .nav-date-pill { display: none; }
+            .nav-social { display: none; }
+            .nav-ham { display: flex; }
+            .nav-center {
+                display: none;
+                position: fixed; top: 64px; left: 0; right: 0;
+                background: rgba(0,0,0,0.96); backdrop-filter: blur(24px);
+                border-bottom: 1px solid var(--border2);
+                flex-direction: column; padding: 24px; gap: 8px;
+                z-index: 999;
+            }
+            .nav-center.open { display: flex; }
+            .nav-center a {
+                font-size: 1rem; padding: 12px 18px; border-radius: 12px;
+                background: var(--black2); border: 1px solid var(--border);
+            }
             .section { padding: 70px 20px; }
             .hero-section { padding: 40px 20px; }
             .steps-grid { grid-template-columns: 1fr; }
@@ -477,17 +499,20 @@
         <span class="star">✳</span>
         <span>Arrow Core</span>
     </a>
-    <div class="nav-center">
-        <a href="#product">Product</a>
-        <a href="#how">How it works</a>
-        <a href="#roadmap">Roadmap</a>
-        <a href="#faq">FAQ</a>
+    <div class="nav-center" id="navMenu">
+        <a href="#product" onclick="closeMobileNav()">Product</a>
+        <a href="#how" onclick="closeMobileNav()">How it works</a>
+        <a href="#roadmap" onclick="closeMobileNav()">Roadmap</a>
+        <a href="#faq" onclick="closeMobileNav()">FAQ</a>
+        <a href="https://x.com/Arrowcore_" target="_blank" onclick="closeMobileNav()">𝕏 Twitter ↗</a>
+        <a href="https://t.me/Arrowcore" target="_blank" onclick="closeMobileNav()">Telegram ↗</a>
     </div>
     <div class="nav-right">
         <span class="nav-date-pill" id="navDate">Friday, June 18, 2025</span>
         <a href="https://x.com/Arrowcore_" target="_blank" class="nav-social">𝕏 Twitter</a>
         <a href="https://t.me/Arrowcore" target="_blank" class="nav-social">Telegram</a>
         <a href="app.html" class="btn-launch">Launch app ↗</a>
+        <button class="nav-ham" id="navHam" onclick="toggleMobileNav()" title="Toggle Menu">☰</button>
     </div>
 </nav>
 
@@ -931,6 +956,15 @@ document.getElementById('invNextBtn').addEventListener('click', () => {
         invTrack.appendChild(invTrack.firstElementChild);
     }
 });
+// Mobile Nav Drawer Toggle
+function toggleMobileNav() {
+    const m = document.getElementById('navMenu');
+    m.classList.toggle('open');
+}
+function closeMobileNav() {
+    const m = document.getElementById('navMenu');
+    if(m) m.classList.remove('open');
+}
 </script>
 </body>
 </html>
