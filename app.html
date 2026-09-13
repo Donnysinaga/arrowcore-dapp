@@ -535,9 +535,9 @@
         <div style="border-top:1px solid var(--border);padding-top:14px;text-align:center;">
             <p style="font-size:0.72rem;color:var(--muted);line-height:1.65;">
                 By connecting you agree to Arrow Core's
-                <a href="#" style="color:var(--accent2);text-decoration:none;">Terms of Service</a>
+                <a href="javascript:void(0)" onclick="toast('Terms of Service','Arrow Core is non-custodial privacy infrastructure on Robinhood Chain.')" style="color:var(--accent2);text-decoration:none;">Terms of Service</a>
                 and
-                <a href="#" style="color:var(--accent2);text-decoration:none;">Privacy Policy</a>
+                <a href="javascript:void(0)" onclick="toast('Privacy Policy','No IP addresses, transaction payloads, or personal credentials are logged.')" style="color:var(--accent2);text-decoration:none;">Privacy Policy</a>
             </p>
         </div>
     </div>
@@ -554,7 +554,7 @@
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 <aside>
     <div class="brand-row">
-        <a href="/" class="brand">
+        <a href="index.html" class="brand" title="Return to Home">
             <img src="logo.jpg" alt="Arrow Core">
             Arrow Core
         </a>

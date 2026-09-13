@@ -495,7 +495,7 @@
 
 <!-- NAVBAR -->
 <nav>
-    <a href="/" class="nav-brand">
+    <a href="index.html" class="nav-brand">
         <img src="logo.jpg" alt="Arrow Core">
         <span>Arrow Core</span>
     </a>
@@ -564,22 +564,22 @@
 
     <!-- Below Sphere Pill Bar (Exact match to reference) -->
     <div class="hero-pill-bar">
-        <div class="pill-widget" style="cursor:pointer;" onclick="changeHeroSlide(0)">
-            <span class="p-dot" id="pdot1">1</span>
-            <span class="p-dot" id="pdot2">2</span>
-            <span class="p-dot" id="pdot3">3</span>
+        <div class="pill-widget">
+            <span class="p-dot active" id="pdot1" onclick="renderHeroSlide(0)" title="View Slide 1" style="cursor:pointer;">1</span>
+            <span class="p-dot" id="pdot2" onclick="renderHeroSlide(1)" title="View Slide 2" style="cursor:pointer;">2</span>
+            <span class="p-dot" id="pdot3" onclick="renderHeroSlide(2)" title="View Slide 3" style="cursor:pointer;">3</span>
         </div>
         <div class="pill-widget green-feature" style="cursor:pointer;" onclick="location.href='app.html'">
-            <span class="p-dot">1</span>
-            <span class="p-dot">2</span>
-            <span class="p-dot">3</span>
+            <span class="p-dot active" id="gfdot1">1</span>
+            <span class="p-dot" id="gfdot2">2</span>
+            <span class="p-dot" id="gfdot3">3</span>
             <span class="pf-text" id="pfText">Arrow Core is a privacy protocol on Robinhood Chain — hold shielded balances and give AI agents real tooling!</span>
             <span class="pf-arrow">↗</span>
         </div>
-        <div class="pill-widget" style="cursor:pointer;" onclick="changeHeroSlide(1)">
+        <div class="pill-widget" style="cursor:pointer;" onclick="changeHeroSlide(1)" title="Next Slide">
             <div class="avatar-group">
-                <img src="logo.jpg" alt="">
-                <img src="logo.jpg" alt="">
+                <img src="logo.jpg" alt="Arrow Core">
+                <img src="logo.jpg" alt="Arrow Core">
             </div>
             <span style="margin-left: 6px;">Explore ↗</span>
         </div>
@@ -929,13 +929,10 @@ function renderHeroSlide(idx) {
     // Update dots
     for(let i=1; i<=3; i++) {
         const dot = document.getElementById('pdot'+i);
-        if(dot) {
-            if(i === currentHeroSlide + 1) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        }
+        const gfDot = document.getElementById('gfdot'+i);
+        const isActive = (i === currentHeroSlide + 1);
+        if(dot) dot.classList.toggle('active', isActive);
+        if(gfDot) gfDot.classList.toggle('active', isActive);
     }
 }
 function changeHeroSlide(direction) {
@@ -943,6 +940,17 @@ function changeHeroSlide(direction) {
 }
 document.getElementById('heroPrevBtn').addEventListener('click', () => changeHeroSlide(-1));
 document.getElementById('heroNextBtn').addEventListener('click', () => changeHeroSlide(1));
+
+// Auto advance hero stats every 7s with pause on hover
+let heroSlideTimer = setInterval(() => changeHeroSlide(1), 7000);
+const heroEl = document.querySelector('.hero-section');
+if (heroEl) {
+    heroEl.addEventListener('mouseenter', () => clearInterval(heroSlideTimer));
+    heroEl.addEventListener('mouseleave', () => {
+        clearInterval(heroSlideTimer);
+        heroSlideTimer = setInterval(() => changeHeroSlide(1), 7000);
+    });
+}
 
 // Interactive Ecosystem Row Rotation
 const invTrack = document.getElementById('invTrack');
