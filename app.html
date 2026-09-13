@@ -733,7 +733,8 @@
                     </div>
                     <div class="fl" style="margin-bottom:7px;">Your Note (withdrawal key — save this!)</div>
                     <div class="ibox" style="margin-bottom:6px;">
-                        <input type="text" id="noteOut" readonly placeholder="Connect wallet to generate">
+                        <input type="text" id="noteOut" readonly placeholder="arrow-eth-0x...">
+                        <button class="copy-btn" onclick="generateNote();toast('New Note','A fresh cryptographic note has been generated.')" style="margin-right:4px;" title="Generate new note key">↻ New</button>
                         <button class="copy-btn" onclick="copyNote()">Copy</button>
                     </div>
                     <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.18);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:0.78rem;color:var(--yellow);display:flex;gap:8px;align-items:flex-start;">
@@ -1668,6 +1669,21 @@ let liveReward = 0;
 let stakedEthAmount = 0;
 let rewardTickerInterval = null;
 
+function initStakingRewards() {
+    const savedStaked = parseFloat(localStorage.getItem('arrow_staked_amt') || '0');
+    const savedTime = parseInt(localStorage.getItem('arrow_staked_time') || '0');
+    if (savedStaked > 0) {
+        stakedEthAmount = savedStaked;
+        const elapsedSec = Math.max(0, (Date.now() - savedTime) / 1000);
+        liveReward = (stakedEthAmount * 0.124 * elapsedSec) / (365 * 86400);
+        const elStaked = document.getElementById('staked');
+        if (elStaked) elStaked.textContent = stakedEthAmount.toFixed(4) + ' ETH';
+        const elReward = document.getElementById('earned');
+        if (elReward) elReward.textContent = liveReward.toFixed(7);
+        startRewardTicker();
+    }
+}
+
 function startRewardTicker() {
     if(rewardTickerInterval) clearInterval(rewardTickerInterval);
     rewardTickerInterval = setInterval(() => {
@@ -1685,6 +1701,7 @@ async function doStake() {
     if(!signer) { alert('Connect wallet first.'); return; }
     const amt = document.getElementById('stakeAmt').value;
     if(!amt || +amt<=0) { alert('Enter amount.'); return; }
+    if(rawBal > 0 && +amt > rawBal) { alert('Amount exceeds your wallet balance (' + rawBal.toFixed(4) + ' ETH).'); return; }
     document.getElementById('stakeBtn').disabled = true;
 
     try {
@@ -1707,6 +1724,8 @@ async function doStake() {
             toast('⚡ Staked On-Chain', `${amt} ETH staked at 12.4% APY.`, tx.hash);
         }
         stakedEthAmount += parseFloat(amt);
+        localStorage.setItem('arrow_staked_amt', stakedEthAmount.toString());
+        localStorage.setItem('arrow_staked_time', Date.now().toString());
         document.getElementById('staked').textContent = stakedEthAmount.toFixed(4) + ' ETH';
         startRewardTicker();
         feedLog(`<span class="fc fc-green"></span>Staked <b>${amt} ETH</b> at 12.4% APY — <a href="${EXPLORER}/tx/${tx.hash}" target="_blank">tx ↗</a>`);
@@ -1739,6 +1758,8 @@ async function doUnstake() {
         }
         stakedEthAmount = 0;
         liveReward = 0;
+        localStorage.removeItem('arrow_staked_amt');
+        localStorage.removeItem('arrow_staked_time');
         document.getElementById('staked').textContent = '0.0000 ETH';
         document.getElementById('earned').textContent = '0.0000000';
         if(rewardTickerInterval) clearInterval(rewardTickerInterval);
@@ -1912,6 +1933,8 @@ function tab(show,hide,el) {
 }
 
 // ─── INIT ────────────────────────────────────
+generateNote();
+initStakingRewards();
 startBlocks();
 loadContractUI();
 </script>
