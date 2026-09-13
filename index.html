@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arrow Core | Privacy by Construction</title>
+    <meta name="description" content="Arrow Core is a privacy protocol on Robinhood Chain. Hold shielded balances alongside public ones, swap without publishing a traceable trail, and give AI agents real tooling.">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Open Graph / Social / Telegram -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://donnysinaga.github.io/arrowcore-dapp/">
+    <meta property="og:title" content="Arrow Core | Privacy by Construction">
+    <meta property="og:description" content="Zero-knowledge privacy protocol on Robinhood Chain. Hold shielded balances, private swap, and AI agent integration.">
+    <meta property="og:image" content="https://donnysinaga.github.io/arrowcore-dapp/logo.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:site" content="@Arrowcore_">
+    <meta property="twitter:title" content="Arrow Core | Privacy by Construction">
+    <meta property="twitter:description" content="Zero-knowledge privacy protocol on Robinhood Chain. Hold shielded balances, private swap, and AI agent integration.">
+    <meta property="twitter:image" content="https://donnysinaga.github.io/arrowcore-dapp/logo.jpg">
+
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -484,14 +501,14 @@
     <div class="hero-layout">
         <!-- Left Stats -->
         <div class="hero-side-col">
-            <button class="hero-side-btn">←</button>
-            <div>
-                <div class="h-stat-num" id="s1-hero">24K+</div>
-                <div class="h-stat-label">Anonymity set</div>
+            <button class="hero-side-btn" id="heroPrevBtn" title="Previous Stats">←</button>
+            <div id="heroStat1">
+                <div class="h-stat-num" id="hs1-val">24K+</div>
+                <div class="h-stat-label" id="hs1-label">Anonymity set</div>
             </div>
-            <div>
-                <div class="h-stat-num">3.2b</div>
-                <div class="h-stat-label">Market size</div>
+            <div id="heroStat2">
+                <div class="h-stat-num" id="hs2-val">3.2b</div>
+                <div class="h-stat-label" id="hs2-label">Market size</div>
             </div>
         </div>
 
@@ -508,41 +525,38 @@
 
         <!-- Right Stats -->
         <div class="hero-side-col" style="text-align: right; align-items: flex-end;">
-            <button class="hero-side-btn">→</button>
-            <div>
-                <div class="h-stat-num">1k+</div>
-                <div class="h-stat-label">Shielded txns</div>
+            <button class="hero-side-btn" id="heroNextBtn" title="Next Stats">→</button>
+            <div id="heroStat3">
+                <div class="h-stat-num" id="hs3-val">1k+</div>
+                <div class="h-stat-label" id="hs3-label">Shielded txns</div>
             </div>
-            <div>
-                <div class="h-stat-num">221k</div>
-                <div class="h-stat-label">Transactions</div>
+            <div id="heroStat4">
+                <div class="h-stat-num" id="hs4-val">221k</div>
+                <div class="h-stat-label" id="hs4-label">Transactions</div>
             </div>
         </div>
     </div>
 
     <!-- Below Sphere Pill Bar (Exact match to reference) -->
     <div class="hero-pill-bar">
-        <div class="pill-widget">
-            <span class="p-dot active">1</span>
-            <span class="p-dot"></span>
-            <span class="p-dot"></span>
+        <div class="pill-widget" style="cursor:pointer;" onclick="changeHeroSlide(0)">
+            <span class="p-dot" id="pdot1">1</span>
+            <span class="p-dot" id="pdot2">2</span>
+            <span class="p-dot" id="pdot3">3</span>
         </div>
-        <div class="pill-widget green-feature">
+        <div class="pill-widget green-feature" style="cursor:pointer;" onclick="location.href='app.html'">
             <span class="p-dot">1</span>
             <span class="p-dot">2</span>
             <span class="p-dot">3</span>
-            <span class="pf-text">Arrow Core is a privacy protocol on Robinhood Chain — hold shielded balances and give AI agents real tooling!</span>
+            <span class="pf-text" id="pfText">Arrow Core is a privacy protocol on Robinhood Chain — hold shielded balances and give AI agents real tooling!</span>
             <span class="pf-arrow">↗</span>
         </div>
-        <div class="pill-widget">
-            <span class="p-dot"></span>
-            <span class="p-dot"></span>
-            <span class="p-dot active">3</span>
-            <div class="avatar-group" style="margin-left: 6px;">
+        <div class="pill-widget" style="cursor:pointer;" onclick="changeHeroSlide(1)">
+            <div class="avatar-group">
                 <img src="logo.jpg" alt="">
                 <img src="logo.jpg" alt="">
             </div>
-            <span style="margin-left: 4px;">↗</span>
+            <span style="margin-left: 6px;">Explore ↗</span>
         </div>
     </div>
 </section>
@@ -589,7 +603,7 @@
 
             <!-- Card 2: AI-based detection (Center Highlight Card) -->
             <div class="card-ref">
-                <div class="card2-header-pill">
+                <div class="card2-header-pill" onclick="location.href='app.html'" style="cursor:pointer;">
                     <span>EXPLORE POOL</span>
                     <span>↗</span>
                 </div>
@@ -645,16 +659,18 @@
             <h2 class="investors-title">Our ecosystem of ✳ Arrow Core project</h2>
             
             <div class="investor-row">
-                <button class="hero-side-btn">←</button>
-                <div class="inv-circle">⛵</div>
-                <div class="inv-circle">❖</div>
-                <div class="inv-circle">🛡️</div>
-                <div class="inv-circle featured">
-                    ARROW
-                    <span>↗</span>
+                <button class="hero-side-btn" id="invPrevBtn">←</button>
+                <div id="invTrack" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;">
+                    <div class="inv-circle" title="Decentralized Exchanges">⛵</div>
+                    <div class="inv-circle" title="ZK Protocols">❖</div>
+                    <div class="inv-circle" title="Security Audits">🛡️</div>
+                    <div class="inv-circle featured" onclick="location.href='app.html'" style="cursor:pointer;" title="Arrow Core App">
+                        ARROW
+                        <span>↗</span>
+                    </div>
+                    <div class="inv-circle text-brand">Robinhood</div>
                 </div>
-                <div class="inv-circle text-brand">Robinhood</div>
-                <button class="hero-side-btn">→</button>
+                <button class="hero-side-btn" id="invNextBtn">→</button>
             </div>
         </div>
     </div>
@@ -846,6 +862,75 @@ function buildTicker(){
 }
 buildTicker();
 setInterval(buildTicker,30000);
+
+// Interactive Hero Stats Slides
+const HERO_SLIDES = [
+    {
+        s1: { val: '24K+', label: 'Anonymity set' },
+        s2: { val: '3.2b', label: 'Market size' },
+        s3: { val: '1k+', label: 'Shielded txns' },
+        s4: { val: '221k', label: 'Transactions' },
+        text: 'Arrow Core is a privacy protocol on Robinhood Chain — hold shielded balances and give AI agents real tooling!'
+    },
+    {
+        s1: { val: '$14.2M', label: 'Total locked' },
+        s2: { val: '0%', label: 'Gas fees' },
+        s3: { val: '40s', label: 'Shield time' },
+        s4: { val: '4663', label: 'Chain ID' },
+        text: 'Zero gas fees with instant finality on Robinhood Chain — zk-SNARK cryptographic Merkle commitments!'
+    },
+    {
+        s1: { val: '12.4%', label: 'Staking APY' },
+        s2: { val: '99.9%', label: 'Tor Uptime' },
+        s3: { val: '3:1', label: 'Decoy ratio' },
+        s4: { val: '0.04%', label: 'Price impact' },
+        text: 'Private Swap routes through shielded Uniswap V4 pools without publishing an on-chain wallet trace!'
+    }
+];
+let currentHeroSlide = 0;
+function renderHeroSlide(idx) {
+    currentHeroSlide = (idx + HERO_SLIDES.length) % HERO_SLIDES.length;
+    const s = HERO_SLIDES[currentHeroSlide];
+    document.getElementById('hs1-val').textContent = s.s1.val;
+    document.getElementById('hs1-label').textContent = s.s1.label;
+    document.getElementById('hs2-val').textContent = s.s2.val;
+    document.getElementById('hs2-label').textContent = s.s2.label;
+    document.getElementById('hs3-val').textContent = s.s3.val;
+    document.getElementById('hs3-label').textContent = s.s3.label;
+    document.getElementById('hs4-val').textContent = s.s4.val;
+    document.getElementById('hs4-label').textContent = s.s4.label;
+    document.getElementById('pfText').textContent = s.text;
+    
+    // Update dots
+    for(let i=1; i<=3; i++) {
+        const dot = document.getElementById('pdot'+i);
+        if(dot) {
+            if(i === currentHeroSlide + 1) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        }
+    }
+}
+function changeHeroSlide(direction) {
+    renderHeroSlide(currentHeroSlide + direction);
+}
+document.getElementById('heroPrevBtn').addEventListener('click', () => changeHeroSlide(-1));
+document.getElementById('heroNextBtn').addEventListener('click', () => changeHeroSlide(1));
+
+// Interactive Ecosystem Row Rotation
+const invTrack = document.getElementById('invTrack');
+document.getElementById('invPrevBtn').addEventListener('click', () => {
+    if(invTrack.lastElementChild) {
+        invTrack.insertBefore(invTrack.lastElementChild, invTrack.firstElementChild);
+    }
+});
+document.getElementById('invNextBtn').addEventListener('click', () => {
+    if(invTrack.firstElementChild) {
+        invTrack.appendChild(invTrack.firstElementChild);
+    }
+});
 </script>
 </body>
 </html>
