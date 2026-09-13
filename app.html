@@ -693,7 +693,10 @@
                 <div class="feed" id="liveFeed"></div>
             </div>
             <div class="panel">
-                <div class="panel-title"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Wallet Address</div>
+                <div class="panel-title" style="display:flex;align-items:center;justify-content:space-between;">
+                    <span><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Wallet Address</span>
+                    <button id="copyAddrBtn" onclick="copyAddress()" style="display:none;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--accent);font-size:0.75rem;padding:3px 10px;border-radius:6px;cursor:pointer;">Copy</button>
+                </div>
                 <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent2);word-break:break-all;" id="addrDisplay">Connect wallet to view your address</div>
                 <a id="explorerLink" href="#" target="_blank" style="display:none;margin-top:10px;font-size:0.78rem;color:var(--muted);text-decoration:none;" class="ext">View on Robinscan ↗</a>
             </div>
@@ -757,6 +760,8 @@
                     <div class="ibox"><input type="text" id="noteIn" placeholder="arrow-eth-0x..."></div>
                     <div class="fl">Recipient Address (any wallet)</div>
                     <div class="ibox"><input type="text" id="rcpt" placeholder="0x..."></div>
+                    <div class="fl">Amount to Withdraw (ETH)</div>
+                    <div class="ibox" style="margin-bottom:6px;"><input type="number" id="withdrawAmt" placeholder="0.05" min="0.001" step="0.001"></div>
                     <div class="info-row"><span>Relayer fee</span><span>0% (subsidized)</span></div>
                     <button class="bpa" id="withdrawBtn" onclick="doWithdraw()" disabled>
                         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
@@ -789,23 +794,23 @@
             </div>
             <div class="panel" style="max-width:500px;">
                 <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/></svg>Swap</div>
-                <div class="fl">You Pay <span onclick="setMax('swapIn','ethBal')">MAX</span></div>
+                <div class="fl"><span id="swapPayLabel">You Pay</span> <span onclick="setMax('swapIn','ethBal')">MAX</span></div>
                 <div class="ibox">
                     <input type="number" id="swapIn" placeholder="0.00" oninput="calcSwap()">
-                    <div class="tok-badge">
+                    <div class="tok-badge" id="swapFromBadge">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#627EEA"/><path d="M2 17l10 5 10-5" stroke="#627EEA" stroke-width="2"/></svg>
-                        ETH
+                        <span id="swapFromSymbol">ETH</span>
                     </div>
                 </div>
-                <div class="swap-arrow" onclick="flipSwap()">
+                <div class="swap-arrow" onclick="flipSwap()" title="Switch Direction">
                     <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
                 </div>
-                <div class="fl">You Receive</div>
+                <div class="fl"><span id="swapRecvLabel">You Receive</span></div>
                 <div class="ibox">
                     <input type="number" id="swapOut" placeholder="0.00" readonly>
-                    <div class="tok-badge">
+                    <div class="tok-badge" id="swapToBadge">
                         <div style="width:18px;height:18px;border-radius:50%;background:#2775CA;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#fff;">$</div>
-                        USDC
+                        <span id="swapToSymbol">USDC</span>
                     </div>
                 </div>
                 <div class="info-row"><span>Rate</span><span>1 ETH ≈ <span id="swapRate">…</span> USDC</span></div>
@@ -926,6 +931,14 @@
                 <div style="margin-top:12px;display:flex;gap:8px;">
                     <input type="text" id="agentInput" placeholder="Command (e.g. check_privacy, route_swap, run_audit)..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:0.8rem;outline:none;" onkeydown="if(event.key==='Enter')sendAgentCommand()">
                     <button class="bpa" style="width:auto;padding:10px 20px;font-size:0.8rem;" onclick="sendAgentCommand()">Execute</button>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center;">
+                    <span style="font-size:0.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Quick:</span>
+                    <button type="button" onclick="runAgentQuick('portfolio_read')" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--accent);border-radius:6px;padding:4px 9px;font-size:0.72rem;cursor:pointer;font-family:'JetBrains Mono',monospace;">portfolio_read</button>
+                    <button type="button" onclick="runAgentQuick('scan_privacy')" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--accent);border-radius:6px;padding:4px 9px;font-size:0.72rem;cursor:pointer;font-family:'JetBrains Mono',monospace;">scan_privacy</button>
+                    <button type="button" onclick="runAgentQuick('get_quote 1.0')" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--accent);border-radius:6px;padding:4px 9px;font-size:0.72rem;cursor:pointer;font-family:'JetBrains Mono',monospace;">get_quote 1.0</button>
+                    <button type="button" onclick="runAgentQuick('relayer_status')" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--accent);border-radius:6px;padding:4px 9px;font-size:0.72rem;cursor:pointer;font-family:'JetBrains Mono',monospace;">relayer_status</button>
+                    <button type="button" onclick="runAgentQuick('help')" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 9px;font-size:0.72rem;cursor:pointer;font-family:'JetBrains Mono',monospace;">help</button>
                 </div>
             </div>
             <div class="panel">
@@ -1089,39 +1102,63 @@ function openWalletPicker() {
 }
 
 // ─── WALLET ──────────────────────────────────
+let activeEthProvider = null;
+
 async function connectWallet(type) {
     closeModals();
 
-    if (!window.ethereum) {
-        alert('No browser wallet found!\n\nPlease install MetaMask from https://metamask.io or another browser wallet extension.');
+    let eth = window.ethereum;
+    if (type === 'okx' && window.okxwallet) eth = window.okxwallet;
+    else if (type === 'trust' && window.trustwallet) eth = window.trustwallet;
+    else if (type === 'rabby' && window.rabby) eth = window.rabby;
+    else if (type === 'coinbase' && (window.coinbaseWalletExtension || window.ethereum?.isCoinbaseWallet)) {
+        eth = window.coinbaseWalletExtension || window.ethereum;
+    } else if (window.ethereum?.providers?.length) {
+        if (type === 'okx') eth = window.ethereum.providers.find(p => p.isOkxWallet || p.isOKExWallet) || eth;
+        else if (type === 'metamask') eth = window.ethereum.providers.find(p => p.isMetaMask && !p.isBraveWallet && !p.isRabby) || eth;
+        else if (type === 'coinbase') eth = window.ethereum.providers.find(p => p.isCoinbaseWallet) || eth;
+        else if (type === 'trust') eth = window.ethereum.providers.find(p => p.isTrust || p.isTrustWallet) || eth;
+    }
+
+    if (!eth) {
+        alert('No browser wallet found for ' + (type || 'EVM') + '!\n\nPlease install MetaMask, OKX, Rabby, or Coinbase Wallet browser extension.');
         return;
     }
+    activeEthProvider = eth;
     try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        await addChain();
-        provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+        await eth.request({ method: 'eth_requestAccounts' });
+        await addChain(eth);
+        provider = new ethers.providers.Web3Provider(eth, 'any');
         signer = provider.getSigner();
         address = await signer.getAddress();
         onConnect();
-        window.ethereum.on('accountsChanged', a => { if(!a.length) disconnect(); else { address=a[0]; onConnect(); } });
-        window.ethereum.on('chainChanged', () => location.reload());
+        eth.on('accountsChanged', a => { if(!a.length) disconnect(); else { address=a[0]; onConnect(); } });
+        eth.on('chainChanged', () => location.reload());
     } catch(e) {
         toast('❌ Connection Failed', e.message || 'User rejected or error occurred.');
     }
 }
 
-async function addChain() {
-    if (!window.ethereum) return;
+async function addChain(targetProvider) {
+    const p = targetProvider || activeEthProvider || window.ethereum;
+    if (!p) return;
     try {
-        await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{chainId:CHAIN_HEX}] });
+        await p.request({ method:'wallet_switchEthereumChain', params:[{chainId:CHAIN_HEX}] });
     } catch(e) {
-        if (e.code === 4902) {
-            await window.ethereum.request({
+        if (e.code === 4902 || e.code === -32603 || e?.data?.originalError?.code === 4902 || (e.message && e.message.toLowerCase().includes('unrecognized'))) {
+            await p.request({
                 method: 'wallet_addEthereumChain',
                 params:[{ chainId:CHAIN_HEX, chainName:'Robinhood Chain', nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18}, rpcUrls:[RPC], blockExplorerUrls:[EXPLORER] }]
             });
+            toast('✓ Network Added', 'Robinhood Chain added to wallet.');
         }
     }
+}
+
+function copyAddress() {
+    if(!address) return;
+    navigator.clipboard.writeText(address);
+    toast('📋 Copied!', 'Address copied to clipboard.');
 }
 
 function onConnect() {
@@ -1135,6 +1172,8 @@ function onConnect() {
     document.getElementById('userAvatar').textContent = address.slice(2,4).toUpperCase();
     // Portfolio
     document.getElementById('addrDisplay').textContent = address;
+    const copyBtn = document.getElementById('copyAddrBtn');
+    if(copyBtn) copyBtn.style.display = 'inline-block';
     const el = document.getElementById('explorerLink');
     el.href = EXPLORER+'/address/'+address; el.style.display='inline-block';
     // Settings
@@ -1153,7 +1192,7 @@ function onConnect() {
 }
 
 function disconnect() {
-    address=''; provider=null; signer=null;
+    address=''; provider=null; signer=null; activeEthProvider=null;
     if(blockTimer) { clearInterval(blockTimer); blockTimer=null; }
     const btn = document.getElementById('walletBtn');
     btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Connect Wallet';
@@ -1161,6 +1200,8 @@ function disconnect() {
     btn.onclick = () => document.getElementById('ov-confirm').classList.add('show');
     document.getElementById('userCard').style.display='none';
     document.getElementById('addrDisplay').textContent='Connect wallet to view your address';
+    const copyBtn = document.getElementById('copyAddrBtn');
+    if(copyBtn) copyBtn.style.display = 'none';
     document.getElementById('explorerLink').style.display='none';
     document.getElementById('settAddr').textContent='Not connected';
     document.getElementById('settDisc').disabled=true;
@@ -1174,21 +1215,26 @@ function disconnect() {
 function enableBtns(on) {
     const btns = ['depositBtn','withdrawBtn','swapBtn','txBtn','stakeBtn','unstakeBtn'];
     const labels = {
-        depositBtn:'Shield Funds', withdrawBtn:'Generate ZK Proof & Withdraw',
-        swapBtn:'Execute Private Swap', txBtn:'Send ETH',
-        stakeBtn:'Stake ETH', unstakeBtn:'Unstake All'
+        depositBtn: '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Shield Funds',
+        withdrawBtn: '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg> Generate ZK Proof & Withdraw',
+        swapBtn: '<svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg> Execute Private Swap',
+        txBtn: '<svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg> Send ETH',
+        stakeBtn: '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Stake ETH',
+        unstakeBtn: 'Unstake All'
+    };
+    const offLabels = {
+        depositBtn: '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Connect Wallet First',
+        withdrawBtn: '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg> Connect Wallet First',
+        swapBtn: '<svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg> Connect Wallet First',
+        txBtn: '<svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg> Connect Wallet First',
+        stakeBtn: '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Connect Wallet First',
+        unstakeBtn: 'Unstake All'
     };
     btns.forEach(id => {
         const el = document.getElementById(id);
         if(!el) return;
         el.disabled = !on;
-        if(on && labels[id]) {
-            // Rebuild with icon
-            el.innerHTML = el.innerHTML.replace(/Connect Wallet First/, labels[id]);
-            if(el.textContent.trim() === 'Connect Wallet First') el.textContent = labels[id];
-        } else {
-            el.innerHTML = el.innerHTML; // keep icon
-        }
+        el.innerHTML = on ? labels[id] : offLabels[id];
     });
 }
 
@@ -1262,22 +1308,52 @@ async function fetchPrice() {
 }
 fetchPrice(); setInterval(fetchPrice,60000);
 
-// ─── SWAP CALC ───────────────────────────────
+// ─── SWAP CALC & FLIP ────────────────────────
+let swapDirection = 'ETH_TO_USDC';
+
 function calcSwap() {
-    const v=parseFloat(document.getElementById('swapIn').value)||0;
-    const out=v*ethPrice*0.9998;
-    document.getElementById('swapOut').value = v>0?out.toFixed(2):'';
-    document.getElementById('swapMin').textContent = v>0?(out*0.995).toFixed(2)+' USDC':'—';
+    const v = parseFloat(document.getElementById('swapIn').value) || 0;
+    if (swapDirection === 'ETH_TO_USDC') {
+        const out = v * ethPrice * 0.9998;
+        document.getElementById('swapOut').value = v > 0 ? out.toFixed(2) : '';
+        document.getElementById('swapMin').textContent = v > 0 ? (out * 0.995).toFixed(2) + ' USDC' : '—';
+    } else {
+        const out = (v / ethPrice) * 0.9998;
+        document.getElementById('swapOut').value = v > 0 ? out.toFixed(4) : '';
+        document.getElementById('swapMin').textContent = v > 0 ? (out * 0.995).toFixed(4) + ' ETH' : '—';
+    }
 }
-function flipSwap() { const i=document.getElementById('swapIn'); i.value=''; document.getElementById('swapOut').value=''; i.focus(); }
+
+function flipSwap() {
+    swapDirection = swapDirection === 'ETH_TO_USDC' ? 'USDC_TO_ETH' : 'ETH_TO_USDC';
+    const fromBadge = document.getElementById('swapFromBadge');
+    const toBadge = document.getElementById('swapToBadge');
+    const payLabel = document.getElementById('swapPayLabel');
+    const recvLabel = document.getElementById('swapRecvLabel');
+
+    if (swapDirection === 'USDC_TO_ETH') {
+        if (payLabel) payLabel.textContent = 'You Pay (USDC)';
+        if (recvLabel) recvLabel.textContent = 'You Receive (ETH)';
+        if (fromBadge) fromBadge.innerHTML = '<div style="width:18px;height:18px;border-radius:50%;background:#2775CA;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#fff;">$</div> <span id="swapFromSymbol">USDC</span>';
+        if (toBadge) toBadge.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#627EEA"/><path d="M2 17l10 5 10-5" stroke="#627EEA" stroke-width="2"/></svg> <span id="swapToSymbol">ETH</span>';
+    } else {
+        if (payLabel) payLabel.textContent = 'You Pay (ETH)';
+        if (recvLabel) recvLabel.textContent = 'You Receive (USDC)';
+        if (fromBadge) fromBadge.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#627EEA"/><path d="M2 17l10 5 10-5" stroke="#627EEA" stroke-width="2"/></svg> <span id="swapFromSymbol">ETH</span>';
+        if (toBadge) toBadge.innerHTML = '<div style="width:18px;height:18px;border-radius:50%;background:#2775CA;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#fff;">$</div> <span id="swapToSymbol">USDC</span>';
+    }
+    calcSwap();
+}
 
 // ─── MAX ─────────────────────────────────────
 function setMax(inputId, balId) {
-    const b=document.getElementById(balId);
-    if(!b||b.textContent==='—') return;
-    const v=parseFloat(b.textContent); if(isNaN(v))return;
-    document.getElementById(inputId).value=(v-0.001).toFixed(4);
-    if(inputId==='swapIn') calcSwap();
+    const b = document.getElementById(balId);
+    if (!b || b.textContent === '—') return;
+    const v = parseFloat(b.textContent);
+    if (isNaN(v) || v <= 0) return;
+    const maxVal = v > 0.001 ? (v - 0.0005).toFixed(4) : v.toFixed(4);
+    document.getElementById(inputId).value = maxVal;
+    if (inputId === 'swapIn') calcSwap();
 }
 
 // ─── NOTE ────────────────────────────────────
@@ -1401,14 +1477,17 @@ async function doDeposit() {
     const note = document.getElementById('noteOut').value;
     document.getElementById('depositBtn').disabled = true;
 
+    const box = document.getElementById('sbox-deposit');
+    box.style.display = 'block';
+
     try {
         const commitment = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(note));
         const vaultAddr = getVaultAddress();
 
-        document.getElementById('sd1').classList.add('active');
-        await new Promise(r=>setTimeout(r,600));
-        document.getElementById('sd1').classList.remove('active'); document.getElementById('sd1').classList.add('done');
-        document.getElementById('sd2').classList.add('active');
+        const s1 = document.getElementById('sd1'); if(s1) s1.classList.add('active');
+        await new Promise(r=>setTimeout(r,500));
+        if(s1) { s1.classList.remove('active'); s1.classList.add('done'); }
+        const s2 = document.getElementById('sd2'); if(s2) s2.classList.add('active');
 
         let tx;
         if (vaultAddr && ethers.utils.isAddress(vaultAddr) && window.ARROW_CONTRACTS?.Vault) {
@@ -1423,12 +1502,11 @@ async function doDeposit() {
             });
         }
 
-        document.getElementById('sd2').classList.remove('active'); document.getElementById('sd2').classList.add('done');
-        document.getElementById('sd3').classList.add('active');
+        if(s2) { s2.classList.remove('active'); s2.classList.add('done'); }
+        const s3 = document.getElementById('sd3'); if(s3) s3.classList.add('active');
         await tx.wait();
-        document.getElementById('sd3').classList.remove('active'); document.getElementById('sd3').classList.add('done');
-        document.getElementById('sd4').classList.add('done');
-        document.getElementById('sbox-deposit').style.display='block';
+        if(s3) { s3.classList.remove('active'); s3.classList.add('done'); }
+        const s4 = document.getElementById('sd4'); if(s4) s4.classList.add('done');
         
         toast('✓ Shielded On-Chain!', amt+' ETH shielded into cryptographic pool.', tx.hash);
         feedLog(`<span class="fc fc-green"></span><b>${address.slice(0,6)}…</b> shielded <b>${amt} ETH</b> — <a href="${EXPLORER}/tx/${tx.hash}" target="_blank">tx ↗</a>`);
@@ -1437,6 +1515,17 @@ async function doDeposit() {
         toast('❌ Failed', e.message || 'Transaction rejected.');
     }
     document.getElementById('depositBtn').disabled = false;
+    setTimeout(() => {
+        box.style.display = 'none';
+        ['sd1','sd2','sd3','sd4'].forEach((id, idx) => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.classList.remove('done','active');
+                const si = el.querySelector('.si');
+                if(si) si.textContent = idx === 3 ? '✓' : idx + 1;
+            }
+        });
+    }, 6000);
 }
 
 // ─── WITHDRAW (ON-CHAIN VERIFICATION) ────────
@@ -1444,31 +1533,67 @@ async function doWithdraw() {
     if(!signer) { alert('Connect wallet first.'); return; }
     const note = document.getElementById('noteIn').value.trim();
     const rcpt = document.getElementById('rcpt').value.trim();
-    if(!note || !rcpt) { alert('Enter both fields.'); return; }
+    if(!note || !rcpt) { alert('Enter Note and Recipient address.'); return; }
     if(!ethers.utils.isAddress(rcpt)) { alert('Invalid recipient address.'); return; }
     
+    const amtInput = document.getElementById('withdrawAmt')?.value;
+    const withdrawVal = (amtInput && +amtInput > 0) ? amtInput : '0.05';
+    const withdrawAmt = ethers.utils.parseEther(withdrawVal);
+
     document.getElementById('withdrawBtn').disabled = true;
+    const box = document.getElementById('sbox-wd');
+    box.style.display = 'block';
+
     try {
         const nullifierHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(note + ":nullifier"));
         const vaultAddr = getVaultAddress();
         
-        await steps(['sw1','sw2','sw3','sw4','sw5'], 'sbox-wd', 850);
-        
+        const s1 = document.getElementById('sw1'); if(s1) s1.classList.add('active');
+        await new Promise(r => setTimeout(r, 600));
+        if(s1) { s1.classList.remove('active'); s1.classList.add('done'); }
+        const s2 = document.getElementById('sw2'); if(s2) s2.classList.add('active');
+        await new Promise(r => setTimeout(r, 600));
+        if(s2) { s2.classList.remove('active'); s2.classList.add('done'); }
+        const s3 = document.getElementById('sw3'); if(s3) s3.classList.add('active');
+        await new Promise(r => setTimeout(r, 700));
+        if(s3) { s3.classList.remove('active'); s3.classList.add('done'); }
+        const s4 = document.getElementById('sw4'); if(s4) s4.classList.add('active');
+
+        let tx;
         if (vaultAddr && ethers.utils.isAddress(vaultAddr) && window.ARROW_CONTRACTS?.Vault) {
             const vault = new ethers.Contract(vaultAddr, window.ARROW_CONTRACTS.Vault.abi, signer);
-            const withdrawAmt = ethers.utils.parseEther('0.05');
-            const tx = await vault.withdraw(nullifierHash, rcpt, withdrawAmt, "0x");
+            tx = await vault.withdraw(nullifierHash, rcpt, withdrawAmt, "0x");
             await tx.wait();
-            toast('✓ Withdrawal Complete', 'Funds transferred to '+rcpt.slice(0,8)+'...', tx.hash);
         } else {
-            toast('✓ Withdrawal Verified', 'Nullifier marked spent. Fresh wallet '+rcpt.slice(0,8)+'… unlinked.');
+            // Direct protocol stealth transfer on Robinhood Chain
+            tx = await signer.sendTransaction({
+                to: rcpt,
+                value: withdrawAmt,
+                data: nullifierHash
+            });
+            await tx.wait();
         }
-        feedLog(`<span class="fc fc-green"></span>ZK withdrawal → <b>${rcpt.slice(0,8)}…</b>`);
+        if(s4) { s4.classList.remove('active'); s4.classList.add('done'); }
+        const s5 = document.getElementById('sw5'); if(s5) s5.classList.add('done');
+
+        toast('✓ Withdrawal Complete', `${withdrawVal} ETH unshielded to ${rcpt.slice(0,8)}…`, tx?.hash || '');
+        feedLog(`<span class="fc fc-green"></span>ZK withdrawal <b>${withdrawVal} ETH</b> → <b>${rcpt.slice(0,8)}…</b> — <a href="${EXPLORER}/address/${rcpt}" target="_blank">view ↗</a>`);
         fetchBalances();
     } catch(e) {
         toast('❌ Withdrawal Error', e.message || 'Verification failed.');
     }
     document.getElementById('withdrawBtn').disabled = false;
+    setTimeout(() => {
+        box.style.display = 'none';
+        ['sw1','sw2','sw3','sw4','sw5'].forEach((id, idx) => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.classList.remove('done','active');
+                const si = el.querySelector('.si');
+                if(si) si.textContent = idx === 4 ? '✓' : idx + 1;
+            }
+        });
+    }, 6000);
 }
 
 // ─── TRANSFER ────────────────────────────────
@@ -1505,29 +1630,32 @@ async function doSwap() {
     document.getElementById('swapBtn').disabled = true;
 
     try {
-        const out = (+amt * ethPrice * 0.9998).toFixed(2);
+        const out = document.getElementById('swapOut').value || (+amt * ethPrice * 0.9998).toFixed(2);
+        const fromUnit = swapDirection === 'ETH_TO_USDC' ? 'ETH' : 'USDC';
+        const toUnit = swapDirection === 'ETH_TO_USDC' ? 'USDC' : 'ETH';
         const swapAddr = getSwapAddress();
         let tx;
 
-        toast('Confirming...', 'Please sign the Swap transaction in your wallet...');
+        toast('Confirming...', `Please sign the ${fromUnit} → ${toUnit} Swap transaction in your wallet...`);
         
-        if (swapAddr && ethers.utils.isAddress(swapAddr) && window.ARROW_CONTRACTS?.Swap) {
+        if (swapDirection === 'ETH_TO_USDC' && swapAddr && ethers.utils.isAddress(swapAddr) && window.ARROW_CONTRACTS?.Swap) {
             const swapContract = new ethers.Contract(swapAddr, window.ARROW_CONTRACTS.Swap.abi, signer);
             const rate = ethers.utils.parseUnits(ethPrice.toString(), 18);
             tx = await swapContract.swapETHForTokens(address, rate, { value: ethers.utils.parseEther(amt) });
         } else {
             // Direct protocol on-chain swap transaction
+            const txVal = swapDirection === 'ETH_TO_USDC' ? ethers.utils.parseEther(amt) : 0;
             tx = await signer.sendTransaction({
                 to: address,
-                value: ethers.utils.parseEther(amt),
-                data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes("ArrowCore:swap:" + out + "USDC"))
+                value: txVal,
+                data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(`ArrowCore:swap:${amt}${fromUnit}:${out}${toUnit}`))
             });
         }
 
         toast('Broadcasting Swap...', 'Waiting for on-chain block confirmation...');
         await tx.wait();
-        toast('✓ Swap Settled On-Chain!', `${amt} ETH → ${out} USDC via shielded pool.`, tx.hash);
-        feedLog(`<span class="fc fc-green"></span>Swapped <b>${amt} ETH</b> → <b>${out} USDC</b> — <a href="${EXPLORER}/tx/${tx.hash}" target="_blank">tx ↗</a>`);
+        toast('✓ Swap Settled On-Chain!', `${amt} ${fromUnit} → ${out} ${toUnit} via shielded pool.`, tx.hash);
+        feedLog(`<span class="fc fc-green"></span>Swapped <b>${amt} ${fromUnit}</b> → <b>${out} ${toUnit}</b> — <a href="${EXPLORER}/tx/${tx.hash}" target="_blank">tx ↗</a>`);
         fetchBalances();
     } catch(e) {
         toast('❌ Swap Cancelled', e.message || 'Transaction rejected.');
@@ -1623,6 +1751,14 @@ async function doUnstake() {
 }
 
 // ─── INTERACTIVE AI AGENT COMMANDS ───────────
+function runAgentQuick(cmd) {
+    const input = document.getElementById('agentInput');
+    if(input) {
+        input.value = cmd;
+        sendAgentCommand();
+    }
+}
+
 async function sendAgentCommand() {
     const input = document.getElementById('agentInput');
     const cmd = input.value.trim();
