@@ -132,6 +132,16 @@
             color:var(--muted);background:var(--bg3);border:1px solid var(--border);
             padding:4px 10px;border-radius:6px;
         }
+        .topbar-ca-chip{
+            display:flex;align-items:center;gap:6px;
+            font-family:'JetBrains Mono',monospace;font-size:0.72rem;
+            color:var(--text2);background:rgba(180,255,71,0.06);border:1px solid rgba(180,255,71,0.25);
+            padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.2s;
+        }
+        .topbar-ca-chip:hover{
+            background:rgba(180,255,71,0.15);border-color:var(--accent);color:var(--text);
+        }
+        .topbar-ca-tag{color:var(--accent);font-weight:800;font-size:0.68rem;}
         .topbar-right{display:flex;align-items:center;gap:10px;}
         .btn-w{
             display:flex;align-items:center;gap:8px;
@@ -647,6 +657,11 @@
                 <span class="bname" id="bname">Portfolio</span>
             </div>
             <div class="block-chip" id="blockChip">Block #–</div>
+            <div class="topbar-ca-chip" onclick="copyTokenCA(this)" title="Official Arrow Core CA: 0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c (Click to copy)">
+                <span class="topbar-ca-tag">CA</span>
+                <span>0x7c83...f93c</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </div>
         </div>
         <div class="topbar-right">
             <button class="btn-w" id="walletBtn" onclick="document.getElementById('ov-confirm').classList.add('show')">
@@ -699,6 +714,14 @@
                 </div>
                 <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent2);word-break:break-all;" id="addrDisplay">Connect wallet to view your address</div>
                 <a id="explorerLink" href="#" target="_blank" style="display:none;margin-top:10px;font-size:0.78rem;color:var(--muted);text-decoration:none;" class="ext">View on Robinscan ↗</a>
+            </div>
+            <div class="panel">
+                <div class="panel-title" style="display:flex;align-items:center;justify-content:space-between;">
+                    <span><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Official Token Contract (CA)</span>
+                    <button onclick="copyTokenCA(this)" style="background:rgba(180,255,71,0.1);border:1px solid rgba(180,255,71,0.3);color:var(--accent);font-size:0.75rem;padding:3px 10px;border-radius:6px;cursor:pointer;font-weight:600;">Copy CA</button>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--accent);word-break:break-all;margin-top:4px;">0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c</div>
+                <a href="https://robinscan.io/address/0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c" target="_blank" style="display:inline-block;margin-top:10px;font-size:0.78rem;color:var(--muted);text-decoration:none;" class="ext">View on Robinscan ↗</a>
             </div>
         </div>
 
@@ -1016,6 +1039,15 @@
                 <div class="panel-title"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Protocol Smart Contracts (Robinhood Chain)</div>
                 <table><tbody>
                     <tr>
+                        <td style="color:var(--muted);width:160px;">Token Contract (CA)</td>
+                        <td>
+                            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                                <span class="mono" style="color:var(--accent);font-size:0.75rem;word-break:break-all;">0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c</span>
+                                <button class="bps" style="width:auto;margin:0;padding:3px 10px;font-size:0.7rem;flex-shrink:0;" onclick="copyTokenCA(this)">Copy</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td style="color:var(--muted);width:160px;">Shield Vault</td>
                         <td>
                             <input type="text" id="cfgVault" placeholder="Not deployed yet (Click Deploy below)" style="width:100%;background:none;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.75rem;" onchange="saveContractAddresses()">
@@ -1160,6 +1192,36 @@ function copyAddress() {
     if(!address) return;
     navigator.clipboard.writeText(address);
     toast('📋 Copied!', 'Address copied to clipboard.');
+}
+
+function copyTokenCA(btn) {
+    const ca = '0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c';
+    if(navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ca).then(() => {
+            toast('📋 CA Copied!', 'Arrow Core Contract: ' + ca);
+            if(btn) {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span>✓ Copied!</span>';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+            }
+        }).catch(() => fallbackCopyTokenCA(ca, btn));
+    } else {
+        fallbackCopyTokenCA(ca, btn);
+    }
+}
+function fallbackCopyTokenCA(text, btn) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('📋 CA Copied!', 'Arrow Core Contract: ' + text);
+    if(btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✓ Copied!</span>';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    }
 }
 
 function onConnect() {

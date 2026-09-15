@@ -506,6 +506,246 @@
             .stats-strip { grid-template-columns: 1fr 1fr; }
             .rd { grid-template-columns: 1fr; gap: 12px; }
             footer { flex-direction: column; align-items: flex-start; }
+            .hero-ca-box {
+                border-radius: 16px;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 16px;
+            }
+            .ca-right {
+                justify-content: flex-end;
+                margin-top: 6px;
+            }
+            .nav-ca-btn { display: none; }
+            .footer-ca-wrap {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .footer-ca-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* ── CONTRACT ADDRESS (CA) STYLES ── */
+        .hero-ca-box {
+            margin-top: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(14, 14, 18, 0.85);
+            border: 1px solid rgba(180, 255, 71, 0.35);
+            border-radius: 99px;
+            padding: 8px 14px 8px 20px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(180, 255, 71, 0.08);
+            max-width: 660px;
+            width: 100%;
+            z-index: 3;
+            transition: all 0.25s ease;
+        }
+        .hero-ca-box:hover {
+            border-color: rgba(180, 255, 71, 0.7);
+            box-shadow: 0 8px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(180, 255, 71, 0.2);
+        }
+        .ca-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .ca-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+            flex-shrink: 0;
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+        .ca-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--green);
+            letter-spacing: 0.06em;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+        .ca-addr {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--white);
+            letter-spacing: -0.01em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .ca-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .ca-btn {
+            background: var(--green);
+            color: #000;
+            border: none;
+            border-radius: 99px;
+            padding: 6px 14px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+        .ca-btn:hover {
+            background: #cbfb70;
+            transform: translateY(-1px);
+        }
+        .ca-btn:active {
+            transform: translateY(0);
+        }
+        .ca-link-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--gray);
+            border: 1px solid var(--border2);
+            border-radius: 99px;
+            padding: 6px 12px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        .ca-link-btn:hover {
+            color: var(--white);
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .nav-ca-btn {
+            background: rgba(180, 255, 71, 0.08);
+            border: 1px solid rgba(180, 255, 71, 0.3);
+            color: var(--white);
+            border-radius: 99px;
+            padding: 6px 12px;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .nav-ca-btn:hover {
+            background: rgba(180, 255, 71, 0.18);
+            border-color: var(--green);
+        }
+        .nav-ca-tag {
+            color: var(--green);
+            font-weight: 800;
+            font-size: 0.68rem;
+        }
+        .nav-ca-val {
+            font-family: 'JetBrains Mono', monospace;
+            color: #ddd;
+        }
+        .mobile-ca-link {
+            color: var(--green) !important;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem !important;
+        }
+        .footer-ca-wrap {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .footer-ca-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .footer-ca-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+        }
+        .footer-ca-label {
+            font-size: 0.72rem;
+            color: var(--gray);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .footer-ca-code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--green);
+            font-size: 0.78rem;
+            word-break: break-all;
+        }
+        .footer-ca-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* Toast Notification */
+        .toast-notice {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #0d0d10;
+            border: 1px solid var(--green);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(180,255,71,0.25);
+            z-index: 99999;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            max-width: 90vw;
+        }
+        .toast-notice.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .toast-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .toast-desc {
+            font-size: 0.74rem;
+            color: var(--gray);
+            font-family: 'JetBrains Mono', monospace;
+            word-break: break-all;
         }
     </style>
 </head>
@@ -524,8 +764,14 @@
         <a href="#faq" onclick="closeMobileNav()">FAQ</a>
         <a href="https://x.com/Arrowcorefun" target="_blank" onclick="closeMobileNav()">𝕏 Twitter ↗</a>
         <a href="https://t.me/Arrowcore" target="_blank" onclick="closeMobileNav()">Telegram ↗</a>
+        <a href="javascript:void(0)" onclick="copyCA();closeMobileNav()" class="mobile-ca-link">📋 CA: 0x7c83...f93c</a>
     </div>
     <div class="nav-right">
+        <button class="nav-ca-btn" onclick="copyCA(this)" title="Copy Contract Address: 0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c">
+            <span class="nav-ca-tag">CA</span>
+            <span class="nav-ca-val">0x7c83...f93c</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
         <span class="nav-date-pill" id="navDate">Friday, June 18, 2025</span>
         <a href="https://x.com/Arrowcorefun" target="_blank" class="nav-social">𝕏 Twitter</a>
         <a href="https://t.me/Arrowcore" target="_blank" class="nav-social">Telegram</a>
@@ -577,6 +823,22 @@
                 <div class="h-stat-num" id="hs4-val">221k</div>
                 <div class="h-stat-label" id="hs4-label">Transactions</div>
             </div>
+        </div>
+    </div>
+
+    <!-- OFFICIAL CONTRACT ADDRESS (CA) BADGE -->
+    <div class="hero-ca-box">
+        <div class="ca-left">
+            <span class="ca-dot"></span>
+            <span class="ca-label">CA</span>
+            <span class="ca-addr" id="caHeroAddr" title="Contract Address">0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c</span>
+        </div>
+        <div class="ca-right">
+            <button class="ca-btn" onclick="copyCA(this)" title="Copy Contract Address">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Copy CA</span>
+            </button>
+            <a href="https://robinscan.io/address/0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c" target="_blank" class="ca-link-btn" title="View on Robinscan Explorer">Robinscan ↗</a>
         </div>
     </div>
 
@@ -867,6 +1129,20 @@
 
 <!-- FOOTER -->
 <footer>
+    <div class="footer-ca-wrap">
+        <div class="footer-ca-left">
+            <span class="footer-ca-dot"></span>
+            <span class="footer-ca-label">OFFICIAL CONTRACT ADDRESS (CA):</span>
+            <code class="footer-ca-code">0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c</code>
+        </div>
+        <div class="footer-ca-right">
+            <button class="ca-btn" onclick="copyCA(this)">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Copy CA</span>
+            </button>
+            <a href="https://robinscan.io/address/0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c" target="_blank" class="ca-link-btn" title="View on Robinscan">Robinscan ↗</a>
+        </div>
+    </div>
     <div class="footer-brand">
         <img src="logo.jpg" alt="Arrow Core"> <span>Arrow Core</span>
     </div>
@@ -897,14 +1173,64 @@ function rAddr(){return '0x'+[...Array(4)].map(()=>Math.floor(Math.random()*0xff
 function rAmt(){return (Math.random()*9.5+0.1).toFixed(2);}
 function buildTicker(){
     let html='';
+    const caItem = `<span class="t-item" style="color:var(--green);font-weight:700;cursor:pointer;" onclick="copyCA()"><span class="t-dot" style="background:var(--green);box-shadow:0 0 8px var(--green);"></span>CA: 0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c 📋</span>`;
     for(let i=0;i<20;i++){
         const act=ACTS[Math.floor(Math.random()*3)];
         html+=`<span class="t-item"><span class="t-dot"></span><span class="t-addr">${rAddr()}</span> ${act} <b>${rAmt()} ETH</b></span>`;
+        if(i === 3 || i === 11 || i === 17) html += caItem;
     }
     document.getElementById('tickerTrack').innerHTML=html+html;
 }
 buildTicker();
 setInterval(buildTicker,30000);
+
+// Copy Contract Address Helper
+function copyCA(btn) {
+    const ca = '0x7c83C5F3E6b7bba49ABA4AAECEDe91c866b1f93c';
+    if(navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ca).then(() => {
+            showToast('✓ Contract Address Copied!', ca);
+            if(btn) {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span>✓ Copied!</span>';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+            }
+        }).catch(() => fallbackCopy(ca, btn));
+    } else {
+        fallbackCopy(ca, btn);
+    }
+}
+function fallbackCopy(text, btn) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✓ Contract Address Copied!', text);
+    if(btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✓ Copied!</span>';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    }
+}
+
+let toastTimeout;
+function showToast(title, desc) {
+    let t = document.getElementById('globalToast');
+    if(!t) {
+        t = document.createElement('div');
+        t.id = 'globalToast';
+        t.className = 'toast-notice';
+        t.innerHTML = `<div class="toast-title" id="gtTitle"></div><div class="toast-desc" id="gtDesc"></div>`;
+        document.body.appendChild(t);
+    }
+    document.getElementById('gtTitle').innerHTML = title;
+    document.getElementById('gtDesc').textContent = desc;
+    t.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => { t.classList.remove('show'); }, 4000);
+}
 
 // Interactive Hero Stats Slides
 const HERO_SLIDES = [
